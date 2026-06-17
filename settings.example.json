@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "command": "node <PATH_TO_CONFIG>/hooks/check_log.js"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "command": "node <PATH_TO_CONFIG>/hooks/detect_significant_event.js"
+      }
+    ]
+  }
+}

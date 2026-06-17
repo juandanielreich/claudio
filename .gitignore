@@ -1,0 +1,3 @@
+_claude_log.md
+.claude/settings*.json
+*.env*
