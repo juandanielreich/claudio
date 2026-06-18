@@ -1,0 +1,118 @@
+<mxfile host="Electron">
+  <diagram id="Ni3HUuLisEKuIpU-hkW_" name="Página-1">
+    <mxGraphModel dx="1212" dy="736" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0" adaptiveColors="auto">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;&lt;font style=&quot;font-size:18px;&quot;&gt;Claudio — Orchestrator and Agent System&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="35" width="700" x="200" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECEFF1;strokeColor=#546E7A;fontColor=#263238;arcSize=50;" value="&lt;b&gt;&lt;font style=&quot;font-size:13px;&quot;&gt;User&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="200" x="455" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="hcheck" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1E88E5;fontColor=#0D47A1;fontSize=11;" value="&lt;b&gt;check_log.js&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Reads project log · injects context and pending signals&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="270" x="140" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="hdetect" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1E88E5;fontColor=#0D47A1;fontSize=11;" value="&lt;b&gt;detect_significant_event.js&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Accumulates session signals into persistent state&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="310" x="600" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="claudio" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=12;" value="&lt;b&gt;&lt;font style=&quot;font-size:16px;&quot;&gt;CLAUDIO&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px;&quot;&gt;Orchestrator · Sonnet · Claude Code&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="390" x="360" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="bgpre" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;dashed=1;opacity=60;pointerEvents=0;" value="" vertex="1">
+          <mxGeometry height="250" width="310" x="20" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="bgdemand" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;dashed=1;opacity=60;pointerEvents=0;" value="" vertex="1">
+          <mxGeometry height="330" width="330" x="390" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="bgpost" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;dashed=1;opacity=60;pointerEvents=0;" value="" vertex="1">
+          <mxGeometry height="330" width="310" x="780" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="hdrpre" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E65100;strokeColor=#BF360C;fontColor=#FFFFFF;fontSize=12;" value="&lt;b&gt;PRE-ACTION&lt;/b&gt;" vertex="1">
+          <mxGeometry height="35" width="290" x="30" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="hdrdemand" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6A1B9A;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=12;" value="&lt;b&gt;ON-DEMAND&lt;/b&gt;" vertex="1">
+          <mxGeometry height="35" width="310" x="400" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="hdrpost" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#FFFFFF;fontSize=12;" value="&lt;b&gt;POST-ACTION&lt;/b&gt;" vertex="1">
+          <mxGeometry height="35" width="290" x="790" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="analista" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#E65100;fontColor=#3E2723;fontSize=11;" value="&lt;b&gt;Impact Analyst&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Sonnet · memory: project&lt;br&gt;Before moving / deleting files&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="280" x="35" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="uxshape" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#E65100;fontColor=#3E2723;fontSize=11;" value="&lt;b&gt;UX Designer&lt;/b&gt; (shape)&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Sonnet · router → /impeccable&lt;br&gt;Before building a new screen&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="280" x="35" y="458" as="geometry" />
+        </mxCell>
+        <mxCell id="arq" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontColor=#311B92;fontSize=11;" value="&lt;b&gt;Architect&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Opus · Mode A (new) · B (strategic) · C (PRODUCT.md)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="300" x="405" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="audprod" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontColor=#311B92;fontSize=11;" value="&lt;b&gt;Production Auditor&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Opus · 9 categories&lt;br&gt;Before first production deploy&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="300" x="405" y="458" as="geometry" />
+        </mxCell>
+        <mxCell id="audmigr" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontColor=#311B92;fontSize=11;" value="&lt;b&gt;Migration Auditor&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Opus · 7 categories&lt;br&gt;Before migrating to a new machine&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="300" x="405" y="538" as="geometry" />
+        </mxCell>
+        <mxCell id="qa" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;fontColor=#1B5E20;fontSize=11;" value="&lt;b&gt;QA&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Sonnet · memory: project&lt;br&gt;Session: changed files · Full: vs PRODUCT.md&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="280" x="795" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="uxcrit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;fontColor=#1B5E20;fontSize=11;" value="&lt;b&gt;UX Designer&lt;/b&gt; (critique/polish)&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Sonnet · router → /impeccable&lt;br&gt;At session close with UI files edited&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="280" x="795" y="458" as="geometry" />
+        </mxCell>
+        <mxCell id="deploy" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;fontColor=#1B5E20;fontSize=11;" value="&lt;b&gt;Deploy &amp;amp; Infra&lt;/b&gt; (auto)&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Haiku · procedural&lt;br&gt;Build / deploy executed (binary signal)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="280" x="795" y="538" as="geometry" />
+        </mxCell>
+        <mxCell id="logfile" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontColor=#424242;fontSize=11;dashed=1;" value="&lt;b&gt;_claude_log.md&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Per-project session log&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="210" x="35" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="productmd" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontColor=#424242;fontSize=11;dashed=1;" value="&lt;b&gt;PRODUCT.md&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Project reference anchor&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="200" x="450" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="impskill" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontColor=#424242;fontSize=11;dashed=1;" value="&lt;b&gt;/impeccable&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;UX design skill (actual capability)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="45" width="230" x="820" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;" target="claudio" value="Prompt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#1E88E5;" target="hcheck" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#1E88E5;" target="hdetect" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="hcheck" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#1E88E5;fontSize=10;" target="claudio" value="context">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="hdetect" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#1E88E5;fontSize=10;" target="claudio" value="signals">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="claudio" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#E65100;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" target="hdrpre" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="claudio" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#7B1FA2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="hdrdemand" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="claudio" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#388E3C;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" target="hdrpost" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="uxshape" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#9E9E9E;fontSize=10;" target="impskill" value="delegates">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="uxcrit" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#9E9E9E;fontSize=10;" target="impskill" value="delegates">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="qa" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#9E9E9E;fontSize=10;" target="productmd" value="verifies">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="analista" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#9E9E9E;fontSize=10;" target="logfile" value="accumulates">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="claudio" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#9E9E9E;fontSize=10;startArrow=block;startFill=0;endArrow=block;endFill=0;" target="logfile" value="reads / writes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="arq" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#9E9E9E;fontSize=10;" target="productmd" value="produces">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
