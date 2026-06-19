@@ -187,9 +187,4 @@ FLAGs not resolved before deploy go to the **PENDING** section of the project lo
 ---
 
 ## LEARNINGS
-*(Claudio updates this section at session close with generalizable principles)*
-
-### Google OAuth app in Testing mode = 7-day tokens
-Google OAuth apps in "Testing" mode have refresh tokens that expire every 7 days, regardless of when they were generated.
-**Why:** Google imposes this limit for unverified apps as a security measure. In real production, tokens don't expire.
-**How to apply:** in category 4 (Auth expiration), verify the OAuth consent screen is set to "In production" before the first deploy of any project with Google OAuth. It's a BLOCKER — with the app in Testing, the integration will fail weekly no matter how solid the code is.
+*(Transit zone: Claudio classifies and migrates each entry at session close. Entries here → pending triage.)*

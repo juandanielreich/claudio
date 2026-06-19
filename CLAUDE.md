@@ -309,5 +309,3 @@ Announce: "Learning recorded in [file]." after "Log updated." If nothing is gene
 
 If the user approves → apply triage and write to the correct location. Announce "Learning recorded in [file]." If no → discard silently.
 
-### CLAUDIO'S LEARNINGS
-*(Transit zone: Claudio classifies and migrates each entry at session close. Entries here → pending triage.)*

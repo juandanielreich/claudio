@@ -19,7 +19,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - **JUDGMENT** → written as a short rule in the body of the file, near the decision point
   - **HISTORY** → recorded in the project log only; doesn't touch config files
 - `## LEARNINGS` sections in all agents are now labeled as **temporary transit zones**, not permanent lists. Entries that remain there are explicit pending triage debt.
-- `CLAUDIO'S LEARNINGS` section in CLAUDE.md converted to transit zone format. The three example entries (routing table judgment, hooks vs. prose rules, urgency keywords) were already implemented in the system body and are no longer needed as separate entries.
+- `CLAUDIO'S LEARNINGS` section in CLAUDE.md removed. The three example entries (routing table judgment, hooks vs. prose rules, urgency keywords) were already implemented in the system body. Claudio applies triage but never proposes learnings itself, so it needs no transit zone of its own.
 - Batched session close proposal now includes a **Learnings** signal line, so pending candidates surface in the same ritual as QA and UX review.
 - Routing table note updated: removed the circular instruction to record judgment calls back into LEARNINGS.
 - Learning announcement style simplified: `"Learning recorded in [file]."` (was `"[agent / Claudio]"`).
