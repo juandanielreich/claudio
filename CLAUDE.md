@@ -212,7 +212,7 @@ When the user gives the OK (or at session close if there are pending items): cal
 
 | Agent | Activation signal | Mechanism |
 |---|---|---|
-| QA (session mode) | Any code file edited in the session | Batched proposal |
+| QA (session mode) | Any file edited in the session | Batched proposal |
 | QA (full mode) | User asks "review the full project" | On-demand — runs immediately, verifies project against `PRODUCT.md` |
 | UX Designer (critique/polish) | Any UI file (.jsx, .tsx, .html, .css) edited | Batched proposal |
 | Deploy & Infra | Build or deploy executed | Auto-call (binary signal) |
