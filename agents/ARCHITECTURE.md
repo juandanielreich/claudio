@@ -55,7 +55,7 @@ Called **after** the work is done, at session close. They don't interrupt the fl
 6. State is cleared: `node "~/.claude/hooks/clear_session_state.js"`
 
 **Current post-action agents:**
-- **QA** → signal: any code file edited
+- **QA** → signal: any file edited in the session (process adapts its lens based on the type of work)
 - **UX Designer (critique/polish)** → signal: any UI file (.jsx, .tsx, .html, .css) edited
 - **Deploy & Infra** → signal: build or deploy executed (auto-call, binary signal)
 

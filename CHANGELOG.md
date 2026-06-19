@@ -9,6 +9,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+- **QA trigger generalized.** The activation signal changed from "any code file edited" to "any file edited in the session." QA now works across all project types — not just React/Vite apps.
+- **QA process restructured around four lenses.** The agent now classifies the work first (Step 0) and applies the appropriate lens: *App code* (existing flow verification + known-traps checklist), *System/config* (consistency between CLAUDE.md and agents, dead references, transit zone format), *Written content* (content matches intent, tone, format), *Generated output* (script ran clean, output exists, content matches source data). For mixed sessions, each relevant lens is applied. If work doesn't fit any lens, QA declares it explicitly rather than running an inadequate process.
+- `ARCHITECTURE.md`: QA signal description updated to match the new trigger.
+
 ---
 
 ## [2.1.0] - 2026-06-19
