@@ -67,20 +67,4 @@ PROPOSES LEARNING (optional):
 ---
 
 ## LEARNINGS
-*(Claudio updates this section at session close with generalizable principles)*
-
-### Deploy to Preview instead of Production
-Three consecutive deploys went to "Preview" because the script didn't have `--branch main`. Wrangler used the local repo branch (`master`) which didn't match the production branch configured in Cloudflare. The error wasn't obvious until the user reported still seeing the old version. "Deployment complete" in the terminal doesn't mean production was updated.
-→ `--branch main` goes in the `deploy` script in `package.json`. Never rely on memory.
-
-### Version in 5 files
-The version was hardcoded in `package.json` and in 4 different footers. Each deploy required updating them manually, with the risk of forgetting one. In one session, production shipped with inconsistent versions across screens.
-→ One file holds the version. The UI reads it. No exceptions.
-
-### Firebase Authorized Domains is manual and recurring
-Every project with Firebase Auth deploying to a new domain (Cloudflare Pages, custom domain) requires manually adding that domain in Firebase Console. There's no way to automate it. If forgotten, login fails silently or with cryptic CORS errors.
-→ It's in the first deploy checklist. Always ask after completing a first deploy on a new domain.
-
-### `workers_dev = false` missing in cron Workers
-A Worker that only had a cron trigger (no intentional HTTP endpoint) was left exposed at its `.workers.dev` URL because `workers_dev = false` wasn't in the initial scaffold. The Worker had no `fetch` handler, but the URL was still active. It's a security gap by omission, not by decision.
-→ Any Worker without an intentional HTTP endpoint must have `workers_dev = false` in `wrangler.toml` from the first commit. Added to the Worker scaffold checklist.
+*(Transit zone: Claudio classifies and migrates each entry at session close. Entries here → pending triage.)*

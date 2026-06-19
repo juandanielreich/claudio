@@ -104,6 +104,7 @@ Before reasoning about logic, run this mechanical checklist against the modified
 - `New-Item -Force` on an existing file → truncates it. Check `Test-Path` first.
 - `&&`, `||`, `?:`, `??` operators → don't exist in 5.1. Use `if/else` and `;`.
 - Files written with `Out-File`/`Set-Content` without `-Encoding utf8` → end up in UTF-16 with BOM and other tools misread them.
+- `npx -y` as an argument to another command (e.g. `claude mcp add -- npx -y`) → PS 5.1 interprets `-y` as its own flag. Always use `npx --yes` (long form).
 
 **React/Vite:**
 - Dead imports after refactor → build passes (JS isn't static) but crashes at runtime. Search for dead references.
@@ -115,7 +116,15 @@ Before reasoning about logic, run this mechanical checklist against the modified
 - Secret with `VITE_` prefix → exposed publicly on the client.
 - New domain without adding to Authorized Domains → login fails with cryptic CORS error.
 
-This checklist grows. When a new trap appears for a technology, add it here (or to project memory if project-specific).
+**Node.js / scripts:**
+- Regex with an ambiguous separator pattern combined with `Math.max` → can produce active false positives. Review that the regex only matches what it's intended to match.
+- Functions copied between scripts in the same project diverge silently → verify copies are byte-for-byte identical, or refactor to a shared `lib/utils.js` module.
+
+**General:**
+- Loop with per-item try-catch but no `failed[]` array → if an item fails, the summary email/log doesn't mention it and the user never knows. Verify the failure tracking array feeds into the notification.
+- Stale documentation after a service or API migration → the code uses the new service but docs, setup guides, and variable names still reference the old one. Verify SETUP.md reflects current reality after any migration.
+
+This checklist grows. When a new trap appears, add it here directly — not to LEARNINGS.
 
 ## Project memory
 
@@ -124,7 +133,7 @@ I have persistent memory with `project` scope (`.claude/agent-memory/qa/`), whic
 - **At start:** consult my `MEMORY.md` to recover patterns, critical flows, and failures already seen in this project.
 - **At end:** record what was learned — critical project flows, what failed before, technical specifics (rate limits, Workers with `ctx.waitUntil()`, etc.). Concise notes: what and where.
 
-The difference with LEARNINGS below: memory is **project-specific** (this repo); LEARNINGS are **generalizable** (any project) and curated by Claudio.
+The difference with LEARNINGS below: memory is **project-specific** (this repo); LEARNINGS are a transit zone for generalizable findings — Claudio classifies and migrates them at session close.
 
 ## Output format
 
@@ -152,24 +161,4 @@ A generalist agent that also writes code tends to assume that if the code looks 
 ---
 
 ## LEARNINGS
-*(Claudio updates this section at session close with generalizable principles)*
-
-### Functions copied between files in the same project diverge silently
-A `cleanHtml` function was copied from `slides_base.js` to `validate.js` with a subtle difference: the validator version didn't decode HTML entities `&lt;`/`&gt;`. Result: the validator could calculate different text heights than the generator and give a false overflow OK for notes containing those characters.
-→ In projects with multiple scripts sharing logic (parse, clean, extract), verify that copies are byte-for-byte identical. The structural fix is a `lib/utils.js` module as the single source. Without that module, compare copied functions line by line as part of QA for any refactor that touches those files.
-
-### List iteration with individual try-catch
-A Worker processed 3 clients with per-item try-catch. If one failed, it wasn't in `generated[]` or `skipped[]` — the summary email arrived without mentioning the failed attempt. The user didn't know something went wrong.
-→ When the resilience lens finds a loop with individual try-catch, verify there's a `failed[]` array that the notification summary includes. It's not enough that the error doesn't stop execution.
-
-### Stale documentation after service migration
-When migrating from one API to another, SETUP.md kept references to the old API key name. The code already used the new one but the documentation didn't.
-→ When the project history shows an API or service migration, verify that SETUP.md, setup scripts, and variable names reflect the current state. Migrations move the code but often forget the documentation.
-
-### Post-action flow was not defined
-Creating a new item from a search component was supposed to open a creation modal with that item pre-selected. But it was never formally specified. The system did the technically obvious thing (activate the filter) instead of the correct thing for the user (open the creation modal). Only detected when the user reported it.
-→ For each main action, define the next state before implementing. QA verifies that next state is what actually happens.
-
-### Dead import that passed the build
-Functionality was removed from a component but `const queryClient = useQueryClient()` was left unused. The build passed without error (JS isn't static), but it would have crashed at runtime. Only detected in manual review.
-→ "Clean build" doesn't guarantee no dead imports. QA includes searching for dead references after any refactor.
+*(Transit zone: Claudio classifies and migrates each entry at session close. Entries here → pending triage.)*

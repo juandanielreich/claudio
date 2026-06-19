@@ -94,9 +94,4 @@ Verdict: APPROVED / APPROVED WITH OBSERVATIONS / REQUIRES CHANGES
 ---
 
 ## LEARNINGS
-*(Claudio updates this section at session close with generalizable principles)*
-
-### Agent redesign — router model
-The UX Designer went from having its own design intelligence to being a router toward /impeccable.
-→ The capability lives in /impeccable. The agent contributes: the criterion of when to activate and which command to use.
-→ Critical prerequisite: PRODUCT.md must exist. Without it, all /impeccable commands have incomplete context.
+*(Transit zone: Claudio classifies and migrates each entry at session close. Entries here → pending triage.)*

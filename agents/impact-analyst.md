@@ -60,17 +60,9 @@ I have persistent memory with `project` scope (`.claude/agent-memory/impact-anal
 - **At start:** consult my `MEMORY.md` to recover the implicit dependency graph already mapped for this project (e.g. "ModalPatient depends on AppContext for selectedPatient; Settings.jsx is a state hub for its tabs").
 - **At end:** record implicit dependencies, dual roles, and parallel components discovered. The value is compounding: the graph grows with each analysis.
 
-The difference with LEARNINGS below: memory is **project-specific** (this repo); LEARNINGS are **generalizable** and curated by Claudio.
+The difference with LEARNINGS below: memory is **project-specific** (this repo); LEARNINGS are a transit zone for generalizable findings — Claudio classifies and migrates them at session close.
 
 ---
 
 ## LEARNINGS
-*(Claudio updates this section at session close with generalizable principles)*
-
-### Components with an implicit dual role
-A UI element was removed because it "wasn't visually needed anymore." But it was also the only deselection mechanism for the active item on the main screen. Removing it left the screen with no exit when a filter was active. The secondary dependency was never documented.
-→ Always ask: "does this component have responsibilities that aren't in its name or description?"
-
-### Parallel components with divergent logic
-Two components did the same thing but evolved separately. The "create item" flow was different in each because the second was created without fully auditing the first.
-→ Before creating a new component, check if one with similar behavior already exists. If it does → reuse or define an explicit shared behavior contract.
+*(Transit zone: Claudio classifies and migrates each entry at session close. Entries here → pending triage.)*
