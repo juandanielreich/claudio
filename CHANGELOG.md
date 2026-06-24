@@ -9,10 +9,23 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+---
+
+## [2.2.0] - 2026-06-24
+
 ### Changed
 - **QA trigger generalized.** The activation signal changed from "any code file edited" to "any file edited in the session." QA now works across all project types — not just React/Vite apps.
 - **QA process restructured around four lenses.** The agent now classifies the work first (Step 0) and applies the appropriate lens: *App code* (existing flow verification + known-traps checklist), *System/config* (consistency between CLAUDE.md and agents, dead references, transit zone format), *Written content* (content matches intent, tone, format), *Generated output* (script ran clean, output exists, content matches source data). For mixed sessions, each relevant lens is applied. If work doesn't fit any lens, QA declares it explicitly rather than running an inadequate process.
+- **Architect modes renamed from letters to descriptive names.** Mode A → *New project*, Mode B → *Strategic review*, Mode C → *Existing project documentation*. All references in CLAUDE.md, ARCHITECTURE.md, INDEX.md, and the agent file updated. No behavioral change — purely ergonomic: agent completion messages and Claudio announcements now use the descriptive name directly.
+- **Reference stack: Firebase note added.** Firebase Auth + Firestore is correct when there are multiple users, roles, or complex auth. For single-editor CRUDs without those needs, the stack now explicitly recommends evaluating Cloudflare KV/R2 first.
 - `ARCHITECTURE.md`: QA signal description updated to match the new trigger.
+
+### Added
+- **QA checklist — React/Vite:** `useRef` with debounce on a mutable-key resource (e.g., week ID, item ID) → the load effect must call `clearTimeout(debounceRef.current)` before setting new state. Without this, the pending timer writes over the new document (silent corruption).
+- **QA checklist — Node.js:** three new traps from real-world bot/automation failures:
+  - WebSocket/bot connection state as a one-shot Promise → stays resolved after disconnect. Use a boolean flag (`open`/`close` events) + polling with explicit timeout.
+  - Bots/automations with no operational alerts → silent failure is worse than no bot. Alert function must have internal try/catch to avoid recursion.
+  - Unofficial or fast-moving dependencies without pinned exact version → lockfile isn't enough in fresh environments. No `^` or `~` for libs like Baileys, scrapers, or unofficial API wrappers.
 
 ---
 

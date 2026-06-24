@@ -61,7 +61,7 @@ When you type "this is critical", the hook injects: *"Call the Impact Analyst be
 
 ### 5. A team that learns
 
-At session close, Claudio evaluates what was learned. Generalizable insights go into the corresponding agent's `## LEARNINGS` section. Project-specific context stays in the log. The team improves itself over time, session by session.
+At session close, Claudio triages what was learned into three categories: **mechanical** rules (a non-intelligent system could execute them) go directly into the relevant agent's checklist; **judgment** rules (change how a decision is made) go as a short line in the file body, near the decision point; **history** (a decision record, a past fix) stays in the project log only. `## LEARNINGS` sections in agents are transit zones — entries there are explicit pending triage debt, not permanent lists. The team improves itself over time, session by session.
 
 ---
 
