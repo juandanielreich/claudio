@@ -94,6 +94,7 @@ Before reasoning about logic, run this mechanical checklist against the modified
 - Dead imports after refactor → build passes (JS isn't static) but crashes at runtime. Search for dead references.
 - `useEffect` without dependency array or with missing dependencies → loops or desynced state.
 - Version variable hardcoded in a component → must be read from `src/lib/version.js`.
+- `useRef` with debounce on a mutable-key resource (e.g., week ID, item ID) → the effect that loads the new key must call `clearTimeout(debounceRef.current)` before setting the new state. Without this, the pending timer writes over the new document (silent corruption).
 
 **Firebase/Firestore:**
 - `onSnapshot` without error callback → silent connection failure.
@@ -103,6 +104,9 @@ Before reasoning about logic, run this mechanical checklist against the modified
 **Node.js / scripts:**
 - Regex with an ambiguous separator pattern combined with `Math.max` → can produce active false positives. Review that the regex only matches what it's intended to match.
 - Functions copied between scripts in the same project diverge silently → verify copies are byte-for-byte identical, or refactor to a shared `lib/utils.js` module.
+- Bots/WebSocket: connection state represented with `new Promise(resolve => ...)` → trap. Once resolved, it stays resolved even if the connection drops. Correct pattern: boolean flag that turns on at `'open'` and off at `'close'`; `send()` polls the flag with an explicit timeout.
+- Bots/automations: verify that operational errors (API down, send failure, timeout) alert the admin — not only content gaps. The alert function must have an internal try/catch to avoid recursion if the alert channel itself fails.
+- Unofficial or fast-moving dependencies (e.g. Baileys, scrapers, unofficial API wrappers): pin the exact version in `package.json` (no `^` or `~`). The lockfile isn't enough: in a fresh environment without a lockfile, `npm install` picks the latest compatible version.
 
 **General:**
 - Loop with per-item try-catch but no `failed[]` array → if an item fails, the summary email/log doesn't mention it and the user never knows. Verify the failure tracking array feeds into the notification.

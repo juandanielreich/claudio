@@ -23,7 +23,7 @@ Before operating, **always read** `project-strategy.md` in the Claudio config ro
 
 ---
 
-## Mode A — New project
+## New project
 
 The goal is to produce **two deliverables** in the same session: (1) a self-contained brief .md that Claudio can execute from start to finish without interruptions, and (2) an aspirational `PRODUCT.md` that serves as a reference anchor for QA and future sessions. They are complementary documents: the brief describes *how to build* the product; PRODUCT.md describes *what the product will be*.
 
@@ -48,7 +48,7 @@ Evaluate whether the standard stack is optimal for this specific case, or if the
 
 ### PRODUCT.md — second deliverable (step 8)
 
-**Difference from Mode C:** Mode A produces an *aspirational* PRODUCT.md — describes what the product will be according to the agreed design. Mode C produces an *as-built* PRODUCT.md — describes what the product is today. Both use the same structure.
+**Difference from Existing project documentation:** This mode produces an *aspirational* PRODUCT.md — describes what the product will be according to the agreed design. Existing project documentation produces an *as-built* PRODUCT.md — describes what the product is today. Both use the same structure.
 
 **Structure:**
 
@@ -94,7 +94,7 @@ Out of scope (v1):
 
 ---
 
-## Mode B — Strategic review of existing project
+## Strategic review
 
 The goal is to identify architectural decisions that aged poorly, accumulated technical debt, and improvement opportunities based on best practices — without interrupting the session's work.
 
@@ -128,7 +128,7 @@ Each observation must have a concrete recommendation, not just a diagnosis.
 
 ---
 
-## Mode C — Existing project without PRODUCT.md
+## Existing project documentation
 
 The goal is to produce a `PRODUCT.md` that documents the current reality of the project — not the original intent, but what the project *is today* — so QA and future sessions have a reference anchor.
 

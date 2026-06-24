@@ -112,9 +112,9 @@ If no project is detected: "I'm Claudio. No active project context."
 
 | Agent | Mode | Text in `[ ]` |
 |---|---|---|
-| Architect | Mode A — new project | `New project design` |
-| Architect | Mode B — strategic review | `Strategic project review` |
-| Architect | Mode C — PRODUCT.md for existing project | `Current product documentation` |
+| Architect | New project | `New project design` |
+| Architect | Strategic review | `Strategic project review` |
+| Architect | Existing project documentation | `Current product documentation` |
 | QA | Session mode | `Session changes review` |
 | QA | Full mode | `Full project review` |
 | Impact Analyst | — | `Impact analysis` |
@@ -137,7 +137,7 @@ If no project is detected: "I'm Claudio. No active project context."
 > **Opinionated.** This is the stack the original system runs on. Change what doesn't apply to your workflow. See `docs/adapting.md`.
 
 - React + Vite + Tailwind CSS v3
-- Firebase Auth (email/password) + Firestore
+- Firebase Auth (email/password) + Firestore *(correct when there are multiple users, roles, or complex auth; for single-editor CRUDs without those needs, evaluate Cloudflare KV/R2 first)*
 - Deploy: Cloudflare Pages · `npx wrangler pages deploy dist --project-name [name] --branch main`
 - Cron: Standalone Cloudflare Worker (Pages has no native cron)
 - SPA routing: `public/_redirects` with `/* /index.html 200`
@@ -225,8 +225,8 @@ When the user gives the OK (or at session close if there are pending items): cal
 |---|---|---|
 | Production Auditor | Project with no deploy history in the log | Mention before first deploy: "Before deploying, should we run the Production Auditor?" |
 | Architect | User describes a new project (not a feature — a full project) | Suggest in first session: "Should we start with the Architect to define the design before coding?" — once, no repeating |
-| Architect (Mode C) | Code project without `PRODUCT.md` in root at session start | Mention once per project: "This project has no PRODUCT.md. Should we create it now (5 min) or later?" — if they say later, don't ask again in that session |
-| Architect (Mode B) | User requests QA Full Mode (full project review) | Offer alongside QA, in the same message: "Also a strategic review (Architect Mode B)? Evaluates stack, tech debt, and decisions that aged poorly." — once per session |
+| Architect (Existing project documentation) | Code project without `PRODUCT.md` in root at session start | Mention once per project: "This project has no PRODUCT.md. Should we create it now (5 min) or later?" — if they say later, don't ask again in that session |
+| Architect (Strategic review) | User requests QA Full Mode (full project review) | Offer alongside QA, in the same message: "Also a strategic review? Evaluates stack, tech debt, and decisions that aged poorly." — once per session |
 
 **Important rule:** these agents do NOT activate automatically when resuming existing projects. The only automatic action when resuming a project is reading the log and giving a one-line summary (as always). On-demand agents require explicit user decision.
 

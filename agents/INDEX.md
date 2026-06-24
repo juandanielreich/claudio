@@ -14,7 +14,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full taxonomy (pre-action vs post
 | QA | qa.md | sonnet | project | Post-action / On-demand | **Session mode:** at session close with code edited · **Full mode:** when user requests a full project review (verifies against PRODUCT.md) |
 | Deploy & Infra | deploy-infra.md | haiku | — | Post-action (auto) | When a build or deploy runs (binary signal) |
 | Production Auditor | production-auditor.md | opus | — | On-demand | Before first deploy · when user requests it |
-| Architect | architect.md | opus | — | On-demand | When planning a new project (Mode A) · strategic review (Mode B) · existing project without PRODUCT.md (Mode C) |
+| Architect | architect.md | opus | — | On-demand | When planning a new project · strategic review · existing project documentation (without PRODUCT.md) |
 
 Model and memory are defined in each `.md`'s YAML frontmatter. See [ARCHITECTURE.md](ARCHITECTURE.md) → "Integration with the native subagent system".
 
@@ -28,4 +28,4 @@ Model and memory are defined in each `.md`'s YAML frontmatter. See [ARCHITECTURE
 
 | File | Used by | Where it lives |
 |---|---|---|
-| `project-strategy.md` | Architect (Modes A and B) — always reads it before operating | Root of the Claudio config folder |
+| `project-strategy.md` | Architect (New project and Strategic review) — always reads it before operating | Root of the Claudio config folder |

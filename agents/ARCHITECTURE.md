@@ -17,7 +17,7 @@ Hooks don't know about agents. Agents aren't hardcoded in any script. The only p
 | `agents/*.md` | Definition of each agent (YAML frontmatter + body) |
 | `ARCHITECTURE.md` | This file — system design |
 | `INDEX.md` | Agent directory so Claudio knows what exists |
-| `project-strategy.md` | Reference stack and principles the Architect **always** reads before operating. Not an agent — it's a dependency of the Architect (Modes A and B). |
+| `project-strategy.md` | Reference stack and principles the Architect **always** reads before operating. Not an agent — it's a dependency of the Architect (New project and Strategic review). |
 
 ---
 
@@ -94,8 +94,8 @@ Any agent can be called at any time, independent of the proactive system. The us
 Every code project must have a `PRODUCT.md` in its root. It's the document that describes what the product *is* (not how it was built), and allows QA to do full reviews without depending on session context.
 
 **Who creates it:**
-- New project → Architect produces it as the **second deliverable of Mode A**, in the same session as the brief. The brief describes how to build the product; PRODUCT.md describes what the product will be. They're complementary documents with different audiences: brief → Claudio executes; PRODUCT.md → QA verifies.
-- Existing project without it → Architect generates it by reverse engineering (Mode C): reads code + log → produces draft → user validates
+- New project → Architect produces it as the **second deliverable of New project**, in the same session as the brief. The brief describes how to build the product; PRODUCT.md describes what the product will be. They're complementary documents with different audiences: brief → Claudio executes; PRODUCT.md → QA verifies.
+- Existing project without it → Architect generates it by reverse engineering (Existing project documentation): reads code + log → produces draft → user validates
 
 **Who updates it:** Claudio, when it detects a product change (new feature, modified flow, scope decision).
 
@@ -230,4 +230,4 @@ No auto-dispatch cases reported since implementation (2026-06-13). If in the fut
 | 2026-06-13 | Model per agent (opus/sonnet/haiku) | Matches cost and capability to the task: Haiku for procedural, Opus for strategic |
 | 2026-06-13 | `memory: project` in QA and Analyst | Project-specific knowledge that grows between sessions and migrates with the repo |
 | 2026-06-13 | Agents in `~/.claude/agents/` with symlink/copy from config | Single versioned source; agents are visible across all projects |
-| 2026-06-15 | PRODUCT.md as project reference anchor | Established standard (Spec-Driven Development): QA can verify the full project without depending on session context. Architect Mode C creates it retroactively for existing projects |
+| 2026-06-15 | PRODUCT.md as project reference anchor | Established standard (Spec-Driven Development): QA can verify the full project without depending on session context. Architect (Existing project documentation) creates it retroactively for existing projects |
