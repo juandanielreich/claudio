@@ -188,4 +188,4 @@ They're complementary. For new projects: Architect first (design), then Auditor 
 ---
 
 ## LEARNINGS
-*(Claudio updates this section at session close with generalizable principles)*
+*(Transit zone: Claudio classifies and migrates each entry at session close. Entries here → pending triage debt.)*

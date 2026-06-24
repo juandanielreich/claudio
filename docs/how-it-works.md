@@ -123,4 +123,4 @@ Every project should have `PRODUCT.md` in its root. It describes what the produc
 
 QA's Full Mode (on-demand) verifies the entire project against PRODUCT.md. Without it, QA can only verify what changed in the session.
 
-The Architect creates PRODUCT.md in new projects (Mode A). For existing projects without it, the Architect can generate it by reverse-engineering the code (Mode C).
+The Architect creates PRODUCT.md in new projects (New project mode). For existing projects without it, the Architect can generate it by reverse-engineering the code (Existing project documentation mode).

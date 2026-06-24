@@ -68,7 +68,7 @@ process.stdin.on('end', () => {
 
   // --- PRODUCT.md check — once per session ---
   if (!fs.existsSync(path.join(projectPath, 'PRODUCT.md')) && !state.productMdMentioned) {
-    messages.push('PRODUCT.md does not exist in this project. Mention to the user once: "This project has no PRODUCT.md. Should we create it now (5 min with Architect Mode C) or later?" — don\'t repeat this session.')
+    messages.push('PRODUCT.md does not exist in this project. Mention to the user once: "This project has no PRODUCT.md. Should we create it now (5 min with the Architect) or later?" — don\'t repeat this session.')
     state.productMdMentioned = true
     stateChanged = true
   }

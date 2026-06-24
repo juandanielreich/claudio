@@ -11,7 +11,7 @@ Claudio ships with 6 specialized agents. Each is a Markdown file with YAML front
 | QA | `qa.md` | sonnet | project | Post-action / On-demand | **Session mode:** at session close · **Full mode:** when user requests a full project review |
 | Deploy & Infra | `deploy-infra.md` | haiku | — | Post-action (auto) | After a build or deploy |
 | Production Auditor | `production-auditor.md` | opus | — | On-demand | Before first deploy · when user requests it |
-| Architect | `architect.md` | opus | — | On-demand | New project (Mode A) · strategic review (Mode B) · existing project without PRODUCT.md (Mode C) |
+| Architect | `architect.md` | opus | — | On-demand | New project · strategic review · existing project documentation (without PRODUCT.md) |
 
 ## Taxonomy
 
