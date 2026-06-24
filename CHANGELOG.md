@@ -11,6 +11,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.3.0] - 2026-06-24
+
+### Added
+- **`check_log.js`: pending learnings detection.** The hook now scans agent `.md` files at every message and alerts if any `## LEARNINGS` section contains real entries (as opposed to the transit-zone instruction boilerplate). Previously, learnings proposed by agents during a session could sit unprocessed indefinitely with no reminder. The detection filters out the standard `*(Transit zone:...)` line and only fires on actual entries.
+
+---
+
 ## [2.2.0] - 2026-06-24
 
 ### Changed

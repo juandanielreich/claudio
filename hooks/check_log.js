@@ -66,6 +66,37 @@ process.stdin.on('end', () => {
     }
   } catch (_) {}
 
+  // --- Pending learnings in agent files ---
+  // ## LEARNINGS sections are transit zones: they must always be empty.
+  // If they have content, agent-proposed learnings haven't been triaged yet.
+  try {
+    const agentsDir = path.join(os.homedir(), '.claude', 'agents')
+    if (fs.existsSync(agentsDir)) {
+      const agentFiles = fs.readdirSync(agentsDir)
+        .filter(f => f.endsWith('.md') && f !== 'INDEX.md' && f !== 'ARCHITECTURE.md')
+      const withPending = []
+      for (const file of agentFiles) {
+        try {
+          const content = fs.readFileSync(path.join(agentsDir, file), 'utf8')
+          const sections = content.split(/\n(?=## )/)
+          const section = sections.find(s => s.startsWith('## LEARNINGS'))
+          if (section) {
+            const body = section.split('\n').slice(1)
+              .filter(line => {
+                const t = line.trim()
+                return t.length > 0 && !t.startsWith('*(Transit zone:')
+              })
+              .join('\n').trim()
+            if (body.length > 0) withPending.push(file.replace('.md', ''))
+          }
+        } catch (_) {}
+      }
+      if (withPending.length > 0) {
+        messages.push(`⚠ Pending learnings to triage in: ${withPending.join(', ')}. Transit zone — classify (MECHANICAL/JUDGMENT/HISTORY) before closing session.`)
+      }
+    }
+  } catch (_) {}
+
   // --- PRODUCT.md check — once per session ---
   if (!fs.existsSync(path.join(projectPath, 'PRODUCT.md')) && !state.productMdMentioned) {
     messages.push('PRODUCT.md does not exist in this project. Mention to the user once: "This project has no PRODUCT.md. Should we create it now (5 min with the Architect) or later?" — don\'t repeat this session.')

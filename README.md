@@ -53,7 +53,7 @@ Agents aren't called randomly. The system has a taxonomy that matches when the i
 
 Rules in CLAUDE.md get forgotten. Hooks don't. Three hooks enforce the critical behaviors:
 
-- **`check_log.js`** (UserPromptSubmit): verifies `_claude_log.md` exists, detects urgency keywords ("critical", "must not fail"), reminds of pending items, summarizes session state on every message.
+- **`check_log.js`** (UserPromptSubmit): verifies `_claude_log.md` exists, detects urgency keywords ("critical", "must not fail"), reminds of pending items, scans agent files for unprocessed learnings, summarizes session state on every message.
 - **`detect_significant_event.js`** (PostToolUse): silently tracks what changed — files edited, UI files, builds, deploys, git commits — to power the session-close proposal.
 - **`clear_session_state.js`**: resets accumulated state after the batched proposal runs.
 
