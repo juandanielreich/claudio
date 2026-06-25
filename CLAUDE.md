@@ -128,7 +128,7 @@ If no project is detected: "I'm Claudio. No active project context."
 
 **Code projects live in `$env:USERPROFILE\dev\`** (or the equivalent on your system). The Claudio config folder holds only logs, config, and non-code data.
 
-**Rule for new projects:** scaffold in `$env:USERPROFILE\dev\[name]\`, push to GitHub before first deploy, call the Architect in the first session to produce the brief and create `PRODUCT.md`.
+**Rule for new projects:** scaffold in `$env:USERPROFILE\dev\[name]\`, push to GitHub before first deploy, call the Architect in the first session to produce the brief and create `PRODUCT.md`. When scaffolding, also create `src/lib/logger.js` alongside `src/lib/version.js`.
 
 ---
 
@@ -162,6 +162,7 @@ If no project is detected: "I'm Claudio. No active project context."
 | Page | `PascalCase.jsx` in `src/pages/` |
 | Utility / helper | `camelCase.js` in `src/lib/` |
 | Version (single source) | `src/lib/version.js` |
+| Stage logger | `src/lib/logger.js` |
 
 #### File versions
 If a file with the same name already exists on the same day: add suffix `_v1`, `_v2`, etc.
@@ -181,6 +182,22 @@ If a file with the same name already exists on the same day: add suffix `_v1`, `
 **Code Hygiene — after any deletion or refactor:**
 - Check for unused imports, declared-but-unreferenced variables, calls to deleted functions.
 - Verify the version is still in a single file.
+
+**Debug Logging — in any project with data logic or multi-stage processes:**
+- Every React/Vite project has `src/lib/logger.js` with a minimal helper:
+  ```js
+  const isDev = import.meta.env.DEV
+  export function log(stage, event, data) {
+    if (!isDev && event !== 'error') return
+    const fn = event === 'error' ? console.error : console.log
+    fn(`[${stage}]`, event, data ?? '')
+  }
+  ```
+- Stage naming convention: `domain/operation` in lowercase (e.g. `firebase/auth`, `crm/import`, `pdf/parse`, `notif/send`).
+- Every operation that can fail calls: `log('stage', 'start')` → `log('stage', 'success', data)` or `log('stage', 'error', error)`.
+- In production only errors are visible; in dev everything is — no extra configuration needed.
+- When adding a feature with data logic or side effects: include the `log()` calls in that same session, not as separate debt.
+- For Cloudflare Workers and Node scripts: use `console.log('[stage] event', data)` directly — the same naming pattern applies; no helper needed.
 
 **Git Safety — before closing any session where code was touched:**
 - Run `git status` on every project worked on.

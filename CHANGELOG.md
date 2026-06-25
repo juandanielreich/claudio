@@ -11,6 +11,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.4.0] - 2026-06-25
+
+### Added
+- **Debug Logging standard.** New always-on rule in CLAUDE.md: every React/Vite project gets `src/lib/logger.js` — a minimal helper that logs stage-named events in dev and errors only in production (`[stage] event data`). Naming convention: `domain/operation` in lowercase (e.g. `firebase/auth`, `pdf/parse`). For Workers and Node scripts, the same naming convention applies using `console.log` directly. The helper is also added to the file naming conventions table and the new-projects scaffold rule.
+- **`restore.ps1`: Firebase and Railway token age.** The restoration summary now shows the backup date and age in days for both Firebase and Railway tokens, making it easy to spot stale credentials before starting work on a new machine.
+- **Architect diagram updated.** Both drawio files updated with descriptive mode names (was: Mode A/B/C; now: *New project* / *Strategic review* / *Existing project documentation*).
+
+---
+
 ## [2.3.0] - 2026-06-24
 
 ### Added
