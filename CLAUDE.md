@@ -184,7 +184,7 @@ If a file with the same name already exists on the same day: add suffix `_v1`, `
 - Verify the version is still in a single file.
 
 **Debug Logging — in any project with data logic or multi-stage processes:**
-- Every React/Vite project has `src/lib/logger.js` with a minimal helper:
+- Every React/Vite project must have `src/lib/logger.js` with a minimal helper:
   ```js
   const isDev = import.meta.env.DEV
   export function log(stage, event, data) {
