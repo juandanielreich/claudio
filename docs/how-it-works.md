@@ -65,8 +65,9 @@ CC hooks run shell commands at specific events:
 |---|---|---|
 | UserPromptSubmit | `check_log.js` | Checks log, detects urgency, reminds of pending items, summarizes session state |
 | PostToolUse | `detect_significant_event.js` | Accumulates what changed (files, builds, deploys, git) |
+| PreToolUse (`Write\|Edit`) | `check_hardcoded_paths.js` | Blocks the write if it hardcodes an absolute, machine-dependent path |
 
-The hooks communicate with CC by writing JSON to stdout:
+The hooks communicate with CC by writing JSON to stdout. `UserPromptSubmit` and `PostToolUse` inject context:
 ```json
 {
   "hookSpecificOutput": {
@@ -76,7 +77,15 @@ The hooks communicate with CC by writing JSON to stdout:
 }
 ```
 
-This is how urgency detection works: the hook detects "critical" in the prompt and injects a reminder into the conversation that Claudio sees and acts on.
+`PreToolUse` can instead block the action outright:
+```json
+{
+  "decision": "block",
+  "reason": "explanation shown to Claudio and the user"
+}
+```
+
+This is how urgency detection works: the hook detects "critical" in the prompt and injects a reminder into the conversation that Claudio sees and acts on. `check_hardcoded_paths.js` uses the block form instead — the write never happens.
 
 ## The session state file
 

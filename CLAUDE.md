@@ -13,6 +13,24 @@ Paths use the current machine's username. **Never hardcode the username — alwa
 | `<your-config-dir>\templates\_log_template.md` | Template for new project logs |
 | `$env:USERPROFILE\dev\` | Source code for all projects |
 
+### General rule — paths are always generic and portable
+
+No absolute path is ever hardcoded in code, scripts, configs, or documentation — not in this system, not in any project. This includes:
+
+- **Windows username** → never a literal `C:\Users\name\...`. Resolve with `$env:USERNAME` / `$env:USERPROFILE` (PowerShell), `os.homedir()` / `process.env.USERPROFILE` (Node.js), or `%USERPROFILE%` (batch).
+- **Project location** → never assume a fixed path inside a project's code. Use paths relative to the project root (`import.meta.url`, `__dirname`, `process.cwd()`) or environment variables defined in `.env`.
+- **Any path that depends on the current machine or user** → environment variable, config, or relative path — never a literal.
+
+**Why:** projects move between machines and usernames can change. A hardcoded path doesn't fail loudly — it usually fails silently and only gets noticed in production or on the new machine.
+
+**How to apply it:**
+- Before writing any code, script, or config that touches the filesystem → use an environment variable or a relative path, never an absolute literal.
+- When reviewing existing code (QA, refactor, migration, or just passing through a file) → if a hardcoded absolute path shows up, fix it in that same session, not as separate debt.
+- Applies to PowerShell/bash scripts, app code (Node/React/etc.), config files (`.json`, `.yaml`), and operational docs (README, project `CLAUDE.md`).
+- Exception: values that are legitimately fixed and don't depend on the user/machine (e.g. a project name in a hosting dashboard, an external resource ID) aren't "filesystem paths" and this rule doesn't apply.
+
+**Mechanical enforcement:** a `PreToolUse` hook (`hooks/check_hardcoded_paths.js`) blocks any `Write`/`Edit` on code/script/config files (`.js .jsx .ts .tsx .ps1 .sh .py .json .env .yaml .yml .cjs .mjs .bat .cmd`) if it detects a hardcoded absolute path with a username. It exits silently when there's no violation — no token cost in the normal case. **It does not cover `.md` files** — in documentation, the fix is a manual/QA judgment call, not an automatic block.
+
 ---
 
 ## ⚠ HIGHEST PRIORITY — Project log (read first, always)

@@ -9,6 +9,12 @@
       {
         "command": "node <PATH_TO_CONFIG>/hooks/detect_significant_event.js"
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "node <PATH_TO_CONFIG>/hooks/check_hardcoded_paths.js"
+      }
     ]
   }
 }

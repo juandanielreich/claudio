@@ -11,6 +11,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.5.0] - 2026-07-01
+
+### Added
+- **Generic and portable paths rule.** New always-on rule in CLAUDE.md ("General rule — paths are always generic and portable"): no absolute path depending on the current username or machine may be hardcoded in code, scripts, configs, or documentation. Covers PowerShell/bash scripts, app code, config files, and operational docs. Explicit exception for values that are legitimately fixed (external resource IDs, hosting project names).
+- **`check_hardcoded_paths.js` (new hook, PreToolUse).** Blocks any `Write`/`Edit` on code/script/config files that contains a hardcoded absolute path with a username (`C:\Users\<name>\...`, `/home/<name>/...`, `/Users/<name>/...`). Exits silently when there's no violation. Skips `node_modules`, `.git`, `dist`, `build`, `.next`, and comment lines (trade-off: a real path hidden inside a comment isn't caught). Does not check `.md` files.
+- `settings.example.json`, `hooks/README.md`, `docs/setup.md`, `docs/how-it-works.md`: updated to document the new `PreToolUse` wiring and hook.
+
+---
+
 ## [2.4.0] - 2026-06-25
 
 ### Added

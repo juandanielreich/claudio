@@ -51,10 +51,11 @@ Agents aren't called randomly. The system has a taxonomy that matches when the i
 
 ### 4. Hooks that enforce rules — not just prose
 
-Rules in CLAUDE.md get forgotten. Hooks don't. Three hooks enforce the critical behaviors:
+Rules in CLAUDE.md get forgotten. Hooks don't. Four hooks enforce the critical behaviors:
 
 - **`check_log.js`** (UserPromptSubmit): verifies `_claude_log.md` exists, detects urgency keywords ("critical", "must not fail"), reminds of pending items, scans agent files for unprocessed learnings, summarizes session state on every message.
 - **`detect_significant_event.js`** (PostToolUse): silently tracks what changed — files edited, UI files, builds, deploys, git commits — to power the session-close proposal.
+- **`check_hardcoded_paths.js`** (PreToolUse, `Write|Edit`): blocks any write that hardcodes an absolute path depending on the current username or machine, with a reason explaining what to use instead.
 - **`clear_session_state.js`**: resets accumulated state after the batched proposal runs.
 
 When you type "this is critical", the hook injects: *"Call the Impact Analyst before implementing."* No relying on the model remembering the rule.
@@ -116,6 +117,9 @@ Add to your `~/.claude/settings.json` (see `settings.example.json`):
     ],
     "PostToolUse": [
       { "command": "node ~/.claude/hooks/detect_significant_event.js" }
+    ],
+    "PreToolUse": [
+      { "matcher": "Write|Edit", "command": "node ~/.claude/hooks/check_hardcoded_paths.js" }
     ]
   }
 }

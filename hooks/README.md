@@ -1,6 +1,6 @@
 # Hooks
 
-Claudio uses three hooks to enforce behavior at the right moments. Hooks are Node.js scripts wired into Claude Code's event system via `settings.json`.
+Claudio uses four hooks to enforce behavior at the right moments. Hooks are Node.js scripts wired into Claude Code's event system via `settings.json`.
 
 ## The hooks
 
@@ -29,6 +29,12 @@ Runs after every tool call. Silently accumulates what happened in `claude_sessio
 
 This state powers the session-close batched proposal that `check_log.js` surfaces.
 
+### `check_hardcoded_paths.js` — PreToolUse (matcher: `Write|Edit`)
+
+Runs before every `Write` or `Edit`. Scans the content being written for hardcoded absolute paths that depend on a username or machine (`C:\Users\<name>\...`, `/home/<name>/...`, `/Users/<name>/...`) in code/script/config files (`.js .jsx .ts .tsx .ps1 .sh .py .json .env .yaml .yml .cjs .mjs .bat .cmd`). If it finds one, it blocks the write with `decision: "block"` and a reason explaining what to use instead (`$env:USERPROFILE`, `os.homedir()`, etc.).
+
+Skips `node_modules`, `.git`, `dist`, `build`, `.next`, and comment lines (`// # *`) — the latter to avoid blocking example paths in inline docs, at the cost of not catching a real path hidden inside a comment. Exits silently when there's no violation, so it costs nothing on the normal path. Does not check `.md` files — see the "General rule — paths are always generic and portable" section in `CLAUDE.md`.
+
 ### `clear_session_state.js` — manual
 
 Not a hook — a script you run at session close after the batched proposal:
@@ -51,6 +57,9 @@ Add to `~/.claude/settings.json`:
     ],
     "PostToolUse": [
       { "command": "node /absolute/path/to/hooks/detect_significant_event.js" }
+    ],
+    "PreToolUse": [
+      { "matcher": "Write|Edit", "command": "node /absolute/path/to/hooks/check_hardcoded_paths.js" }
     ]
   }
 }
