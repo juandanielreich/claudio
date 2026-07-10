@@ -168,9 +168,10 @@ Signals:
   • Build/deploy: [yes/no]
   • Analyst pending: [N items or "none"]
   • PRODUCT.md: [up to date / updated this session / doesn't exist]
+  • Learnings: [none / N candidate(s) → triage now]
 
 What do we process?
-  [A] All  [B] QA only  [C] UX Designer only  [D] Analyst only  [E] Later
+  [A] All (includes Simplify)  [B] All except Simplify  [C] QA only  [D] UX Designer only  [E] Analyst only  [F] Simplify only  [G] Later
 ```
 
 ---

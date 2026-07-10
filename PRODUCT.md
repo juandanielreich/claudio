@@ -24,6 +24,6 @@ Out of scope (v1 public):
 - Personal backup/restore system (restore.ps1, restore-config).
 - Migration Auditor (depends on unpublished restore system).
 - Personal project integrations from the original author.
-- Third-party skills (impeccable, debate).
+- Third-party skills (impeccable, debate, simplify).
 - Not a fork or replacement of Claude Code: it's a configuration layer on top. Requires Claude Code installed.
 - Does not install or manage API keys or credentials for the user.

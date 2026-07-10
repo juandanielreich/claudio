@@ -27,7 +27,8 @@ Each project has one log file. It has a fixed structure (see `templates/_log_tem
 - **LAST SESSION** — exactly where to resume: what was worked on, what's done, the immediate next step, warnings
 - **CURRENT STATE** — what works, what's broken, deploy URL and version
 - **PENDING** — blockers, high priority, optional improvements
-- **DECISIONS MADE** — a table of non-obvious decisions and why
+- **DECISIONS MADE** — only decisions that pass the 3-test filter (hard to reverse, surprising without context, a genuine trade-off), logged in a compact one-line format, not a full table
+- **KNOWN ISSUES** — one entry per recurring problem (occurrences, symptom, root cause, mitigation, status), updated in place rather than duplicated
 - **CHANGE HISTORY** — chronological entries
 
 Claudio reads this at session start, writes to it during the session when decisions happen, and updates it fully at session close. The hook (`check_log.js`) enforces that it exists before Claudio responds to anything.
@@ -115,9 +116,10 @@ Signals:
   • Build/deploy: no
   • Analyst pending: none
   • PRODUCT.md: up to date
+  • Learnings: none
 
 What do we process?
-  [A] All  [B] QA only  [C] UX Designer only  [D] Analyst only  [E] Later
+  [A] All (includes Simplify)  [B] All except Simplify  [C] QA only  [D] UX Designer only  [E] Analyst only  [F] Simplify only  [G] Later
 ```
 
 The signals come from the session state file. Claudio presents all options without judgment — no "this doesn't apply". The user decides.

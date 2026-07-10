@@ -286,10 +286,10 @@ When the user gives the OK (or at session close if there are pending items): cal
 | QA (session mode) | Any file edited in the session | Batched proposal |
 | QA (full mode) | User asks "review the full project" | On-demand — runs immediately, verifies project against `PRODUCT.md` |
 | UX Designer (critique/polish) | Any UI file (.jsx, .tsx, .html, .css) edited | Batched proposal |
-| Simplify (skill) | Any code file edited in the session | Batched proposal — optional, only runs if selected |
+| Simplify (`/simplify`, a Claude Code skill — not a Claudio agent) | Any code file edited in the session | Batched proposal — optional, only runs if selected |
 | Deploy & Infra | Build or deploy executed | Auto-call (binary signal) |
 
-**Simplify — when to ask for it:** no need to wait for the full feature to be done. It's enough that a chunk of logic already works and won't be rewritten soon — `/simplify` reviews the diff accumulated so far, not the whole feature. Good signal to ask for it mid-session: a pattern got repeated (a copy-pasted block), or 2+ fixes piled up in the same function in the same session — that's where duplication tends to creep in. Bad signal: a trivial 1-2 line diff (little to find, not worth the cost), or code that might still change shape — reviewing something about to be rewritten next turn goes stale before it's ever applied.
+**Simplify — when to ask for it:** `/simplify` is a Claude Code skill, not something this repo ships — same category as `/impeccable`. If it isn't installed, skip this row. No need to wait for the full feature to be done. It's enough that a chunk of logic already works and won't be rewritten soon — `/simplify` reviews the diff accumulated so far, not the whole feature. Good signal to ask for it mid-session: a pattern got repeated (a copy-pasted block), or 2+ fixes piled up in the same function in the same session — that's where duplication tends to creep in. Bad signal: a trivial 1-2 line diff (little to find, not worth the cost), or code that might still change shape — reviewing something about to be rewritten next turn goes stale before it's ever applied.
 
 **On-demand** — always available: the user can call any agent at any time ("call QA", "analyze impact").
 
