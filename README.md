@@ -99,6 +99,10 @@ Session close
 
 **Prerequisite:** Claude Code CLI installed and working.
 
+**Prefer having an AI agent do this for you?** Tell your Claude Code session: *"Read INSTALL.md from this repo and install Claudio into my global profile."* It merges safely with any existing `CLAUDE.md`, `settings.json`, or agents instead of overwriting them. See [`INSTALL.md`](INSTALL.md).
+
+**Doing it by hand:**
+
 **1. Copy the config files**
 
 Place the contents of this repo into your Claude Code config directory:

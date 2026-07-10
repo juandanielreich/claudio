@@ -11,6 +11,29 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.7.0] - 2026-07-10
+
+### Added
+- **`INSTALL.md` (new).** A runbook written for an AI agent, not a human — a user can tell their own Claude Code session "read INSTALL.md from this repo and install Claudio into my global profile" and have it merge safely: detects an existing `CLAUDE.md`/`settings.json`/`agents/`, asks before replacing vs. appending, merges the `hooks` array instead of overwriting `settings.json`, and resolves the `<your-config-dir>` placeholder to the real path instead of leaving it in a live config. Explicitly tells the installing agent not to treat the repo's own `CLAUDE.md` as its current-session behavior.
+- Cross-links added: `README.md` Quick Install now mentions the agent-driven path; `docs/setup.md` points to `INSTALL.md` for anyone with a pre-existing config; `PRODUCT.md` main flows list the install path.
+
+---
+
+## [2.6.0] - 2026-07-10
+
+### Added
+- **Project log — KNOWN ISSUES format enforced.** New required entry format (Occurrences, Symptom, Root cause, Current mitigation, Status), one entry per problem updated in place rather than duplicated. At session start, entries with ≥2 occurrences are proactively surfaced to the user.
+- **`docs/diagnosing-failures.md` (new).** A disciplined 6-phase diagnosis process (red signal → reproduce/narrow → hypothesize → instrument → fix+verify → cleanup) for any recurring or flaky failure — not just code. Wired to the KNOWN ISSUES ≥2-occurrences trigger.
+- **`docs/writing-great-skills.md` (new).** Condensed principles for editing agent/skill `.md` files: no-op hunt, duplication, leading words, sprawl, model-invoked vs. user-invoked, common failure modes. Referenced from the agent system section of CLAUDE.md.
+- **DECISIONS MADE — 3-test filter.** A decision is only logged if it's hard to reverse, surprising without context, and a genuine trade-off. Keeps the log from accumulating decisions that don't need to survive the session.
+- **CONTEXT.md — per-project domain glossary.** Created lazily, on the first ambiguous or repeated domain-specific term. Lives next to `PRODUCT.md`, updated inline as terms get resolved.
+- **Log size — archiving convention.** LAST SESSION holds only the latest session; once a log exceeds ~800 lines, HISTORY entries older than a month move to `_claude_log_archive.md` with a pointer line left behind.
+- **Pending requests to the user.** If the user postpones an out-of-conversation action Claudio asked for (dashboard, signup, infra confirmation), it's written to PENDING in that same turn instead of relying on conversation memory.
+- **Credential-grep checklist before migrating a project to git.** Before `git init`/`gh repo create`, grep for plaintext credential patterns across all included files — not just `.env`, but config files like `.claude/settings.local.json` that can carry credentials embedded in allowed commands.
+- **Simplify as a batched post-action option.** Added alongside QA and UX Designer in the session-close proposal, with guidance on when mid-session logic is "settled enough" to be worth reviewing for duplication.
+
+---
+
 ## [2.5.0] - 2026-07-01
 
 ### Added

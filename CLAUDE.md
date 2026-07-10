@@ -80,12 +80,45 @@ No explanation of what sections changed or why. No detail at all.
 | Moment | Sections to update |
 |---|---|
 | At session start | Read LAST SESSION first |
-| When making a relevant decision | DECISIONS MADE |
+| When making a decision that passes the 3-test filter (see below) | DECISIONS MADE |
 | When discarding a feature | OUT OF SCOPE |
-| When finding a bug or workaround | KNOWN ISSUES |
+| When finding a recurring bug or workaround | KNOWN ISSUES (update the existing entry, don't create a new one) |
 | When an unresolved question arises | OPEN QUESTIONS |
 | When deploying | CURRENT STATE (deploy subsection) |
 | At session end | LAST SESSION + PENDING + HISTORY (required) |
+
+**Pending requests to the user:** if Claudio asks the user for an action outside the conversation (a dashboard, a signup, an infra confirmation) and the user postpones it or changes topic without resolving it, write that request to PENDING in that same turn — don't rely on it staying in conversation memory.
+
+**Rules for KNOWN ISSUES:**
+- One entry per problem, not one per occurrence. Always update the existing entry — never add a new one for the same problem.
+- Required format:
+  ```
+  **[Problem name]**
+  - Occurrences: N — YYYY-MM-DD, YYYY-MM-DD...
+  - Symptom: what message or visible behavior
+  - Root cause: what causes it (if known)
+  - Current mitigation: what's done each time
+  - Status: recurring / resolved / investigating
+  ```
+- **When reading the log at session start:** if any entry has ≥2 occurrences → mention it proactively: *"[Problem name] has occurred N times. Should we dig into it today?"* Don't launch an agent automatically — the user decides. If they say yes, or it's the first time but a quick fix attempt didn't stick, or the failure is intermittent/critical with no visible cause → apply a disciplined diagnosis process (see [`docs/diagnosing-failures.md`](docs/diagnosing-failures.md): red signal → reproduce/narrow → hypothesize → instrument → fix+verify → cleanup). Applies to any workflow, not just code. If the cause is already obvious (a typo, a clear error message) → fix it directly, skip the full process.
+- When a problem is resolved structurally → change Status to "resolved" and remove the entry next session.
+
+**Rules for DECISIONS MADE — the 3-test filter:**
+- Only record a decision if all 3 are true: (1) hard to reverse, (2) surprising without context — a future reader would ask "why this way?", (3) it was a real trade-off — genuine alternatives existed and one was chosen for a specific reason. If any is missing, don't record it — it can keep living in the conversation, but not in the log.
+- Compact format (not the full template):
+  ```
+  **[Short title]** — {context in 1 sentence} → {what was decided} → {why, in 1 sentence}
+  ```
+
+**CONTEXT.md — per-project domain glossary:**
+- Not every project needs one. Created **lazily**: only when the first project-domain-specific term (not generic programming vocabulary) that's repeated or ambiguous shows up — no need to ask permission, do it on the spot.
+- If the user uses a term that contradicts one already defined in `CONTEXT.md` → flag the contradiction immediately, ask which one is correct.
+- Format: `**Term**: {1-2 sentence definition}` + `_Avoid_: {synonyms to avoid}`.
+- Lives in the project root, next to `PRODUCT.md`. Updated inline the moment a term gets resolved — not batched for session close.
+
+**Log size — archiving:**
+- LAST SESSION holds **only the most recent session**. When writing the new entry, delete the previous one from that section — its summary already lives in HISTORY. Don't accumulate entries there.
+- When the log exceeds ~800 lines: move HISTORY entries older than a month to `_claude_log_archive.md` (same folder), leaving a pointer line at the end of HISTORY: `Entries before [date]: see _claude_log_archive.md`. The archive isn't read at session start — only when looking up specific history.
 
 **Memory vs log:** Everything project-specific goes in the log. The system memory (`.claude/memory/`) is only for global behavior preferences.
 
@@ -147,6 +180,8 @@ If no project is detected: "I'm Claudio. No active project context."
 **Code projects live in `$env:USERPROFILE\dev\`** (or the equivalent on your system). The Claudio config folder holds only logs, config, and non-code data.
 
 **Rule for new projects:** scaffold in `$env:USERPROFILE\dev\[name]\`, push to GitHub before first deploy, call the Architect in the first session to produce the brief and create `PRODUCT.md`. When scaffolding, also create `src/lib/logger.js` alongside `src/lib/version.js`.
+
+**Before `git init`/`gh repo create` on any project migration:** grep for plaintext credential patterns (`password`, `PASSWORD`, `API_KEY`, `secret`, `token=`) across every file to be included — not just `.env` (already covered by `.gitignore`), but also config files like `.claude/settings.local.json`, which can carry credentials embedded in allowed commands. If something turns up, exclude that specific file via `.gitignore` before creating the repo, even if it's private. A credential baked into an allow-list is easy to miss because the filename looks innocuous.
 
 ---
 
@@ -229,6 +264,7 @@ If a file with the same name already exists on the same day: add suffix `_v1`, `
 See full architecture in `agents/ARCHITECTURE.md`.
 **When adding a new agent: read ARCHITECTURE.md before designing it.**
 When reading claims about the system in ARCHITECTURE.md or system docs, verify each claim against the actual file before acting — design docs can fall out of sync with the implementation.
+**When writing or editing any agent or skill `.md` file (new or existing):** apply the principles in [`docs/writing-great-skills.md`](docs/writing-great-skills.md) (no-op hunt, duplication, leading words, sprawl) before saving.
 
 #### Taxonomy
 
@@ -250,7 +286,10 @@ When the user gives the OK (or at session close if there are pending items): cal
 | QA (session mode) | Any file edited in the session | Batched proposal |
 | QA (full mode) | User asks "review the full project" | On-demand — runs immediately, verifies project against `PRODUCT.md` |
 | UX Designer (critique/polish) | Any UI file (.jsx, .tsx, .html, .css) edited | Batched proposal |
+| Simplify (skill) | Any code file edited in the session | Batched proposal — optional, only runs if selected |
 | Deploy & Infra | Build or deploy executed | Auto-call (binary signal) |
+
+**Simplify — when to ask for it:** no need to wait for the full feature to be done. It's enough that a chunk of logic already works and won't be rewritten soon — `/simplify` reviews the diff accumulated so far, not the whole feature. Good signal to ask for it mid-session: a pattern got repeated (a copy-pasted block), or 2+ fixes piled up in the same function in the same session — that's where duplication tends to creep in. Bad signal: a trivial 1-2 line diff (little to find, not worth the cost), or code that might still change shape — reviewing something about to be rewritten next turn goes stale before it's ever applied.
 
 **On-demand** — always available: the user can call any agent at any time ("call QA", "analyze impact").
 
@@ -285,7 +324,7 @@ Signals:
   • Learnings: [none / N candidate(s) → triage now]
 
 What do we process?
-  [A] All  [B] QA only  [C] UX Designer only  [D] Analyst only  [E] Later
+  [A] All (includes Simplify)  [B] All except Simplify  [C] QA only  [D] UX Designer only  [E] Analyst only  [F] Simplify only  [G] Later
 ```
 
 After the selected agents run:

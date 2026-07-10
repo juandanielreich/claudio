@@ -10,6 +10,7 @@ Main flows:
 - At session close with edited code → Claudio proposes QA, UX review, and/or pending analysis in a single screen (without interrupting during work).
 - When describing a new project → Claudio suggests the Architect, who produces a construction brief and PRODUCT.md before coding.
 - At session end → Claudio updates the log and, if something is generalizable, records a learning in the corresponding agent (the team improves itself).
+- Installing → a user can either follow docs/setup.md by hand, or point their own Claude Code session at INSTALL.md and ask it to install — it merges into an existing global config instead of overwriting it.
 
 Current design decisions:
 - Orchestrator defined in global CLAUDE.md (loaded in every session).

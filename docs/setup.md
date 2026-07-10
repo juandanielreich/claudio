@@ -1,5 +1,7 @@
 # Setup guide
 
+This guide assumes a clean `~/.claude/` with no existing config. If you already have your own `CLAUDE.md`, `settings.json`, or agents and want an AI agent to merge Claudio in safely instead of following these steps by hand, use [`INSTALL.md`](../INSTALL.md) instead.
+
 ## Prerequisites
 
 - Claude Code CLI installed and working (`claude --version`)
