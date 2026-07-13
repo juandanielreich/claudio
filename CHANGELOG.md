@@ -11,6 +11,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.9.1] - 2026-07-13
+
+### Changed
+- **Trimmed the two subagent-delegation rules added in 2.9.0.** A same-session Simplify pass found redundant "why" prose repeated across the rule statement and its "how to apply" paragraph, and a "don't poll" rule that re-derived an instruction already present in the `Agent` tool's own spec. Tightened both to state the rule once and keep only the concrete evidence. Also added a missed half of the lesson: isolating a phase in a subagent isn't license to make it do less work.
+
+---
+
 ## [2.9.0] - 2026-07-13
 
 ### Added
