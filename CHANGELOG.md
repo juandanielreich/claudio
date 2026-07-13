@@ -11,6 +11,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.8.0] - 2026-07-13
+
+### Added
+- **"Delegate heavy phases to subagents" (new rule).** Any session phase that generates a lot of context not needed in full for the rest of the session (web search results, large log/file dumps, broad codebase exploration) should delegate to a subagent that returns only the compact result — its context doesn't get re-sent on every subsequent turn. Measured in a real session: 19 inline web searches accounted for ~90% of that session's token cost via repeated cache-read of accumulated context; fixed by moving the search phase to a subagent.
+- **"Don't manually poll background subagents" (new rule).** Never use a `ScheduleWakeup`/`SendMessage`/`TaskOutput` loop to check whether a background agent finished — the harness notifies automatically. Same session: 14 polling turns cost ~230k weighted tokens for nothing.
+
+---
+
 ## [2.7.0] - 2026-07-10
 
 ### Added

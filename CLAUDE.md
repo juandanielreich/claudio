@@ -335,6 +335,20 @@ After the selected agents run:
 
 To call an agent: invoke it as a **native subagent** by its frontmatter `name` (e.g. `subagent_type: "qa"`), passing only the project context and specific task — the `.md` body is already its system prompt. Native invocation activates the model, tools, and memory declared in the frontmatter. Requires agents to be in `~/.claude/agents/`. If CC says the agent doesn't exist, as a fallback read the `.md` and pass it as a prompt — but in that mode the frontmatter is ignored.
 
+### Delegate heavy phases to subagents — general rule
+
+Any phase of a session that generates a lot of context and isn't needed in full for the rest of the session (web search results, large log/file dumps, broad codebase exploration) → delegate to a subagent that returns only the compact result (a list, summary, decision) — not the raw content. A subagent's context doesn't get re-sent on every turn of the main thread — this prevents token cost from multiplying over a long session.
+
+**Why:** measured in a real session — 19 inline web searches stayed in the main thread's context and were re-sent on every subsequent turn (checkpoint, output generation, final writes): ~90% of that session's cost was cache-read of that accumulated context. Fixed by delegating the search phase to a subagent that returns only a compact result list.
+
+**How to apply it:** before running a phase you know will produce a lot of intermediate content, with the session continuing afterward → evaluate whether a subagent can do that phase and return only what's needed to continue.
+
+### Don't manually poll background subagents
+
+When launching an `Agent` in the background, never use a `ScheduleWakeup`/`SendMessage`/`TaskOutput` loop to check whether it finished — the harness notifies automatically on completion.
+
+**Why:** same case above — 14 polling turns waiting on a background QA agent cost ~230k weighted tokens for nothing, each turn re-sending the full accumulated context of the main thread.
+
 **When creating or installing skills:** include natural language phrases in the frontmatter `description` if the skill should activate by conversational intent (not only by explicit `/name` command).
 
 ### Context routing by task type
