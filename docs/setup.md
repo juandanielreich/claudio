@@ -21,6 +21,8 @@ The files that must be in the config root:
 - `project-strategy.md` — reference stack (read by the Architect agent)
 - `templates/_log_template.md` — template for new project logs
 
+**Keep the version marker.** `CLAUDE.md` starts with a `<!-- claudio-version: X.Y.Z -->` comment on its own line — don't strip it when you copy the file in. It's what lets `UPDATE.md` find a matching git tag later and do a real diff against what you have, instead of guessing. If you hand-merge Claudio's `CLAUDE.md` into an existing one instead of replacing it outright, carry the marker line over manually.
+
 ## Step 2 — Make agents available
 
 Claude Code loads agents from `~/.claude/agents/`. You have two options:
@@ -86,6 +88,10 @@ Type any message in your project. You should see:
 - If you type "this is critical", a reminder about the Impact Analyst should appear
 
 To verify agents are loaded, type `/agents` in CC — the 6 agents should appear in the list.
+
+## Updating later
+
+Once installed, don't repeat these steps by hand to pick up new rules — tell your Claude Code session *"Read UPDATE.md from this repo and update my Claudio install."* It reads your version marker, finds the matching `vX.Y.Z` git tag in this repo, and merges in only what changed upstream since then (without touching sections you customized yourself). This only works because every release of this repo is tagged — if you're maintaining your own fork, tag each release (`git tag vX.Y.Z`) or `UPDATE.md` will fall back to a coarser merge that can't tell your edits apart from stale content. See [`UPDATE.md`](../UPDATE.md).
 
 ## Troubleshooting
 

@@ -11,6 +11,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.10.1] - 2026-07-13
+
+### Fixed
+- **`docs/setup.md` didn't mention the version marker or tagging.** Manual installers following this guide would never get the `<!-- claudio-version -->` marker, so `UPDATE.md`'s three-way merge could never find a base for them. Added a note in Step 1 to keep the marker, and an "Updating later" section pointing to `UPDATE.md` and explaining that forks need their own tags for the three-way merge to work.
+
+---
+
 ## [2.10.0] - 2026-07-13
 
 ### Added
