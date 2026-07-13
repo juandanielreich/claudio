@@ -11,6 +11,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.10.0] - 2026-07-13
+
+### Added
+- **Three-way merge for `UPDATE.md`, backed by git tags.** Every released version from 2.2.0 onward is now tagged (`vX.Y.Z`) in this repo. When a user's installed `claudio-version` marker matches a tag, `UPDATE.md` fetches that tag as the merge base and diffs base→local (the user's own edits) separately from base→upstream (what changed upstream) — it can now tell "you customized this section" apart from "this is just stale," and only asks the user when a section changed on both sides. Installs without a matching tag (pre-2.9.0, before the marker existed) fall back to the previous heading-existence check, documented as Step 2B.
+
+### Changed
+- Every future release must be tagged (`git tag vX.Y.Z`) for the three-way merge to work for users on that version — this is now a required release step, not optional bookkeeping.
+
+---
+
 ## [2.9.1] - 2026-07-13
 
 ### Changed
