@@ -5,9 +5,18 @@ All notable changes to the Claudio orchestration system are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+> **Releasing:** after bumping the version here, `git tag vX.Y.Z` and push the tag. `UPDATE.md`'s three-way merge depends on every release having a matching tag — a version bumped without a tag breaks it for anyone on that version.
+
 ---
 
 ## [Unreleased]
+
+---
+
+## [2.10.2] - 2026-07-13
+
+### Fixed
+- **QA + Simplify pass on `UPDATE.md` and `docs/setup.md`.** Step 1's fallback conditions now spell out both sub-cases explicitly (no marker → treat as `0.0.0`; marker but no matching tag → use that version) instead of a dangling `0.0.0` reference Step 2B could no longer resolve. Step 2A now does a mechanical `git merge-file --diff3` pass first and only asks the user about sections that actually conflict (and skips asking when both sides converged to the same text) — cheaper than reasoning through every section by hand, and correctly reads "upstream" straight from the checkout instead of an unnecessary `git show HEAD:...` per file. Two redundant bullets describing the same "apply it" outcome were merged into one. Step 3's heading no longer implies the user needs to run `git tag` (they don't — that's this repo's job, not `~/.claude/`). `docs/setup.md`'s "Updating later" section now points to `UPDATE.md` instead of re-explaining the merge mechanism. The tagging requirement for maintainers, previously only a changelog line nobody would re-read at release time, now also lives as a standing note above `## [Unreleased]` and in the private `CLAUDE.md`'s system-paths entry for this repo.
 
 ---
 

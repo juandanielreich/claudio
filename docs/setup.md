@@ -91,7 +91,7 @@ To verify agents are loaded, type `/agents` in CC — the 6 agents should appear
 
 ## Updating later
 
-Once installed, don't repeat these steps by hand to pick up new rules — tell your Claude Code session *"Read UPDATE.md from this repo and update my Claudio install."* It reads your version marker, finds the matching `vX.Y.Z` git tag in this repo, and merges in only what changed upstream since then (without touching sections you customized yourself). This only works because every release of this repo is tagged — if you're maintaining your own fork, tag each release (`git tag vX.Y.Z`) or `UPDATE.md` will fall back to a coarser merge that can't tell your edits apart from stale content. See [`UPDATE.md`](../UPDATE.md).
+Once installed, don't repeat these steps by hand to pick up new rules — tell your Claude Code session *"Read UPDATE.md from this repo and update my Claudio install."* See [`UPDATE.md`](../UPDATE.md) for how it works; if you're maintaining your own fork, note that it depends on each release being tagged (`git tag vX.Y.Z`).
 
 ## Troubleshooting
 

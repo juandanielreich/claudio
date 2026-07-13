@@ -14,30 +14,27 @@ This file is for a user who **already has Claudio installed** and wants the newe
 2. Read the user's installed `~/.claude/CLAUDE.md`.
 3. Look for the marker `<!-- claudio-version: X.Y.Z -->` near the top.
    - **Found, and a matching `vX.Y.Z` git tag exists in this repo:** you can do a real three-way merge — go to Step 2A.
-   - **Not found, or found but no matching tag exists (install predates tagging, before 2.9.0):** there's no base snapshot to diff against. Tell the user this explicitly. Fall back to Step 2B (heading-existence merge — coarser, can't tell their edits apart from stale content).
+   - **Found, but no matching tag exists** (a fork without its own tags, or a canonical release that shipped without one): tell the user there's no base snapshot for their exact version. Fall back to Step 2B, treating their marker version as the "installed version" for the changelog summary.
+   - **Not found** (install predates the marker, before 2.9.0): tell the user this explicitly, then treat the installed version as `0.0.0` for Step 2B — every changelog entry is "new" to them.
 
 ## Step 2A — Three-way merge (when a base tag exists)
 
 You have three versions of each tracked file (`CLAUDE.md`, `settings.example.json` → user's `settings.json`, `agents/*.md`, `hooks/*.js`):
 
-- **base** — this repo's file content at the tag matching the user's installed marker (`git show vX.Y.Z:path/to/file`)
-- **local** — the user's current installed file
-- **upstream** — this repo's file content at the current `HEAD` (latest)
+- **base** — this repo's file content at the tag matching the user's installed marker: `git show vX.Y.Z:path/to/file` (the only one of the three you need a git command for)
+- **local** — the user's current installed file (read directly, no git needed)
+- **upstream** — the file as it exists on disk in this cloned repo right now, at `HEAD` (also a plain read — you're already sitting in that checkout, don't `git show HEAD:...` it)
 
-For each file, diff **base→local** (what the user personally changed since installing) and **base→upstream** (what changed upstream since their version), section by section (use `##`/`###` headings as the unit for `CLAUDE.md` and agent files; use top-level JSON keys / hook entries for `settings.json`):
+Before reasoning section-by-section, try a mechanical merge first: `git merge-file -p --diff3 <local> <base> <upstream>` (or `git merge-tree`). Everything that merges without `<<<<<<<` conflict markers is resolved for free — upstream-only changes and local-only changes both fold in automatically with zero ambiguity. You only need to reason, section by section, about the hunks the tool actually flags as conflicting:
 
-- **Changed only in upstream, untouched in local** → apply the upstream version. Safe, no prompt needed.
-- **Changed only in local, untouched upstream** → leave it. It's the user's customization — don't touch it, don't ask.
-- **Unchanged in both** → nothing to do.
-- **Changed in both (real conflict)** → do not silently pick one. Show the user the base, their local version, and the upstream version for that section, and ask which they want (keep theirs / take upstream / merge by hand).
-- **New section that didn't exist in base, added upstream** → apply, same as any new content in `INSTALL.md`'s merge logic.
-- **Section existed in base and was removed upstream** → don't auto-delete the user's local copy (they may still want it, even if it modified since); mention it and let them decide.
+- **Tool reports no conflict for a section** → trust it, move on. (Covers: changed only in upstream; changed only in local; unchanged in both; new section added upstream; section removed upstream but you still have local content — the merge tool keeps it, don't second-guess that.)
+- **Tool reports a conflict** → check first whether local and upstream actually landed on the same resulting text (e.g. both independently fixed the same typo). If identical, apply it silently, no prompt. If they genuinely differ, don't silently pick one — show the user base, local, and upstream for that section and ask (keep theirs / take upstream / merge by hand).
 
-This is the same logic `git merge` uses with a common ancestor — the tag is the ancestor. It's strictly better than Step 2B because it separates "the user's own edit" from "just an old version" instead of guessing from a single-version diff.
+This is strictly better than Step 2B because it separates "the user's own edit" from "just an old version" instead of guessing from a single-version diff — and doing the merge mechanically first means you only spend reasoning on sections that actually need a judgment call.
 
 ## Step 2B — Heading-existence merge (fallback, no base available)
 
-Read this repo's `CHANGELOG.md` and collect every entry newer than the installed version (or all of it, if treating as `0.0.0`). Summarize for the user in plain language what's new — one line per entry — and confirm before applying.
+Read this repo's `CHANGELOG.md` and collect every entry newer than the installed version determined in Step 1 (their marker version, or `0.0.0` if there was none). Summarize for the user in plain language what's new — one line per entry — and confirm before applying.
 
 Then, for each changed file:
 - **Never blind-overwrite.** Read the user's file first, merge in only the sections/rules that changed.
@@ -46,9 +43,9 @@ Then, for each changed file:
 - **`agents/*.md`:** if a new agent file was added upstream and the filename doesn't collide with anything the user has, copy it. If it collides, ask before overwriting.
 - **Removed/renamed rules:** don't auto-delete the user's local copy — mention it and let them decide.
 
-## Step 3 — Bump the version marker and tag the baseline
+## Step 3 — Bump the version marker
 
-After applying, update `<!-- claudio-version: X.Y.Z -->` in the user's `~/.claude/CLAUDE.md` to the latest version from `CHANGELOG.md`. If the marker didn't exist before, add it at the top of the file, right under the title line. This is what makes the *next* update a real three-way merge instead of falling back to Step 2B.
+After applying, update `<!-- claudio-version: X.Y.Z -->` in the user's `~/.claude/CLAUDE.md` to the latest version from `CHANGELOG.md`. If the marker didn't exist before, add it at the top of the file, right under the title line. There's no git tag to create here — `~/.claude/` isn't this repo. The marker alone is what anchors the *next* update to a matching tag in the upstream repo, making it a real three-way merge instead of falling back to Step 2B.
 
 ## Step 4 — Verify
 
