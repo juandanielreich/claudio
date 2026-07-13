@@ -101,6 +101,8 @@ Session close
 
 **Prefer having an AI agent do this for you?** Tell your Claude Code session: *"Read INSTALL.md from this repo and install Claudio into my global profile."* It merges safely with any existing `CLAUDE.md`, `settings.json`, or agents instead of overwriting them. See [`INSTALL.md`](INSTALL.md).
 
+**Already have Claudio installed and want the latest rules/agents?** Tell your Claude Code session: *"Read UPDATE.md from this repo and update my Claudio install."* It reads the version marker in your `CLAUDE.md`, shows you what changed since then, and merges in only what's new. See [`UPDATE.md`](UPDATE.md).
+
 **Doing it by hand:**
 
 **1. Copy the config files**

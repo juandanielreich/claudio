@@ -11,6 +11,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.9.0] - 2026-07-13
+
+### Added
+- **`UPDATE.md` (new) + version marker.** Existing installs previously had no way to pull in new rules/agents/hooks short of re-reading the whole repo by hand. `CLAUDE.md` now carries a `<!-- claudio-version: X.Y.Z -->` marker; `UPDATE.md` is a runbook (same agent-driven pattern as `INSTALL.md`) that reads that marker, diffs it against `CHANGELOG.md`, and merges in only what's new — skipping headings the user already has, flagging real conflicts instead of overwriting, and bumping the marker when done. `INSTALL.md` now detects an existing marker and redirects to `UPDATE.md` instead of re-running first-install logic. `README.md` Quick Install cross-links both paths.
+
+---
+
 ## [2.8.0] - 2026-07-13
 
 ### Added

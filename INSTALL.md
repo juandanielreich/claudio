@@ -17,6 +17,8 @@
 
 ## Step 1 — Detect existing config (do not skip this)
 
+**If the user's `~/.claude/CLAUDE.md` already contains a `<!-- claudio-version: X.Y.Z -->` marker, they already have Claudio installed — stop here and use `UPDATE.md` instead.** This file is for a first install, not for bringing an existing one up to date.
+
 Check, in order, whether the user already has:
 - `~/.claude/CLAUDE.md` with real content
 - `~/.claude/settings.json`
