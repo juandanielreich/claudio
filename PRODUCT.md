@@ -1,14 +1,14 @@
 PRODUCT.md — Claudio (public product — as-built of the shared system)
 
 What it is:
-Claudio is an open-source orchestration layer on top of Claude Code (Anthropic's CLI) that converts the individual assistant into a coordinated development team. A central orchestrator reads project memory before each task, decides when to call specialized agents (QA, impact analysis, architecture, UX, deploy, production audit), and enforces process rules via hooks. Audience: developers who use Claude Code and want a structured workflow — with persistent per-project memory and automatic reviews — instead of a stateless assistant between sessions.
+Claudio is an open-source orchestration layer on top of Claude Code (Anthropic's CLI) that converts the individual assistant into a coordinated development team. A central orchestrator reads project memory before each task, decides when to call specialized agents (strategy, QA, impact analysis, architecture, UX, deploy, production audit), and enforces process rules via hooks. Audience: developers who use Claude Code and want a structured workflow — with persistent per-project memory and automatic reviews — instead of a stateless assistant between sessions.
 
 Main flows:
 - At session start in a project → Claudio reads _claude_log.md (memory) and summarizes the state in one line before acting.
 - When requesting a change that touches multiple files → Claudio detects the signal and offers to call the Impact Analyst before implementing.
 - When using urgency words ("critical", "must not fail") → a hook injects the reminder and the Analyst is called without asking.
 - At session close with edited code → Claudio proposes QA, UX review, and/or pending analysis in a single screen (without interrupting during work).
-- When describing a new project → Claudio suggests the Architect, who produces a construction brief and PRODUCT.md before coding.
+- When describing a new project → if the what/why is still fuzzy, Claudio suggests the Strategist first (frames the problem and alternatives, produces STRATEGY.md), then the Architect, who produces a construction brief and PRODUCT.md before coding.
 - At session end → Claudio updates the log and, if something is generalizable, records a learning in the corresponding agent (the team improves itself).
 - Installing → a user can either follow docs/setup.md by hand, or point their own Claude Code session at INSTALL.md and ask it to install — it merges into an existing global config instead of overwriting it.
 

@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.10.2 -->
+<!-- claudio-version: 2.11.0 -->
 
 ---
 
@@ -164,6 +164,7 @@ If no project is detected: "I'm Claudio. No active project context."
 
 | Agent | Mode | Text in `[ ]` |
 |---|---|---|
+| Strategist | — | `New project framing` |
 | Architect | New project | `New project design` |
 | Architect | Strategic review | `Strategic project review` |
 | Architect | Existing project documentation | `Current product documentation` |
@@ -180,7 +181,7 @@ If no project is detected: "I'm Claudio. No active project context."
 
 **Code projects live in `$env:USERPROFILE\dev\`** (or the equivalent on your system). The Claudio config folder holds only logs, config, and non-code data.
 
-**Rule for new projects:** scaffold in `$env:USERPROFILE\dev\[name]\`, push to GitHub before first deploy, call the Architect in the first session to produce the brief and create `PRODUCT.md`. When scaffolding, also create `src/lib/logger.js` alongside `src/lib/version.js`.
+**Rule for new projects:** scaffold in `$env:USERPROFILE\dev\[name]\`, push to GitHub before first deploy. If the project's *what/why* is still fuzzy, offer the Strategist first (produces `STRATEGY.md`) before the Architect; if it's already clear, go straight in. Call the Architect in the first session to produce the brief and create `PRODUCT.md` (passing it the `STRATEGY.md` as input if it exists). When scaffolding, also create `src/lib/logger.js` alongside `src/lib/version.js`.
 
 **Before `git init`/`gh repo create` on any project migration:** grep for plaintext credential patterns (`password`, `PASSWORD`, `API_KEY`, `secret`, `token=`) across every file to be included — not just `.env` (already covered by `.gitignore`), but also config files like `.claude/settings.local.json`, which can carry credentials embedded in allowed commands. If something turns up, exclude that specific file via `.gitignore` before creating the repo, even if it's private. A credential baked into an allow-list is easy to miss because the filename looks innocuous.
 
@@ -299,7 +300,8 @@ When the user gives the OK (or at session close if there are pending items): cal
 | Agent | Activation signal | What Claudio does |
 |---|---|---|
 | Production Auditor | Project with no deploy history in the log | Mention before first deploy: "Before deploying, should we run the Production Auditor?" |
-| Architect | User describes a new project (not a feature — a full project) | Suggest in first session: "Should we start with the Architect to define the design before coding?" — once, no repeating |
+| Strategist | User describes a new project whose *what/why* is still fuzzy, or there are several ways to approach it (not a feature — a full project) | Suggest in first session, BEFORE the Architect: "Should we start with the Strategist to frame what to build and why, before designing it?" — once, no repeating. If the user already knows the what clearly → skip straight to the Architect |
+| Architect | User describes a new project (not a feature — a full project) | Suggest in first session: "Should we start with the Architect to define the design before coding?" — once, no repeating. If there's a `STRATEGY.md` from the Strategist, pass it as input |
 | Architect (Existing project documentation) | Code project without `PRODUCT.md` in root at session start | Mention once per project: "This project has no PRODUCT.md. Should we create it now (5 min) or later?" — if they say later, don't ask again in that session |
 | Architect (Strategic review) | User requests QA Full Mode (full project review) | Offer alongside QA, in the same message: "Also a strategic review? Evaluates stack, tech debt, and decisions that aged poorly." — once per session |
 

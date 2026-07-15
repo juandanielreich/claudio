@@ -28,16 +28,17 @@ The log isn't just written at the end of a session. It's a living document: Clau
 
 ### 2. A team of specialists, called when needed
 
-Six agents, each with a defined scope:
+Seven agents, each with a defined scope:
 
 | Agent | Category | Question they answer |
 |---|---|---|
+| [Strategist](agents/strategist.md) | On-demand | What should we build and why? Is it worth it? |
 | [Impact Analyst](agents/impact-analyst.md) | Pre-action | What breaks if this changes? |
 | [UX Designer](agents/ux-designer.md) | Pre-action / Post-action | Is this usable? Is it consistent? |
 | [QA](agents/qa.md) | Post-action | Do the critical paths actually work? |
 | [Deploy & Infra](agents/deploy-infra.md) | Post-action (auto) | Did the deploy land correctly? |
 | [Production Auditor](agents/production-auditor.md) | On-demand | Can this run unsupervised for weeks? |
-| [Architect](agents/architect.md) | On-demand | Is this well designed? What should we build? |
+| [Architect](agents/architect.md) | On-demand | Is this well designed? How do we build it? |
 
 Claudio calls agents at the right moment — or you call them directly. They don't interrupt your flow; they show up when work is done or when risk is high.
 

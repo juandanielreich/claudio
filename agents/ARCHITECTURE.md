@@ -111,6 +111,20 @@ Every code project must have a `PRODUCT.md` in its root. It's the document that 
 
 ---
 
+## Strategist → Architect — the framing layer before design
+
+The Strategist is on-demand (with a proactive Claudio trigger on new projects) and runs **before** the Architect. It's neither pre-action nor post-action in the session-taxonomy sense: it's a discovery phase prior to design.
+
+**Division of responsibilities:**
+- **Strategist** → the *what* and the *why*. Problem, users, functionality alternatives with trade-offs, chosen direction, minimal scope. Forbidden to touch the technical (stack, data, files). Delivers `STRATEGY.md`.
+- **Architect** → the *how*. Takes STRATEGY.md as input (if it exists) and produces the brief + PRODUCT.md.
+
+**Why a separate agent and not a mode of the Architect:** the Architect jumps to a single technical solution by design (its flow proposes one option, doesn't explore). Mixing framing and design in the same agent drags the stack bias into the phase where there shouldn't be a stack yet. Separating them keeps the Strategist free of the technical.
+
+**Skippable:** if the user already knows what to build and why, go straight to the Architect. The Strategist gains value when the idea is fuzzy or there are several ways to approach it.
+
+---
+
 ## Discarded decisions
 
 This section documents alternatives that were considered and why they weren't chosen. Prevents re-debating the same things in future sessions.
@@ -232,3 +246,4 @@ No auto-dispatch cases reported since implementation (2026-06-13). If in the fut
 | 2026-06-13 | `memory: project` in QA and Analyst | Project-specific knowledge that grows between sessions and migrates with the repo |
 | 2026-06-13 | Agents in `~/.claude/agents/` with symlink/copy from config | Single versioned source; agents are visible across all projects |
 | 2026-06-15 | PRODUCT.md as project reference anchor | Established standard (Spec-Driven Development): QA can verify the full project without depending on session context. Architect (Existing project documentation) creates it retroactively for existing projects |
+| 2026-07-15 | Strategist as a separate agent, before the Architect | The Architect jumps to a single technical solution by design; a framing layer (what/why, functionality alternatives) free of stack bias was missing. Separating them keeps the Strategist non-technical |

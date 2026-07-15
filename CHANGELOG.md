@@ -13,6 +13,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.11.0] - 2026-07-15
+
+### Added
+- **Strategist agent (new).** A framing layer that runs *before* the Architect. It handles the *what* and the *why* — problem, users, functionality alternatives with trade-offs, chosen direction, minimal scope — and is forbidden from touching the technical (stack, data model, files). Delivers `STRATEGY.md`, which the Architect reads as input instead of starting from scratch. Stance is "critical partner": it questions whether the project is worth building and can recommend not building. On-demand, with a proactive Claudio suggestion at the start of a fuzzy new project; skippable when the user already knows what to build.
+- **Chain Strategist → Architect → build.** Documented in `agents/ARCHITECTURE.md`: why it's a separate agent rather than a mode of the Architect (the Architect jumps to a single technical solution by design, so mixing framing and design drags stack bias into a phase that shouldn't have a stack yet).
+
+### Changed
+- `CLAUDE.md`: added the Strategist to the announcement translation table, the proactive-trigger table (before the Architect), and the new-project rule (offer the Strategist first when the what/why is fuzzy, pass `STRATEGY.md` to the Architect).
+- `agents/INDEX.md`, `README.md`: registered the Strategist (now seven agents); the Architect's framing question narrowed from "what should we build?" to "how do we build it?".
+
+---
+
 ## [2.10.2] - 2026-07-13
 
 ### Fixed
