@@ -13,6 +13,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.12.0] - 2026-07-16
+
+### Added
+- **Pointer rule in `File architecture`.** `CLAUDE.md` holds pointers, not detail: when a section grows past a few lines and only applies in one context, it moves to the agent or skill that needs it. The exception is explicit and matters more than the rule — anything that must fire in *every* session (the destructive-operation prohibition, read-the-log-first, the path rules) stays inline however long it gets, because a rule one hop away can be missed. Rationale: `CLAUDE.md` loads in full in every session of every project, while agents load only when invoked, so extraction moves the cost to where it's used without losing anything.
+- **"Measure, don't infer" in `Rules always active`.** Before asserting a trend about anything under version control ("this only grows", "nobody reviews it"), read the `git log`. Applies to the config system itself as much as to project code.
+
+### Notes
+- Both rules came out of evaluating [microsoft/SkillOpt](https://github.com/microsoft/SkillOpt) as a possible upgrade to the learning system. **SkillOpt was rejected:** it treats a skill document as trainable weights and needs a held-out benchmark with an objective per-case score to gate edits. Skills whose output is voice or judgment have no such score, so the loop has no signal.
+- The evaluation also proposed a formal pruning mechanism (validation gate, retirement file, line budgets). **That was rejected too, by measurement:** `git log` showed the system already self-prunes by judgment — two net contractions in eleven days (one commit cut 24 lines by extracting detail to an agent, another cut 3 as redundancy), plus an audit that landed 16 improvements for a net +5 lines, meaning it cut while it added. The formal mechanism would have been ceremony over something already working, with a rare-but-catastrophic downside: most durable rules exist because of a past disaster and almost never fire, so pruning by usage would delete exactly the ones worth keeping. Only the extraction pattern survived, because a commit already demonstrated it.
+
+---
+
 ## [2.11.0] - 2026-07-15
 
 ### Added
