@@ -13,6 +13,25 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.14.0] - 2026-07-16
+
+The user reported responses that were too long to act on. The diagnosis moved the problem: it was never length, it was order — and the formatting rule was the one causing it.
+
+### Added
+
+- **`CLAUDE.md` → Rules always active — "Answering — the conclusion opens, the reasoning follows".** The conclusion, decision or question opens the response; the reasoning goes after and is optional. Any decision requiring the user to choose goes through `AskUserQuestion`, never prose — prose buries the choice under the argument, the tool structurally cannot.
+
+### Changed
+
+- **The rule prescribes an order, not a length.** The version this replaces read "3-4 dense key points" plus "structure: current problem → direct solution → specific action" — a rule that looked like it was about brevity while dictating the exact shape that buries the answer. It also fought the harness, which instructs "Lead with the outcome". Aligning with the harness instead of competing against it is the fix; "be brief" is a semantic instruction that loses to a strong generation pattern, the same way language-drift rules lose.
+
+### Notes
+
+- **The decisive evidence was negative.** A style-compression plugin had been active in every session for months, shortening every response, and the problem persisted throughout — it compresses words but does not reorder. That ruled out length as the variable more firmly than any argument could. Worth remembering before reaching for a "make it shorter" fix: check whether something already shortening the output has failed to help.
+- **The conflict was one `Read` away**, in a line loaded into context every session. Same pattern as the audit findings in 2.13.0.
+
+---
+
 ## [2.13.0] - 2026-07-16
 
 Findings from a full audit of the agent system. Half of these fix the audit's own first attempt — the review agents caught more than the audit did.

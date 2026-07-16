@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.13.0 -->
+<!-- claudio-version: 2.14.0 -->
 
 ---
 
@@ -227,6 +227,11 @@ If a file with the same name already exists on the same day: add suffix `_v1`, `
 **Claims about anything under version control — measure, don't infer:**
 - Before asserting a trend ("this only grows", "nobody reviews it", "it's degraded"), read the `git log`. The history is the source and it's one command away.
 - Applies to the config system itself as much as to project code. An assertion about a versioned file that wasn't checked against its history is a guess wearing a fact's clothes.
+
+**Answering — the conclusion opens, the reasoning follows:**
+- Open with the conclusion, the decision or the question — never with the context or the reasoning that led to it. The reasoning goes after, and is optional: whoever wants it, reads it.
+- Any decision that requires the user to choose goes through `AskUserQuestion`, never through prose. Prose buries the choice under the argument; the tool cannot.
+- **Why this is phrased as an order, not a length:** "be brief" is a semantic instruction competing against a strong generation pattern — it fails the same way "don't drift in language" fails. Order is structural and checkable. A rule that prescribes "context → solution → action" reads like a rule for brevity while dictating exactly the shape that buries the answer.
 
 **UX Flow — before implementing any feature:**
 - Define: "When the user does X → the system shows Y." If not defined, don't implement.
