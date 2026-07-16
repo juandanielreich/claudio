@@ -13,22 +13,39 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.15.0] - 2026-07-16
+
+Same day as 2.14.0, and mostly its cleanup. The review agents run over 2.14.0 found that the rule it added was contradicted by this repo's own templates, and that its changelog entry described a change that never happened here.
+
+### Changed
+
+- **The batched session-close menu is now an `AskUserQuestion`, not a prose menu** (`CLAUDE.md` → "Session close procedure"). 2.14.0 added a rule saying every decision goes through `AskUserQuestion` and never through prose — while the file kept prescribing a seven-option prose menu for the most frequent decision in the system. A rule that competes against a template in the same file loses to the template. The same conversion applies to the Impact Analyst and UX Designer accumulate prompts, the new-agent proposal, and the learning proposal.
+- **The three mirrors of that menu are now pointers** (`README.md`, `docs/how-it-works.md`, `agents/ARCHITECTURE.md`). They restated the menu as an example and had been showing five options for months after the real one grew to seven. Copying the new format into all three would have rebuilt the same trap; the operative format now has one home.
+- **`CLAUDE.md` → the answering rule dropped its rationale block.** "Why this is phrased as an order, not a length" instructed no behavior — it argued for the rule to a human reader, in a file re-sent every turn. Moved to this changelog, which is read once.
+
+### Fixed
+
+- **The 2.14.0 entry claimed a rule was replaced that never existed here.** It described removing "3-4 dense key points" and "context → solution → action" from this repo's `CLAUDE.md`. That text only ever lived in the author's private config; the public file has no personal tone section, so 2.14.0 was a pure addition. The entry was written from the private repo's diff without checking this one.
+
+### Notes
+
+- **Watch for a rule that arrives in absolute form.** "Every decision... never in prose" reads cleanly in isolation, which is exactly why nobody re-reads the rest of the document against it. When a rule is rewritten from permissive to absolute, audit what the file already prescribes under the older, looser version — the absolute form can silently outlaw a pattern the same document still teaches.
+
+---
+
 ## [2.14.0] - 2026-07-16
 
-The user reported responses that were too long to act on. The diagnosis moved the problem: it was never length, it was order — and the formatting rule was the one causing it.
+Responses too long to act on. The diagnosis moved the problem: it was never length, it was order — the decision arrived buried under the reasoning that led to it.
 
 ### Added
 
 - **`CLAUDE.md` → Rules always active — "Answering — the conclusion opens, the reasoning follows".** The conclusion, decision or question opens the response; the reasoning goes after and is optional. Any decision requiring the user to choose goes through `AskUserQuestion`, never prose — prose buries the choice under the argument, the tool structurally cannot.
 
-### Changed
-
-- **The rule prescribes an order, not a length.** The version this replaces read "3-4 dense key points" plus "structure: current problem → direct solution → specific action" — a rule that looked like it was about brevity while dictating the exact shape that buries the answer. It also fought the harness, which instructs "Lead with the outcome". Aligning with the harness instead of competing against it is the fix; "be brief" is a semantic instruction that loses to a strong generation pattern, the same way language-drift rules lose.
-
 ### Notes
 
-- **The decisive evidence was negative.** A style-compression plugin had been active in every session for months, shortening every response, and the problem persisted throughout — it compresses words but does not reorder. That ruled out length as the variable more firmly than any argument could. Worth remembering before reaching for a "make it shorter" fix: check whether something already shortening the output has failed to help.
-- **The conflict was one `Read` away**, in a line loaded into context every session. Same pattern as the audit findings in 2.13.0.
+- **Prescribe an order, not a length.** "Be brief" is a semantic instruction competing against a strong generation pattern — it fails the way language-drift rules fail. Order is different: it says where the answer goes, not how much of it there is. Beware of a rule shaped like "context → solution → action": it reads as a rule about brevity while dictating exactly the shape that buries the answer.
+- **The decisive evidence was negative.** A style-compression plugin had been active in every session for months, shortening every response, and the problem persisted throughout — it compresses words but does not reorder. That ruled out length as the variable more firmly than any argument could. Worth remembering before reaching for a "make it shorter" fix: check whether something already shortening the output has already failed to help.
+- **Check what the harness already says before writing a formatting rule.** Claude Code's own system prompt instructs "Lead with the outcome". A local rule that contradicts it loses, and a local rule that merely restates it is dead weight in a file re-sent every turn. The clause worth writing was the one the harness does *not* cover: routing decisions to `AskUserQuestion`.
 
 ---
 

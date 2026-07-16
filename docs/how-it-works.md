@@ -117,12 +117,11 @@ Signals:
   • Analyst pending: none
   • PRODUCT.md: up to date
   • Learnings: none
-
-What do we process?
-  [A] All (includes Simplify)  [B] All except Simplify  [C] QA only  [D] UX Designer only  [E] Analyst only  [F] Simplify only  [G] Later
 ```
 
-The signals come from the session state file. Claudio presents all options without judgment — no "this doesn't apply". The user decides.
+Then the choice itself arrives as an `AskUserQuestion` — pick any combination of QA, UX Designer, Analyst and Simplify, or "Later". The exact option list lives in `CLAUDE.md` → "Session close procedure"; this page won't restate it, because three copies of that menu once drifted out of sync with the real one for months.
+
+The signals come from the session state file. Claudio offers every agent without judgment — no "this doesn't apply". The user decides.
 
 ## PRODUCT.md as project anchor
 

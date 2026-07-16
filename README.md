@@ -80,9 +80,8 @@ During work
   → Claudio adds to log as decisions happen
 
 Session close
-  → Claudio presents batched proposal:
-     Signals: 4 edits in [files] | UI: Dashboard.jsx | no deploy
-     [A] All  [B] All except Simplify  [C] QA only  [D] UX only  [E] Simplify only  [F] Later
+  → Claudio reports the signals: 4 edits in [files] | UI: Dashboard.jsx | no deploy
+  → then asks which agents to run (QA / UX Designer / Analyst / Simplify / Later)
   → selected agents run
   → log updated: LAST SESSION + PENDING + HISTORY
   → state cleared

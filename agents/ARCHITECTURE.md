@@ -32,7 +32,7 @@ Called **before** doing something. Whether to block the work is the user's decis
 
 **Pattern:**
 1. Claudio detects the intent (before acting)
-2. Asks the user: "Should I [action]? Analyze now or accumulate?"
+2. Asks the user through `AskUserQuestion`: analyze now, or accumulate?
 3. If "accumulate" → writes item in the corresponding section of `_claude_log.md`
 4. Hook `check_log.js` detects the section and reminds on each message
 5. When the user gives the OK (or at session close) → agent runs with all accumulated items
@@ -203,20 +203,7 @@ A rule written at the top of an agent's `.md` competes, at delivery time, agains
 
 **PRODUCT.md pre-check (Claudio, before the proposal):** if any feature was added, modified, or discarded this session → update `PRODUCT.md` right now. No agent needed — Claudio edits it directly. It's a 1-2 minute edit.
 
-```
-Closing session — [project]
-
-Signals:
-  • [N] edits in: [files]
-  • UI files: [list or "none"]
-  • Build/deploy: [yes/no]
-  • Analyst pending: [N items or "none"]
-  • PRODUCT.md: [up to date / updated this session / doesn't exist]
-  • Learnings: [none / N candidate(s) → triage now]
-
-What do we process?
-  [A] All (includes Simplify)  [B] All except Simplify  [C] QA only  [D] UX Designer only  [E] Analyst only  [F] Simplify only  [G] Later
-```
+Two parts: the detected signals as a text report, then the choice through `AskUserQuestion` with `multiSelect: true` — one option per agent whose trigger fired. **The exact format lives in `CLAUDE.md` → "Session close procedure" and is not restated here.** It used to be, in three separate files, and all three were still showing a five-option menu months after the real one had grown to seven. A design doc describes the mechanism; the operative format has one home.
 
 ---
 

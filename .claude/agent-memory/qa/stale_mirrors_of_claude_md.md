@@ -1,13 +1,15 @@
 ---
 name: stale-mirrors-of-claude-md
-description: Files that copy illustrative examples from CLAUDE.md and silently drift when CLAUDE.md changes but they aren't co-edited
+description: Files that copy operative formats from CLAUDE.md drift silently; check for new copies rather than assuming the old ones
 metadata:
   type: project
 ---
 
-Several files in this repo restate parts of `CLAUDE.md` as illustrative prose/examples instead of linking to it. They are not auto-synced, so any edit to the underlying CLAUDE.md rule must be manually checked against all of them:
+Files in this repo have twice restated an operative format from `CLAUDE.md` as an illustrative example instead of pointing at it, and both times the copies drifted without anyone noticing — nothing auto-syncs them, and they don't appear in `git show` for the session that made them stale.
 
-- **Batched session-close menu** (`What do we process? [A] All [B] QA only ...`) is restated as an example in three places, not just defined once: `README.md` ("How a session looks"), `docs/how-it-works.md` ("The batched proposal at session close"), and `agents/ARCHITECTURE.md` ("Batched proposal format"). Confirmed 2026-07-10: when CLAUDE.md's menu grew from 5 to 7 options (Simplify added), all three mirrors were left showing the old 5-option version — a visible inconsistency in public onboarding docs.
-- **Log section formats** (`DECISIONS MADE`, `KNOWN ISSUES`) are defined narratively in `CLAUDE.md` but also given a starting shape in `templates/_log_template.md` (the file Claudio actually scaffolds for new projects) and described again in `docs/how-it-works.md` ("PRODUCT.md as project anchor" / "Project memory" sections). Confirmed 2026-07-10: CLAUDE.md switched `DECISIONS MADE` to a compact one-line arrow format (`**[Title]** — context → decision → why`) and gave `KNOWN ISSUES` a required structured block (Occurrences/Symptom/Root cause/Mitigation/Status), but `templates/_log_template.md` still ships the old 3-column table (`| Decision | Reason | Date |`) and a bare `- ...` placeholder — so a newly scaffolded project log contradicts CLAUDE.md's own instructions for filling it in.
+Both original instances are now fixed, so don't re-check them expecting to find the old bugs:
 
-**How to apply:** whenever a session's diff touches the batched-proposal menu text or a log-section format rule in `CLAUDE.md`, grep the whole repo for the changed phrase (e.g. `"QA only"`, `"DECISIONS MADE"`) before approving QA — these mirrors won't show up in `git show <commit>` for that session since they weren't edited, but they become stale as a direct result of it.
+- **Batched session-close menu** — was restated in `README.md`, `docs/how-it-works.md` and `agents/ARCHITECTURE.md`; all three sat at a five-option menu for months after the real one grew to seven. Fixed 2026-07-16: the menu became an `AskUserQuestion` and the three mirrors became pointers to `CLAUDE.md` → "Session close procedure". The drift class is gone, not just the instance.
+- **Log section formats** — `templates/_log_template.md` shipped a 3-column `DECISIONS MADE` table after CLAUDE.md moved to the compact one-line format. Verified fixed 2026-07-16; the template now matches.
+
+**How to apply:** the lesson survives its instances. When a session's diff changes an operative format in `CLAUDE.md` (a menu, a required block, a section shape), grep the whole repo for a distinctive phrase from the *old* text before approving — a copy that nobody edited is exactly the copy that just went stale. And when reviewing a diff that *adds* a format to `CLAUDE.md`, check whether it's being written in a second place at the same time; that's the moment the next mirror is born.

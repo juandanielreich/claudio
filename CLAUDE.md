@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.14.0 -->
+<!-- claudio-version: 2.15.0 -->
 
 ---
 
@@ -229,9 +229,8 @@ If a file with the same name already exists on the same day: add suffix `_v1`, `
 - Applies to the config system itself as much as to project code. An assertion about a versioned file that wasn't checked against its history is a guess wearing a fact's clothes.
 
 **Answering — the conclusion opens, the reasoning follows:**
-- Open with the conclusion, the decision or the question — never with the context or the reasoning that led to it. The reasoning goes after, and is optional: whoever wants it, reads it.
+- Open with the conclusion, the decision or the question — never with the context or the reasoning that led to it. The reasoning goes after, and is optional.
 - Any decision that requires the user to choose goes through `AskUserQuestion`, never through prose. Prose buries the choice under the argument; the tool cannot.
-- **Why this is phrased as an order, not a length:** "be brief" is a semantic instruction competing against a strong generation pattern — it fails the same way "don't drift in language" fails. Order is structural and checkable. A rule that prescribes "context → solution → action" reads like a rule for brevity while dictating exactly the shape that buries the answer.
 
 **UX Flow — before implementing any feature:**
 - Define: "When the user does X → the system shows Y." If not defined, don't implement.
@@ -283,8 +282,8 @@ When reading claims about the system in ARCHITECTURE.md or system docs, verify e
 
 | Agent | Activates when | Question to ask |
 |---|---|---|
-| Impact Analyst | About to move, delete, or restructure more than one file | "Analyze now or accumulate?" → items to `## PENDING IMPACT ANALYSIS` |
-| UX Designer (shape) | About to build a new screen or component | "Shape now or accumulate?" → items to `## PENDING DESIGN` |
+| Impact Analyst | About to move, delete, or restructure more than one file | `AskUserQuestion`: analyze now / accumulate → if accumulating, items to `## PENDING IMPACT ANALYSIS` |
+| UX Designer (shape) | About to build a new screen or component | `AskUserQuestion`: shape now / accumulate → if accumulating, items to `## PENDING DESIGN` |
 
 **Urgency signal (automatic enforcement via hook):** if the user uses words like *"critical"*, *"must not fail"*, *"urgent"*, *"crucial"* → call the Impact Analyst BEFORE implementing any change, without asking to accumulate. The `check_log.js` hook detects these words and injects the reminder automatically.
 
@@ -322,7 +321,9 @@ When updating the log, **before writing HISTORY**, take two steps in order:
 
 **Step 1 — PRODUCT.md pre-check (Claudio, before the proposal):** if any feature was added, modified, or discarded this session → edit `PRODUCT.md` right now. No agent or confirmation needed — it's a direct 1-2 minute edit. If the project has no PRODUCT.md → flag it in the batched proposal.
 
-**Step 2 — Batched proposal** with what the hook detected:
+**Step 2 — Batched proposal** with what the hook detected. The signals go as text; the choice goes through `AskUserQuestion`, never as a prose menu.
+
+First the signal report:
 
 ```
 Closing session — [project]
@@ -334,16 +335,17 @@ Signals:
   • Analyst pending: [N items or "none"]
   • PRODUCT.md: [up to date / updated this session / doesn't exist]
   • Learnings: [none / N candidate(s) → triage now]
-
-What do we process?
-  [A] All (includes Simplify)  [B] All except Simplify  [C] QA only  [D] UX Designer only  [E] Analyst only  [F] Simplify only  [G] Later
 ```
+
+Then the choice, as an `AskUserQuestion` with `multiSelect: true`: **all four agents, every time** — QA, UX Designer, Analyst, Simplify — with no "this one doesn't apply" judgment. "Later" arrives through the "Other" the tool adds on its own. Each option's `description` says what that agent will review in *this* session, not its generic definition.
+
+**Don't filter the list by your own judgment.** The signals are reported above so the user can decide with them; they are not permission to remove options. This has already gone wrong: Simplify was skipped once for looking inapplicable, and when it was run anyway it found two real errors. The signal informs, the user chooses.
 
 After the selected agents run:
 - Clear session state: `node "~/.claude/hooks/clear_session_state.js"`
 - If Analyst ran: delete `## PENDING IMPACT ANALYSIS` section from the log
 - If UX Designer (shape) ran: delete `## PENDING DESIGN` section from the log
-- If user said "Later": do NOT clear — state persists to the next session
+- If the user chose "Later": do NOT clear — state persists to the next session
 
 To call an agent: invoke it as a **native subagent** by its frontmatter `name` (e.g. `subagent_type: "qa"`), passing only the project context and specific task — the `.md` body is already its system prompt. Native invocation activates the model, tools, and memory declared in the frontmatter. Requires agents to be in `~/.claude/agents/`. If CC says the agent doesn't exist, as a fallback read the `.md` and pass it as a prompt — but in that mode the frontmatter is ignored.
 
