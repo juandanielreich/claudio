@@ -13,6 +13,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.12.1] - 2026-07-16
+
+### Changed
+- **Pointer rule moved from `File architecture` to `Learning triage at session close`, under the JUDGMENT branch.** It was in the wrong section: `File architecture` governs where *projects* live on disk, while the pointer rule governs where the text of a *rule* lives. Nobody deciding where to put a new rule reads the project-layout section — which is the exact failure mode the rule itself describes. The JUDGMENT branch already says "short rule in the body of CLAUDE.md or the agent, near the decision point"; the pointer rule is the elaboration of that sentence, so it now sits with it.
+- **Pointer rule trimmed.** Cut the closing rationale ("this file loads in full every session…") and the restatement of the exception — both argued for the rule rather than deciding any case. The rule, the exception, the test, the examples, and the inline list all survive intact.
+
+### Notes
+- Caught by a quality review of the 2.12.0 diff. Two findings, both misfiled by the release itself: the pointer rule landed in a section about a different subject, and a second rule shipped in 2.12.0's Spanish original ("check the qualitative label against the sign of the number") was mechanical rather than judgment, so it belongs on the QA agent's checklist, not in the instruction body. That rule never reached this repo, so only the relocation applies here.
+
+---
+
 ## [2.12.0] - 2026-07-16
 
 ### Added

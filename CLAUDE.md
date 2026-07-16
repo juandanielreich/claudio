@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.12.0 -->
+<!-- claudio-version: 2.12.1 -->
 
 ---
 
@@ -182,8 +182,6 @@ If no project is detected: "I'm Claudio. No active project context."
 **Code projects live in `$env:USERPROFILE\dev\`** (or the equivalent on your system). The Claudio config folder holds only logs, config, and non-code data.
 
 **Rule for new projects:** scaffold in `$env:USERPROFILE\dev\[name]\`, push to GitHub before first deploy. If the project's *what/why* is still fuzzy, offer the Strategist first (produces `STRATEGY.md`) before the Architect; if it's already clear, go straight in. Call the Architect in the first session to produce the brief and create `PRODUCT.md` (passing it the `STRATEGY.md` as input if it exists). When scaffolding, also create `src/lib/logger.js` alongside `src/lib/version.js`.
-
-**Pointer rule — this CLAUDE.md holds pointers, not detail:** when a section grows past a few lines and its content only applies in one context (deploy, a specific project flow), extract it to the agent or skill that needs it and leave only the pointer here. **Exception — a rule that has to ambush you stays inline, however long it gets.** The test is *does the situation send you looking for the rule?* If something fails visibly and you go find out how to fix it (a file that won't open, a deploy to configure), extract it — the context walks you to the pointer on its own. If the rule has to fire when you are **not** looking for it and feel fine without it — you're about to run `--overwrite` and nothing is warning you — it stays inline: the destructive-operation prohibition, read-the-log-first, the path rules. A rule one hop away can be missed, and that risk isn't worth taking with the ones that warn about a disaster you didn't see coming. This file loads in full in every session of every project; agents load only when invoked — extracting moves the cost to where it's used, losing nothing.
 
 **Before `git init`/`gh repo create` on any project migration:** grep for plaintext credential patterns (`password`, `PASSWORD`, `API_KEY`, `secret`, `token=`) across every file to be included — not just `.env` (already covered by `.gitignore`), but also config files like `.claude/settings.local.json`, which can carry credentials embedded in allowed commands. If something turns up, exclude that specific file via `.gitignore` before creating the repo, even if it's private. A credential baked into an allow-list is easy to miss because the filename looks innocuous.
 
@@ -387,6 +385,8 @@ At session close, before updating HISTORY, check if anything was learned. If yes
 
 **2 — Does it change how a decision is made but can't be mechanized?**
 → JUDGMENT → short rule in the body of CLAUDE.md or the agent, near the decision point. Not at the end in a list.
+
+  **CLAUDE.md or the agent? — the pointer rule.** This CLAUDE.md holds pointers, not detail: whatever only applies in one context (deploy, a specific project flow) lives in the agent or skill that needs it, and the pointer stays here. **Exception — a rule that has to ambush stays inline, however long it gets.** The test is *does the situation force you to go looking for the rule?* If something fails visibly and you have to find out how to fix it (a file that won't open, a deploy to configure), it goes to the agent — the context walks you to the pointer on its own. If the rule has to fire when nobody is looking for it and everything feels fine — an `--overwrite` is about to run and nothing is warning you — it stays inline: the destructive-operation prohibition, read-the-log-first, the path rules.
 
 **3 — Neither?** (record of something already implemented, a negative decision, a historical event)
 → HISTORY → project log only. Does not touch CLAUDE.md or agent files.
