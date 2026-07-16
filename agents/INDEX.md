@@ -30,3 +30,4 @@ Model and memory are defined in each `.md`'s YAML frontmatter. See [ARCHITECTURE
 | File | Used by | Where it lives |
 |---|---|---|
 | `project-strategy.md` | Architect (New project and Strategic review) — always reads it before operating | Root of the Claudio config folder |
+| `STRATEGY.md` (per project) | Architect (New project) — produced by the Strategist; the Architect reads it as settled framing in its step 0 | Project root (see `strategist.md` § deliverable) |

@@ -154,6 +154,7 @@ Verify:
 - If `ARCHITECTURE.md` or `INDEX.md` was edited: do the claims match the actual state of the files?
 - If something was deleted: are there dead references to it in CLAUDE.md, other agents, or hooks?
 - If a protocol was changed: were all the places that implement it updated consistently?
+- If a rule claims a scope over a hook or script ("the only exception", "only X touches Y", "nothing hardcodes Z"): verify it against the file's full code (grep for literal names), not just the section that motivated the change. Hooks accumulate coupling across sessions that the new text may not cover — and a scope claim sounds most precise exactly when it's false.
 
 ---
 

@@ -6,7 +6,11 @@ Read this file **before creating or modifying any agent**. It contains the agree
 
 ## Core principle
 
-Hooks don't know about agents. Agents aren't hardcoded in any script. The only place where the intelligence of "when to use which agent" lives is CLAUDE.md. Adding a new agent = only touching CLAUDE.md and INDEX.md.
+The intelligence of "when to use which agent" lives in CLAUDE.md, not in the scripts. Agents aren't hardcoded in any script. Adding a new agent = touching CLAUDE.md and INDEX.md.
+
+**Single exception:** a pre-action agent that accumulates items requires `check_log.js` to know the name of its log section — that case does touch the hook. See the decision tree, point 1.
+
+*(Before claiming "only X touches Y" about a hook, grep the whole hook. A scope claim is easier to break than a specific one, and it sounds most precise exactly when it's false.)*
 
 ---
 
@@ -145,6 +149,23 @@ Verify that `PRODUCT.md` exists in the project. If not → `/impeccable init` fi
 
 ---
 
+## Pre-flight — enforcing an agent's own rules
+
+A rule written at the top of an agent's `.md` competes, at delivery time, against everything the agent generated since. Restating it near the decision point puts it back in play. But **the form matters more than the repetition**, and there are two distinct mechanisms worth keeping apart:
+
+- **Ask for evidence in the output** — a field that can't be filled without having done the work (paste the output of a command, name the file verified, list the status of every category). This is the strong mechanism: either there's evidence, or there's a visible hole. **Prefer it whenever the rule has an observable result.**
+- **Re-read before delivering** — only useful when there's something to *recover*: the agent chose among several modes or loaded selective material, and needs to return to what it applied (QA with its four lenses; the auditors confirming every category has a status assigned). Over a short, always-visible list it recovers nothing.
+
+**What doesn't work:** asking the agent to *confirm* it complied. That instruction is satisfied by writing that it complied — the same process that produced the work judges whether the work happened. An agent that skipped a step and didn't notice won't notice when asking itself either.
+
+**How to apply it:** every agent whose `.md` defines rules or a checklist for its own output needs one of the two mechanisms — evidence in the output by default, re-reading if there are modes or selective loading to recover. Don't enumerate here which agents carry it: the list goes stale.
+
+**Reasoned exception:** a fully procedural agent (like Deploy & Infra) doesn't need it. Its checklist *is* its process, not a rule about its output — the output already reports the result of each step.
+
+**Origin:** detected while analyzing the external `task-observer` skill (rebelytics), which formalizes the "Pre-Flight Principle" as a cross-cutting practice. The evidence-vs-self-confirmation distinction came later, from applying the original formulation to an agent with no modes and getting a section with no effect.
+
+---
+
 ## Decision tree for a new agent
 
 ```
@@ -162,7 +183,16 @@ Verify that `PRODUCT.md` exists in the project. If not → `/impeccable init` fi
    Yes → Only add to CLAUDE.md and INDEX.md
    No → Add detection in detect_significant_event.js
 
-3. Does it have its own specialized intelligence or does it delegate to a tool?
+3. Does it produce an artifact another agent consumes (STRATEGY.md, PRODUCT.md, a knowledge file)?
+   Yes → Wire the CONSUMER, not just the producer: the .md of the agent that reads it must name
+         it in its own flow, and the artifact goes into "System dependencies" in INDEX.md.
+         The producer pins the exact path; the consumer references it.
+   No → Continue
+   Reason: Claudio knowing to pass the artifact isn't enough — agents run in isolated context,
+   without CLAUDE.md. If the consumer doesn't name it, nothing catches the omission. This happened
+   with the Strategist: it shipped with STRATEGY.md and the Architect never mentioned it.
+
+4. Does it have its own specialized intelligence or does it delegate to a tool?
    Own → Create .md with the detailed process
    Delegates → .md is a routing table toward the tool (like ux-designer.md)
 ```

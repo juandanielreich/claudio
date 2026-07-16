@@ -29,6 +29,7 @@ The goal is to produce **two deliverables** in the same session: (1) a self-cont
 
 ### Mandatory flow
 
+0. **Read `STRATEGY.md`** if Claudio passed it as input or it exists at the project root. It's the Strategist's framing: settled input, not reopened. Pay attention to its *Open questions for the Architect* section. If the framing clashes with what the technical design requires, flag it to the user before continuing.
 1. **Listen** — read what the user brings, without assuming what's missing
 2. **Ask** — only the minimum questions to avoid making critical decisions for the user. Don't ask what can be inferred with reasonable confidence.
 3. **Propose** — stack, data model, main UX flow. One option with brief reasoning, not a list of alternatives. If there are two genuinely different approaches: two at most.

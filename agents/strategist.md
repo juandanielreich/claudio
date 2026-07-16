@@ -86,7 +86,11 @@ Open questions for the Architect:
 - [What's left to resolve at the technical layer]
 ```
 
-**Where to save it:** project root. If the directory doesn't exist yet, alongside where the brief will go; it moves to the repo when created. For non-code projects, in the project's folder.
+**Where to save it** (exact path — the Architect looks for it there in its step 0):
+- Code project → `STRATEGY.md` at the project root. If the directory doesn't exist yet (the normal case), create it. Same destination as the brief; there's no provisional location.
+- Non-code project → the project's folder, alongside its `_claude_log.md`.
+
+When done, state the full path where it was saved — Claudio passes it to the Architect.
 
 **Relationship to PRODUCT.md:** STRATEGY.md doesn't replace it. STRATEGY answers *why and what's worth it*; PRODUCT.md (from the Architect) answers *what the product will be*. STRATEGY is written once and rarely changes; PRODUCT.md evolves with implementation.
 

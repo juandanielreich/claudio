@@ -13,6 +13,24 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.13.0] - 2026-07-16
+
+Findings from a full audit of the agent system. Half of these fix the audit's own first attempt — the review agents caught more than the audit did.
+
+### Added
+- **Decision tree, new step 3: "Does it produce an artifact another agent consumes?"** If yes, wire the *consumer*, not just the producer — the reading agent's `.md` must name the artifact, and the artifact goes into "System dependencies" in INDEX.md. This is the layer that should have caught the Strategist→Architect gap and didn't: the Strategist shipped producing `STRATEGY.md`, CLAUDE.md told Claudio to pass it along, and `architect.md` never mentioned it. Agents run in isolated context without CLAUDE.md, so nothing caught the omission.
+- **`architect.md` step 0:** read `STRATEGY.md` if it exists — settled framing, not reopened. Closes the chain on the consumer side.
+- **`STRATEGY.md` row in INDEX.md "System dependencies".**
+- **Pre-flight section in `ARCHITECTURE.md`** (this repo never had it; it dates to an earlier release upstream).
+- **QA, system/config lens:** verify scope claims about a hook ("the only exception", "only X touches Y") against the file's full code, not just the section that motivated the change.
+
+### Changed
+- **Pre-flight rule reformulated — the important one.** The original said "re-read your rules and confirm compliance", indistinctly. The distinction that was missing: *asking for evidence in the output* (a field that can't be filled without doing the work) is the strong mechanism; *re-reading* only helps when there's something to recover (multiple modes, selective loading); *asking the agent to confirm* never works — that instruction is satisfied by writing that it complied, and the same process that produced the work judges whether the work happened. Applied to an agent with no modes, the original formulation produced a section with no effect. The hand-maintained list of which agents carry pre-flight was replaced by the criterion plus a reasoned exception for fully procedural agents — the list went stale in the same commit that used it.
+- **Core principle no longer overclaims.** It said "hooks don't know about agents… adding an agent = only touching CLAUDE.md and INDEX.md", which its own decision tree contradicts ("update check_log.js to detect it") for pre-action agents that accumulate. The exception is now explicit, with a note: before claiming "only X touches Y" about a hook, grep the whole hook.
+- **`strategist.md` pins the exact path for `STRATEGY.md`.** It said "alongside where the brief will go", which isn't a path and fails in the normal case — the project directory doesn't exist yet. The producer pins the location; the consumer references it.
+
+---
+
 ## [2.12.1] - 2026-07-16
 
 ### Changed
