@@ -17,7 +17,7 @@ Current design decisions:
 - Per-project memory in _claude_log.md (read before any task).
 - 6 agents with YAML frontmatter (name, description, tools, model, memory); invoked as native CC subagents.
 - Pre-action / post-action / on-demand taxonomy (see agents/ARCHITECTURE.md).
-- Real enforcement via hooks (not just prose rules): urgency keyword detection, session state accumulation, close reminders.
+- Real enforcement via hooks (not just prose rules): urgency keyword detection, session state accumulation, close reminders, hardcoded-path blocking, and decisions-in-prose blocking (the turn can't close until the choice goes through `AskUserQuestion`).
 - Opinionated reference stack (React+Vite+Firebase+Cloudflare) — adaptable.
 
 Out of scope (v1 public):
