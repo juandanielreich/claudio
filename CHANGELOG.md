@@ -13,7 +13,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [2.16.0] - 2026-07-16
+## [2.17.0] - 2026-07-17
+
+### Added
+
+- **`hooks/check_decision_prose.js` — a `Stop` hook that enforces the `AskUserQuestion` rule.** Blocks the turn from closing when a response hands the user a decision in prose (lettered options, "Option 1/2", or a question offering alternatives) without calling the tool. The rule itself shipped in 2.14.0; until now nothing enforced it.
+
+  The reason this rule can be checked mechanically while "response length" can't: `AskUserQuestion` leaves a tool call in the transcript. It's an artifact, not a self-report — and asking for evidence in the output is the only mechanism that holds.
+
+  Detection is deliberately literal and exits on `!text.includes('?')` before any structural regex, so it costs nothing on the normal path. **Numbered lists are excluded on purpose** — they collide with summaries and next-step lists that end in a question, and a hook that fires on correct responses gets disabled. The scan covers the current turn only; an `AskUserQuestion` from a previous turn doesn't excuse the current one.
+
+### Changed
+
+- `settings.example.json` and `hooks/README.md` document the new `Stop` hook.
 
 ### Added
 

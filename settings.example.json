@@ -15,6 +15,11 @@
         "matcher": "Write|Edit",
         "command": "node <PATH_TO_CONFIG>/hooks/check_hardcoded_paths.js"
       }
+    ],
+    "Stop": [
+      {
+        "command": "node <PATH_TO_CONFIG>/hooks/check_decision_prose.js"
+      }
     ]
   }
 }
