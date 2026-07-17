@@ -13,6 +13,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.16.0] - 2026-07-16
+
+### Added
+
+- **QA gets the check that 2.15.0 only wrote down** (`agents/qa.md`, config/system lens): when a rule is rewritten from a narrow form into an absolute one, re-read the whole document against the new phrasing. 2.15.0 described this lesson in its notes but never gave QA the check — the entry was the record of a fix, not the fix. Filed next to its sibling, the trap about scope claims over hooks.
+
+---
+
 ## [2.15.0] - 2026-07-16
 
 Same day as 2.14.0, and mostly its cleanup. The review agents run over 2.14.0 found that the rule it added was contradicted by this repo's own templates, and that its changelog entry described a change that never happened here.
