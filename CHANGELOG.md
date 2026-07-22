@@ -13,6 +13,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.18.0] - 2026-07-22
+
+### Added
+
+- **Rule: check the project's own material before claiming something cannot be done.** Verification now explicitly includes what the project already produced — its log, an agent's brief, an earlier session's analysis — not only external documentation. The existing rules cover asserting a limitation from memory and inferring a trend without reading `git log`; neither covered contradicting an analysis the project itself had already written down.
+
+---
+
 ## [2.17.0] - 2026-07-17
 
 ### Added
