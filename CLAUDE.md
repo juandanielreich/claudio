@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.18.0 -->
+<!-- claudio-version: 2.19.0 -->
 
 ---
 
@@ -236,6 +236,21 @@ If a file with the same name already exists on the same day: add suffix `_v1`, `
 - Open with the conclusion, the decision or the question — never with the context or the reasoning that led to it. The reasoning goes after, and is optional.
 - Any decision that requires the user to choose goes through `AskUserQuestion`, never through prose. Prose buries the choice under the argument; the tool cannot.
 
+**Anti-AI baseline: applies to all prose I write.**
+
+Always applies, without invoking anything: emails, reports, documentation, `PRODUCT.md`, log entries, briefs, long chat replies. Does not apply to code, commit messages, or short structured output. Any project- or persona-specific voice guide layers on top of this baseline, it doesn't replace it.
+
+- **Telltale vocabulary** → plain word: crucial/pivotal/key→important · underscore/highlight→show, say · foster→help, cause · delve into→look at, review · robust/holistic→strong, complete · leverage→use, improve · landscape/tapestry/ecosystem (figurative), vibrant, meticulous, testament to→rephrase or cut.
+- **No hollow filler**: "Furthermore," · "It's worth noting that" · "In summary/conclusion" · "I'm reaching out to..." · "Please find attached..." · "I hope this message finds you well" · "Looking forward to your reply" → cut it and say what you actually mean.
+- **No closing analysis gerund**: "...highlighting its importance", "...contributing to", "...reflecting", "...cementing". Cut it. If the idea matters, give it its own sentence.
+- **No negative parallelism**: "not only X but also Y" → "X and Y". "It's not X, it's Y" → say Y directly.
+- **No inflated importance**: "marks a milestone", "reflects a broader trend", "leaves a lasting mark", "lays the groundwork for". If cutting the sentence loses no information, cut it.
+- **Give the verb "to be" back its job**: "serves as"/"stands as"/"represents"→is · "boasts"/"features"→has.
+- **No vague attribution**: "experts say", "industry reports show". Name the real source, or cut the claim, don't soften it.
+- **Formatting**: **zero em dashes, anywhere, in anything I write**: chat, prose, headings, definitions, bullets, code comments, config files. Mid-sentence, replace with a comma, period, or parentheses; in definitions use a colon (`**Term**: description`). Not retroactive: em dashes already in CLAUDE.md, agents, and skills get fixed only when that line is edited for another reason anyway. Straight quotes, not curly. No mechanical bold or `- **Thing:** description` lists where prose belongs. Sentence-case headings, not Title Case. No decorative emoji.
+
+**What is NOT a signal and should be left alone:** flawless grammar, formal or technical prose, an isolated sophisticated word (density is the problem, not rarity), reusing the correct term instead of hunting for a synonym, long sentences. And never *add* anything just to "sound human."
+
 **UX Flow — before implementing any feature:**
 - Define: "When the user does X → the system shows Y." If not defined, don't implement.
 - Every activatable state has a visible exit on screen. If the user can enter it, they must be able to leave it.
@@ -272,6 +287,7 @@ If a file with the same name already exists on the same day: add suffix `_v1`, `
 - **Why it's critical:** code lives outside the cloud until a commit is made. No commit = no backup. A machine failure = permanent loss.
 - **Blocker on migrations:** if `git status` shows changes when migrating a project, STOP and commit before deleting any file.
 - **Agent memory:** the `.claude/agent-memory/` folder must be committed and NOT in `.gitignore`. It's project-specific knowledge that only migrates to a new machine if it's versioned.
+- **Never reference a commit's own hash inside content that is part of that same commit** (or a later amend of it). The hash changes with every amend, breaking the reference instantly, and amending again to fix it just repeats the problem in a loop. Reference the commit by its message instead (searchable with `git log --oneline`).
 
 ### Agent system
 
