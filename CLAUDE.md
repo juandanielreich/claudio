@@ -240,7 +240,7 @@ If a file with the same name already exists on the same day: add suffix `_v1`, `
 
 Always applies, without invoking anything: emails, reports, documentation, `PRODUCT.md`, log entries, briefs, long chat replies. Does not apply to code, commit messages, or short structured output. Any project- or persona-specific voice guide layers on top of this baseline, it doesn't replace it.
 
-- **Telltale vocabulary** → plain word: crucial/pivotal/key→important · underscore/highlight→show, say · foster→help, cause · delve into→look at, review · robust/holistic→strong, complete · leverage→use, improve · landscape/tapestry/ecosystem (figurative), vibrant, meticulous, testament to→rephrase or cut.
+- **Telltale vocabulary** → plain word: crucial/pivotal/key→important · underscore/highlight→show, say · foster→help, cause · delve into→look at, review · robust/comprehensive/holistic→strong, complete · intricate→complicated · leverage→use, improve · landscape/tapestry/ecosystem (figurative), vibrant, meticulous, testament to→rephrase or cut.
 - **No hollow filler**: "Furthermore," · "It's worth noting that" · "In summary/conclusion" · "I'm reaching out to..." · "Please find attached..." · "I hope this message finds you well" · "Looking forward to your reply" → cut it and say what you actually mean.
 - **No closing analysis gerund**: "...highlighting its importance", "...contributing to", "...reflecting", "...cementing". Cut it. If the idea matters, give it its own sentence.
 - **No negative parallelism**: "not only X but also Y" → "X and Y". "It's not X, it's Y" → say Y directly.

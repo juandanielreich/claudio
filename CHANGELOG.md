@@ -20,6 +20,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Anti-AI baseline rule set, in `### Rules always active`.** Applies to all prose (emails, reports, docs, log entries, long chat replies), not code or commit messages: telltale vocabulary to plain-word, no hollow filler phrases, no closing analysis gerunds, no negative parallelism, no inflated-importance phrasing, give the verb "to be" back its job, no vague attribution, and formatting rules (zero em dashes, straight quotes, no mechanical bold lists where prose belongs, sentence-case headings, no decorative emoji). Not retroactive against this repo's own existing files.
 - **Git Safety: never reference a commit's own hash inside content that's part of that same commit** (or a later amend of it). The hash changes on every amend, breaking the reference instantly and turning a fix-the-reference amend into a loop. Reference the commit by its message instead.
 
+---
+
 ## [2.18.0] - 2026-07-22
 
 ### Added
