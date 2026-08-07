@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.19.0 -->
+<!-- claudio-version: 2.19.1 -->
 
 ---
 

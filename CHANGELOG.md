@@ -13,6 +13,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.19.1] - 2026-08-07
+
+### Fixed
+
+- **2.19.0's Spanish-to-English port of the anti-AI baseline dropped a translation entry.** The telltale-vocabulary list was missing "intricate→complicated" and "comprehensive" (alongside robust/holistic) — both silently disappeared during translation despite the result reading fluently. Restored, plus the missing `---` separator after the 2.19.0 changelog entry.
+
+---
+
 ## [2.19.0] - 2026-08-07
 
 ### Added
