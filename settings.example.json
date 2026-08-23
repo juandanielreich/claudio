@@ -19,6 +19,9 @@
     "Stop": [
       {
         "command": "node <PATH_TO_CONFIG>/hooks/check_decision_prose.js"
+      },
+      {
+        "command": "node <PATH_TO_CONFIG>/hooks/check_style.js"
       }
     ]
   }

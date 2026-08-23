@@ -126,10 +126,16 @@ Add to your `~/.claude/settings.json` (see `settings.example.json`):
     ],
     "PreToolUse": [
       { "matcher": "Write|Edit", "command": "node ~/.claude/hooks/check_hardcoded_paths.js" }
+    ],
+    "Stop": [
+      { "command": "node ~/.claude/hooks/check_decision_prose.js" },
+      { "command": "node ~/.claude/hooks/check_style.js" }
     ]
   }
 }
 ```
+
+The two `Stop` hooks check the reply itself: `check_decision_prose.js` catches a decision handed to you in prose instead of through `AskUserQuestion`, and `check_style.js` checks the mechanizable half of the anti-AI baseline (em dashes, curly quotes, hollow filler, opening preamble) plus one idea per bullet and short paragraphs. Both run after the reply is on screen, so their only remedy is asking for another version: you will occasionally see two near-identical answers. That is the trade-off, and it is why only rules that rarely fire belong there.
 
 **3. Make agents available**
 

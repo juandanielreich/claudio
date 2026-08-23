@@ -13,6 +13,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.20.0] - 2026-08-23
+
+### Added
+
+- **`hooks/check_style.js`, a `Stop` hook that enforces the mechanizable half of the anti-AI baseline** on chat replies: em dashes, curly quotes, hollow filler phrases, and an opening preamble instead of the conclusion, plus two response-shape rules (one idea per bullet, short paragraphs). Version 2.19.0 added the baseline as prose only, while `PRODUCT.md` promises "real enforcement via hooks", so the new rules fell short of that promise. Registered in `settings.example.json` next to `check_decision_prose.js`.
+- **`CLAUDE.md` now states which anti-AI rules a hook enforces and which stay with the model,** so the split is explicit instead of something you discover by reading the hook. Vocabulary density, inflated importance, negative parallelism and vague attribution stay with the model on purpose: judging them needs meaning, and a regex for them fires on legitimate prose.
+
+### Fixed
+
+- **The README's hook setup block was missing the `Stop` section entirely,** so anyone following the README instead of `settings.example.json` ended up without `check_decision_prose.js`. Both `Stop` hooks are now listed, with a note that they run after the reply is on screen and can produce two near-identical answers.
+
+---
+
 ## [2.19.1] - 2026-08-07
 
 ### Fixed

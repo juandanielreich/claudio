@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.19.1 -->
+<!-- claudio-version: 2.20.0 -->
 
 ---
 
@@ -250,6 +250,10 @@ Always applies, without invoking anything: emails, reports, documentation, `PROD
 - **Formatting**: **zero em dashes, anywhere, in anything I write**: chat, prose, headings, definitions, bullets, code comments, config files. Mid-sentence, replace with a comma, period, or parentheses; in definitions use a colon (`**Term**: description`). Not retroactive: em dashes already in CLAUDE.md, agents, and skills get fixed only when that line is edited for another reason anyway. Straight quotes, not curly. No mechanical bold or `- **Thing:** description` lists where prose belongs. Sentence-case headings, not Title Case. No decorative emoji.
 
 **What is NOT a signal and should be left alone:** flawless grammar, formal or technical prose, an isolated sophisticated word (density is the problem, not rarity), reusing the correct term instead of hunting for a synonym, long sentences. And never *add* anything just to "sound human."
+
+**Which of these a hook enforces.** `hooks/check_style.js` checks four of the rules above on chat replies: em dashes, curly quotes, hollow filler, and an opening preamble instead of the conclusion. It also checks two response-shape rules: one idea per bullet, and short paragraphs. Everything else on this list stays with the model, because deciding whether a word is inflated or an attribution is vague needs judgment about meaning, and a regex for it fires on legitimate prose. A hook that cries wolf gets turned off.
+
+It is a `Stop` hook, so it runs after the reply is on screen and its only remedy is asking for another version. That means the reader sees two near-identical answers, which is a real cost. Before adding a rule there, measure how often it would fire.
 
 **UX Flow — before implementing any feature:**
 - Define: "When the user does X → the system shows Y." If not defined, don't implement.
