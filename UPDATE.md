@@ -49,9 +49,13 @@ After applying, update `<!-- claudio-version: X.Y.Z -->` in the user's `~/.claud
 
 ## Step 4 — Verify
 
-Tell the user to restart Claude Code — agents/hooks are only loaded at session start. Then:
-- Run `/agents` — any newly copied agents should be listed.
-- Open any project — Claudio should introduce itself as before, nothing should have broken.
+Tell the user to restart Claude Code (agents and hooks are only loaded at session start). Then:
+- Run `/agents`, and any newly copied agents should be listed.
+- Open any project: Claudio should introduce itself as before, nothing should have broken.
+
+## Step 5 — Offer to set up notifications for next time
+
+If the user isn't already watching the repo, tell them they can be emailed the next time a version ships instead of checking by hand: on GitHub, **Watch, Custom, Releases**. It's a one-time click, nothing runs on their machine. See the "Staying up to date" section of `README.md`.
 
 ---
 

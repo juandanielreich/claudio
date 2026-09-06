@@ -149,6 +149,19 @@ Full walkthrough with edge cases: [`docs/setup.md`](docs/setup.md).
 
 ---
 
+## Staying up to date
+
+Claudio ships as files, not a package, so nothing on your machine phones home to check for updates: that is deliberate. To hear about a new version without checking by hand, use GitHub's own release notifications:
+
+1. Open this repository on GitHub.
+2. Click **Watch** (top right), choose **Custom**, tick **Releases**, and apply (equivalently, **Watch, Releases only**).
+
+From then on GitHub emails you once each time a new version ships, never per commit and never from anything running locally. When one arrives, follow [`UPDATE.md`](UPDATE.md) to merge the new rules, agents, and hooks into your install while keeping your own changes.
+
+Every version from 2.22.0 on is published as a GitHub Release, so Watch fires on each one. Older tags were not Releases, so a notification for a version before 2.22.0 will not arrive; 2.22.0 is the first you will be told about.
+
+---
+
 ## Adapting to your workflow
 
 The reference stack (React + Vite + Firebase + Cloudflare Pages) is opinionated. The orchestration system is not.

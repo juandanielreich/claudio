@@ -5,11 +5,19 @@ All notable changes to the Claudio orchestration system are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-> **Releasing:** after bumping the version here, `git tag vX.Y.Z` and push the tag. `UPDATE.md`'s three-way merge depends on every release having a matching tag — a version bumped without a tag breaks it for anyone on that version.
+> **Releasing:** after bumping the version here, `git tag vX.Y.Z`, push the tag, and publish it as a GitHub Release (`gh release create vX.Y.Z --title vX.Y.Z --notes-from-tag`, or the web UI). Two things depend on this: `UPDATE.md`'s three-way merge needs the matching tag (a version bumped without a tag breaks it for anyone on that version), and users watching the repo for Releases are only notified once the tag is published as a Release (a tag with no Release notifies no one).
 
 ---
 
 ## [Unreleased]
+
+---
+
+## [2.22.0] - 2026-09-06
+
+### Added
+
+- **A documented way to hear about new versions, using GitHub's own release notifications rather than any code.** Claudio ships as files with no auto-updater, on purpose, so until now a user had no way to learn a new version existed short of checking the repo by hand. The README's new "Staying up to date" section explains enabling Watch (Releases only), which makes GitHub email once per new version, with nothing running on the user's machine and no phone-home. From this release on, every version is published as a GitHub Release (not just a git tag) so those notifications actually fire; tags before 2.22.0 were not Releases, so 2.22.0 is the first users are notified about. When notified, `UPDATE.md` merges the changes as before.
 
 ---
 
