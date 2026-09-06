@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.20.0 -->
+<!-- claudio-version: 2.21.0 -->
 
 ---
 
@@ -30,7 +30,7 @@ No absolute path is ever hardcoded in code, scripts, configs, or documentation �
 - Applies to PowerShell/bash scripts, app code (Node/React/etc.), config files (`.json`, `.yaml`), and operational docs (README, project `CLAUDE.md`).
 - Exception: values that are legitimately fixed and don't depend on the user/machine (e.g. a project name in a hosting dashboard, an external resource ID) aren't "filesystem paths" and this rule doesn't apply.
 
-**Mechanical enforcement:** a `PreToolUse` hook (`hooks/check_hardcoded_paths.js`) blocks any `Write`/`Edit` on code/script/config files (`.js .jsx .ts .tsx .ps1 .sh .py .json .env .yaml .yml .cjs .mjs .bat .cmd`) if it detects a hardcoded absolute path with a username. It exits silently when there's no violation — no token cost in the normal case. **It does not cover `.md` files** — in documentation, the fix is a manual/QA judgment call, not an automatic block.
+**Mechanical enforcement:** a `PreToolUse` hook (`hooks/check_escritura.js`) runs on every `Write`/`Edit` and dispatches two checks. `check_hardcoded_paths.js` blocks a write to a code/script/config file (`.js .jsx .ts .tsx .ps1 .sh .py .json .jsonc .env .yaml .yml .cjs .mjs .bat .cmd`) that contains a hardcoded absolute path with a username; system folders like `Public` and `Default` are excluded, since a path to them doesn't depend on the user, and a path in a comment is ignored. `check_no_emdash.js` blocks a `Write`/`Edit` that adds an em dash to a `.md` file (em dashes inside code fences, tilde fences, indented code blocks, or inline spans are ignored, so a quoted one survives). Both exit silently when there's no violation, so there's no token cost in the normal case. `scripts/probar_hooks.js` is the test suite for both.
 
 ---
 
@@ -232,6 +232,12 @@ If a file with the same name already exists on the same day: add suffix `_v1`, `
 - Verification includes what this project already produced: the log, an agent's brief, an analysis from an earlier session. Contradicting something the project already established is worse than not knowing it — the correct answer was one `Read` away and the text went out asserting the opposite.
 - Before telling anyone a capability is missing or a limit exists, read what is already written there, not just the external documentation. Denying too much costs the same credibility as promising too much, and the reader who owns the system spots it immediately.
 
+**A pending item that names a deliverable with a location gets verified on disk before it's reported:**
+- That the log still lists it doesn't mean it's still pending: it means nobody crossed it off. Look at that location before calling it open, before asking the user about its state, or before acting on it. Only the item you're about to report or act on, never a reconciliation of every log against disk.
+
+**A search that returns nothing is not proof of absence:**
+- Before asserting something isn't there, check how the search was scoped: the date filter, the folder, the pattern. A void produced by a badly framed search looks identical to a real one, and is more common. If the void contradicts what the user says, the search is the first thing to suspect, not the last.
+
 **Answering — the conclusion opens, the reasoning follows:**
 - Open with the conclusion, the decision or the question — never with the context or the reasoning that led to it. The reasoning goes after, and is optional.
 - Any decision that requires the user to choose goes through `AskUserQuestion`, never through prose. Prose buries the choice under the argument; the tool cannot.
@@ -251,7 +257,7 @@ Always applies, without invoking anything: emails, reports, documentation, `PROD
 
 **What is NOT a signal and should be left alone:** flawless grammar, formal or technical prose, an isolated sophisticated word (density is the problem, not rarity), reusing the correct term instead of hunting for a synonym, long sentences. And never *add* anything just to "sound human."
 
-**Which of these a hook enforces.** `hooks/check_style.js` checks four of the rules above on chat replies: em dashes, curly quotes, hollow filler, and an opening preamble instead of the conclusion. It also checks two response-shape rules: one idea per bullet, and short paragraphs. Everything else on this list stays with the model, because deciding whether a word is inflated or an attribution is vague needs judgment about meaning, and a regex for it fires on legitimate prose. A hook that cries wolf gets turned off.
+**Which of these a hook enforces.** `hooks/check_style.js` checks four of the rules above on chat replies: em dashes, curly quotes, hollow filler, and an opening preamble instead of the conclusion. It also checks two response-shape rules: one idea per bullet, and short paragraphs. The em-dash rule is enforced on the write side too: `hooks/check_no_emdash.js` (via `check_escritura.js`) blocks a `Write`/`Edit` that adds an em dash to a `.md` file, so documentation is covered, not just chat. Everything else on this list stays with the model, because deciding whether a word is inflated or an attribution is vague needs judgment about meaning, and a regex for it fires on legitimate prose. A hook that cries wolf gets turned off.
 
 It is a `Stop` hook, so it runs after the reply is on screen and its only remedy is asking for another version. That means the reader sees two near-identical answers, which is a real cost. Before adding a rule there, measure how often it would fire.
 

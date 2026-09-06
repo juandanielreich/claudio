@@ -13,6 +13,36 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.21.0] - 2026-09-06
+
+### Added
+
+- **`hooks/check_no_emdash.js`, a write-side hook that blocks a `Write`/`Edit` adding an em dash to a `.md` file.** Version 2.20.0 enforced the em-dash rule only on chat replies (`check_style.js`), leaving documentation uncovered, so em dashes kept slipping into `.md` files. It counts a delta, not presence: an edit that preserves a pre-existing em dash passes (the rule isn't retroactive), one that adds an em dash is blocked. Em dashes inside code fences (```` ``` ```` or `~~~`), indented code blocks, and inline spans are ignored, so a quoted one survives.
+- **`hooks/check_escritura.js`, a single `PreToolUse` dispatcher** that runs `check_hardcoded_paths.js` and `check_no_emdash.js` in one process. With one hook per check, every write started `node` twice and one process existed only to say the file wasn't its concern. Each check still lives in its own file and stays importable alone.
+- **`scripts/probar_hooks.js`, a test suite for the write-side hooks.** It pipes payloads end-to-end through `check_escritura.js`, exactly as Claude Code runs it, including the false-positive edge cases the fixes below address.
+
+### Fixed
+
+- **`check_hardcoded_paths.js` no longer blocks `C:\Users\Public` and `C:\Users\Default`.** They are Windows system folders, not usernames, so a path to them is identical on every machine and doesn't violate the rule. A `NON_USER` exclusion list handles them.
+- **`check_hardcoded_paths.js` no longer blocks a path in a trailing comment.** It already skipped full comment lines; now it also strips a trailing `//` or `#` comment (only when preceded by whitespace, so a URL's `://` or a UNC `//server` in a string isn't cut).
+- **The em-dash check no longer blocks an em dash inside a `~~~` tilde fence or a 4-space indented code block.** `stripCode` recognized only backtick fences and inline spans; it now recognizes those two forms too.
+
+### Changed
+
+- **`settings.example.json` and the README point `Write|Edit` at `check_escritura.js`** instead of `check_hardcoded_paths.js` directly, and the CLAUDE.md "System paths" and anti-AI sections now describe the em-dash write hook.
+
+### Upgrading (if you already run a customized setup)
+
+This release changed which hook `Write|Edit` calls. To adopt it without breaking your own changes:
+
+1. Copy the three hook files into your hooks dir: `hooks/check_escritura.js`, `hooks/check_no_emdash.js`, and the updated `hooks/check_hardcoded_paths.js`. If you had customized `check_hardcoded_paths.js`, diff it first: the changes are the capture group in the path patterns, the `NON_USER` set, and the trailing-comment strip. Everything else is the same.
+2. In your `settings.json`, change the `Write|Edit` `PreToolUse` command from `check_hardcoded_paths.js` to `check_escritura.js`. If you had extra `Write|Edit` checks of your own, add them to the `CHECKS` array at the top of `check_escritura.js` (each exports a `check(json, raw)` returning `{ reason, short? }` or `null`) instead of registering separate hooks.
+3. Run `node scripts/probar_hooks.js` to confirm both checks work in your setup.
+
+Your other hooks, agents, and CLAUDE.md customizations are untouched: this release only adds two hook files and repoints one command.
+
+---
+
 ## [2.20.0] - 2026-08-23
 
 ### Added

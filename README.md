@@ -56,7 +56,7 @@ Rules in CLAUDE.md get forgotten. Hooks don't. Four hooks enforce the critical b
 
 - **`check_log.js`** (UserPromptSubmit): verifies `_claude_log.md` exists, detects urgency keywords ("critical", "must not fail"), reminds of pending items, scans agent files for unprocessed learnings, summarizes session state on every message.
 - **`detect_significant_event.js`** (PostToolUse): silently tracks what changed — files edited, UI files, builds, deploys, git commits — to power the session-close proposal.
-- **`check_hardcoded_paths.js`** (PreToolUse, `Write|Edit`): blocks any write that hardcodes an absolute path depending on the current username or machine, with a reason explaining what to use instead.
+- **`check_escritura.js`** (PreToolUse, `Write|Edit`): a dispatcher that runs two write checks in one process. `check_hardcoded_paths.js` blocks a write that hardcodes an absolute path depending on the current username or machine (system folders like `Public`/`Default` and paths inside comments are ignored). `check_no_emdash.js` blocks a `Write`/`Edit` that adds an em dash to a `.md` file (em dashes inside code fences or spans survive). `scripts/probar_hooks.js` is the test suite for both.
 - **`clear_session_state.js`**: resets accumulated state after the batched proposal runs.
 
 When you type "this is critical", the hook injects: *"Call the Impact Analyst before implementing."* No relying on the model remembering the rule.
@@ -125,7 +125,7 @@ Add to your `~/.claude/settings.json` (see `settings.example.json`):
       { "command": "node ~/.claude/hooks/detect_significant_event.js" }
     ],
     "PreToolUse": [
-      { "matcher": "Write|Edit", "command": "node ~/.claude/hooks/check_hardcoded_paths.js" }
+      { "matcher": "Write|Edit", "command": "node ~/.claude/hooks/check_escritura.js" }
     ],
     "Stop": [
       { "command": "node ~/.claude/hooks/check_decision_prose.js" },
