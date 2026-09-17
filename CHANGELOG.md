@@ -13,6 +13,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.23.0] - 2026-09-17
+
+### Added
+
+- **A rule for the third-party skill registry, because installing from it can overwrite your own skills silently.** `npx skills` installs by folder name and does not go through the `check_config_overwrite.js` hook, so a registry skill that happens to share a folder name with one of yours replaces it with no warning and no error. The new `docs/third-party-skills.md` covers searching with `npx skills find`, trying one without installing via `npx skills use`, why `-a claude-code` is not optional (without it the skill lands somewhere Claude Code never reads, and nothing says so), and why installs default to the project rather than the global config. The short pointer in `CLAUDE.md` carries the overwrite risk inline, since that is the part that has to fire before anyone goes looking for the document.
+
+---
+
 ## [2.22.0] - 2026-09-06
 
 ### Added

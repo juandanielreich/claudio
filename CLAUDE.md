@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.22.0 -->
+<!-- claudio-version: 2.23.0 -->
 
 ---
 
@@ -390,6 +390,8 @@ Before running a phase you know will produce a lot of intermediate content, with
 The `Agent` tool already notifies automatically on completion — never use a `ScheduleWakeup`/`SendMessage`/`TaskOutput` loop to check whether it finished. Same case above: 14 polling turns waiting on a background QA agent cost ~230k weighted tokens for nothing, even though the no-polling instruction already lives in the tool's own spec — reinforced here because it failed once in practice.
 
 **When creating or installing skills:** include natural language phrases in the frontmatter `description` if the skill should activate by conversational intent (not only by explicit `/name` command).
+
+**Finding or installing a third-party skill: read [`docs/third-party-skills.md`](docs/third-party-skills.md) before running `npx skills`.** Installing is the user's decision, one skill at a time, into the project; `-g` is a separate question. The reason it can't be skipped: `npx` does not go through the `check_config_overwrite.js` hook, so a registry skill whose folder name matches one of your own overwrites it with no warning and no error.
 
 ### Context routing by task type
 
