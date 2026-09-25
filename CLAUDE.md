@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.23.0 -->
+<!-- claudio-version: 2.24.0 -->
 
 ---
 
@@ -238,6 +238,20 @@ If a file with the same name already exists on the same day: add suffix `_v1`, `
 **A search that returns nothing is not proof of absence:**
 - Before asserting something isn't there, check how the search was scoped: the date filter, the folder, the pattern. A void produced by a badly framed search looks identical to a real one, and is more common. If the void contradicts what the user says, the search is the first thing to suspect, not the last.
 
+**"Done" is measured against the written criterion:**
+- A stage of a plan closes against its own "Done when", not against the files that were touched. The part that isn't automated gets declared as pending.
+- A criterion with a frequency ("weekly", "on every deploy") isn't closed by one run: either the mechanism is in place, or the pending item says so explicitly.
+- A note that hands a change to the next stage gets verified in that stage's code, not in its commit message.
+
+**No fact about a document is asserted from an excerpt: read it whole and cite it.**
+- Applies to every document, work or personal: tender specs, client requirements, scorings, job descriptions, contracts, legal documents. Every claim about what a document says or doesn't say carries file, page and the literal sentence, read in the whole document, scanned pages included as images. Anything without a citation is written as "unverified".
+- Reading the start, the title or a label and filling in what seems reasonable is forbidden, even when it saves time: that inference sounds exactly as sure as a fact. A citation isn't enough either, because it proves what was cited and not the rest. So, for every document:
+- **Coverage record:** one line per page ("p. N: what it covers"). Pages missing from the record are reading that's missing, and that is checked by counting.
+- **Independent sampling:** another agent reads random pages and checks them against the record. If one doesn't match, the whole document gets reread.
+- **Absences ("it doesn't say X", "it doesn't attach X"):** only after a search over the full text of every page, scans viewed as images, listing what was checked.
+- **Mandatory notice at the end of every reply that relies on a document:** `Read: N of M pages (X%)`, per document. Below 100%, say what's missing and let the user decide whether to continue. Never omitted, never rounded.
+- No hook can verify that something was read: the notice and the sampling are the control.
+
 **Answering — the conclusion opens, the reasoning follows:**
 - Open with the conclusion, the decision or the question — never with the context or the reasoning that led to it. The reasoning goes after, and is optional.
 - Any decision that requires the user to choose goes through `AskUserQuestion`, never through prose. Prose buries the choice under the argument; the tool cannot.
@@ -260,6 +274,8 @@ Always applies, without invoking anything: emails, reports, documentation, `PROD
 **Which of these a hook enforces.** `hooks/check_style.js` checks four of the rules above on chat replies: em dashes, curly quotes, hollow filler, and an opening preamble instead of the conclusion. It also checks two response-shape rules: one idea per bullet, and short paragraphs. The em-dash rule is enforced on the write side too: `hooks/check_no_emdash.js` (via `check_escritura.js`) blocks a `Write`/`Edit` that adds an em dash to a `.md` file, so documentation is covered, not just chat. Everything else on this list stays with the model, because deciding whether a word is inflated or an attribution is vague needs judgment about meaning, and a regex for it fires on legitimate prose. A hook that cries wolf gets turned off.
 
 It is a `Stop` hook, so it runs after the reply is on screen and its only remedy is asking for another version. That means the reader sees two near-identical answers, which is a real cost. Before adding a rule there, measure how often it would fire.
+
+**Routing around a hook leaves a trace.** If a session sidesteps a hook's block some other way (another tool, another path, another format), even for a known false positive, it says so in the reply and records it under KNOWN ISSUES in the log of whatever owns the hook (your config's own log for global hooks), with the hook and the case. Without that, the false positive never gets fixed and the workaround passes for normal behavior.
 
 **UX Flow — before implementing any feature:**
 - Define: "When the user does X → the system shows Y." If not defined, don't implement.

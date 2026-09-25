@@ -13,6 +13,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.24.0] - 2026-09-25
+
+### Added
+
+- **"Done" is measured against the written criterion.** A plan stage closes against its own "Done when", not against the files touched; a criterion with a frequency isn't closed by a single run; and a note that hands work to the next stage is verified in that stage's code, not its commit message. Without it, a stage whose acceptance criterion never ran gets crossed off anyway.
+- **No fact about a document is asserted from an excerpt.** Every claim about what a document says carries file, page and literal sentence from a full read, with a per-page coverage record, independent sampling by another agent, a full-text search before claiming an absence, and a mandatory `Read: N of M pages (X%)` notice at the end of any reply that relies on a document. An inference from a title or a first page sounds exactly as sure as a fact, and no hook can check that something was read.
+- **Routing around a hook leaves a trace.** A session that sidesteps a hook's block, even for a known false positive, says so and records it under KNOWN ISSUES of whatever owns the hook. Otherwise the false positive is never fixed.
+- **Effort guidance for Opus 5.5** in `agents/ARCHITECTURE.md` § Model per agent: `high` as the ceiling for Opus agents, `medium` for Claudio, and a note that the general `effortLevel` in the user `settings.json` doesn't apply to Opus 5.5 (use `modelSettings`) while it still applies to Fable 5.1 and earlier.
+
+---
+
 ## [2.23.0] - 2026-09-17
 
 ### Added

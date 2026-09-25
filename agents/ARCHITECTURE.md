@@ -222,6 +222,8 @@ Since 2026-06-13, agents are **CC native subagents**: each `.md` in `agents/` ha
 | ux-designer | sonnet | Router with contextual judgment |
 | deploy-infra | haiku | 100% procedural, follows checklist |
 
+**Effort on Opus 5.5:** `high` as the ceiling for Opus agents (set `effort` in the agent's frontmatter), `medium` as the default for Claudio. At the same level Opus 5.5 thinks more than Opus 5, and Anthropic recommends keeping `xhigh` and `max` for cases where you measured a gain ("Prompting Claude Opus 5.5", § Calibrate effort). In the user `settings.json`, the general `effortLevel` does not apply to Opus 5.5: set it per model under `modelSettings`. The general value does still apply to Fable 5.1 and earlier models, so give those their own entry if the general one is lower than you want. *(Holds while `opus` resolves to Opus 5.5. Observed 2026-09-25.)*
+
 Claudio (main agent) runs on Sonnet by default (configured in CC's UI, not in `settings.json`). Switch to Opus with `/model` for strategic sessions. Claudio's model does **not** migrate automatically with the system — it requires manual configuration in the UI.
 
 ### Persistent memory (project scope)
