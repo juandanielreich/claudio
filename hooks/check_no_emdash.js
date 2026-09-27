@@ -12,8 +12,10 @@
 // is why it counts instead of comparing presence.
 //
 // Code is ignored, same as in check_style.js: an em dash that genuinely belongs to
-// a quoted source goes inside backticks or a code block. Exception: under skills/
-// and agents/, code blocks count (see TEMPLATES below).
+// a quoted source goes inside backticks or a code block that declares a language
+// (```text). A code block with no language counts as your own text (see
+// stripTaggedCode below), and under skills/ and agents/ every code block counts (see
+// TEMPLATES below).
 const fs = require('fs')
 const path = require('path')
 
@@ -46,6 +48,34 @@ function stripInlineCode(text) {
     .replace(/`[^`\n]*`/g, '')
 }
 
+// Everywhere else, only code blocks that declare a language (```js, ~~~text) are
+// ignored. A block with no language counts: measured over a real corpus, nearly every
+// untagged block with an em dash was a template or the author's own text (file trees,
+// schemas), not a quote. It walks the lines instead of using a regex because the
+// closing fence of a tagged block is a bare fence line that a regex would take as the
+// opening of an untagged one. An unclosed fence exempts nothing: its content is prose,
+// so an Edit fragment with a lone opening fence can't hide em dashes. Indented code
+// blocks stay exempt, since they can't declare a language.
+const OPENING = /^ {0,3}(`{3,}|~{3,})(.*)$/
+function stripTaggedCode(text) {
+  const lines = String(text).split('\n')
+  const prose = []
+  const untagged = []
+  let i = 0
+  while (i < lines.length) {
+    const m = lines[i].replace(/\r$/, '').match(OPENING)
+    if (!m) { prose.push(lines[i]); i++; continue }
+    const fence = m[1]
+    const closing = new RegExp('^ {0,3}' + (fence[0] === '`' ? '`' : '~') + '{' + fence.length + ',}[ \\t]*$')
+    let j = i + 1
+    while (j < lines.length && !closing.test(lines[j].replace(/\r$/, ''))) j++
+    if (j >= lines.length) { prose.push(...lines.slice(i + 1)); break }
+    if (!m[2].trim()) untagged.push(...lines.slice(i + 1, j))
+    i = j + 1
+  }
+  return stripCode(prose.join('\n')) + '\n' + untagged.join('\n').replace(/`[^`\n]*`/g, '')
+}
+
 // Returns { reason } if the write should be blocked, or null. Never exits.
 // `raw` is the unparsed payload: with no em dash anywhere in it there is no
 // possible positive delta, so we skip the readFileSync of the destination file.
@@ -63,7 +93,7 @@ function check(json, raw) {
   if (/[\\/](node_modules|\.git|dist|build|\.next)[\\/]/.test(filePath)) return null
 
   const isTemplate = TEMPLATES.test(filePath)
-  const strip = isTemplate ? stripInlineCode : stripCode
+  const strip = isTemplate ? stripInlineCode : stripTaggedCode
   let before, after
   if (toolName === 'Write') {
     // New file: every em dash is new. Existing file: compare against what's
@@ -84,7 +114,7 @@ function check(json, raw) {
   return {
     reason: `Em dash (—) in ${path.basename(filePath)}: this write adds ${added}. "Formatting: zero em dashes" rule of CLAUDE.md, in any position and in any prose I write, .md files included. Replace with a comma, period, or parentheses mid-sentence, and with a colon in a definition (**Term**: description). If the em dash is literal from a source being quoted, ` + (isTemplate
       ? 'put it inside inline backticks. Under skills/ and agents/ code blocks DO count: they are templates the model copies.'
-      : 'put it inside backticks or a code block, which this check ignores.')
+      : 'put it inside backticks or a code block that declares a language (```text), which this check ignores. A code block with no language counts.')
   }
 }
 

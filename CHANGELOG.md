@@ -13,6 +13,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.26.0] - 2026-09-27
+
+### Changed
+
+- **`check_no_emdash.js` counts em dashes inside code blocks that don't declare a language, in any `.md`.** Measured over a real corpus, nearly every untagged block with an em dash was a template or the author's own text (file trees, schemas), not a quote. A block that declares a language (` ```js `, ` ```text `) is still ignored, so a genuine quote goes in one of those or in inline backticks. An unclosed fence no longer hides anything. Indented code blocks stay exempt, since they can't declare a language. Under `skills/` and `agents/` every block still counts, as in 2.25.0.
+- **`CLAUDE.md` and `README.md` describe the rule as it is now.** Before this, neither mentioned the 2.25.0 exception for `skills/` and `agents/`.
+
+---
+
 ## [2.25.0] - 2026-09-27
 
 ### Added

@@ -1,5 +1,5 @@
 # Global Instructions â€” Claudio
-<!-- claudio-version: 2.25.0 -->
+<!-- claudio-version: 2.26.0 -->
 
 ---
 
@@ -30,7 +30,7 @@ No absolute path is ever hardcoded in code, scripts, configs, or documentation â
 - Applies to PowerShell/bash scripts, app code (Node/React/etc.), config files (`.json`, `.yaml`), and operational docs (README, project `CLAUDE.md`).
 - Exception: values that are legitimately fixed and don't depend on the user/machine (e.g. a project name in a hosting dashboard, an external resource ID) aren't "filesystem paths" and this rule doesn't apply.
 
-**Mechanical enforcement:** a `PreToolUse` hook (`hooks/check_escritura.js`) runs on every `Write`/`Edit` and dispatches two checks. `check_hardcoded_paths.js` blocks a write to a code/script/config file (`.js .jsx .ts .tsx .ps1 .sh .py .json .jsonc .env .yaml .yml .cjs .mjs .bat .cmd`) that contains a hardcoded absolute path with a username; system folders like `Public` and `Default` are excluded, since a path to them doesn't depend on the user, and a path in a comment is ignored. `check_no_emdash.js` blocks a `Write`/`Edit` that adds an em dash to a `.md` file (em dashes inside code fences, tilde fences, indented code blocks, or inline spans are ignored, so a quoted one survives). Both exit silently when there's no violation, so there's no token cost in the normal case. `scripts/probar_hooks.js` is the test suite for both.
+**Mechanical enforcement:** a `PreToolUse` hook (`hooks/check_escritura.js`) runs on every `Write`/`Edit` and dispatches two checks. `check_hardcoded_paths.js` blocks a write to a code/script/config file (`.js .jsx .ts .tsx .ps1 .sh .py .json .jsonc .env .yaml .yml .cjs .mjs .bat .cmd`) that contains a hardcoded absolute path with a username; system folders like `Public` and `Default` are excluded, since a path to them doesn't depend on the user, and a path in a comment is ignored. `check_no_emdash.js` blocks a `Write`/`Edit` that adds an em dash to a `.md` file (em dashes inside code fences that declare a language, indented code blocks, or inline spans are ignored, so a quoted one survives; a fence with no language counts as your own text, and under `skills/` and `agents/` every fence counts, since there a code block is a template the model copies). Both exit silently when there's no violation, so there's no token cost in the normal case. `scripts/probar_hooks.js` is the test suite for both.
 
 ---
 

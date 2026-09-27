@@ -72,7 +72,11 @@ c('Edit new_string with path', { tool_name: 'Edit', tool_input: { file_path: '/t
 // ---- check_no_emdash ----
 c('em dash in new .md', { tool_name: 'Write', tool_input: { file_path: '/tmp/n1.md', content: 'text ' + EM + ' dash' } }, 'block', 'emdash')
 c('clean new .md', { tool_name: 'Write', tool_input: { file_path: '/tmp/n2.md', content: 'text without anything' } }, 'pass', 'emdash')
-c('em dash inside fenced code block', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3.md', content: 'prose\n```\ncode ' + EM + ' here\n```\n' } }, 'pass', 'emdash')
+c('em dash inside a fenced code block with no language (counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3.md', content: 'prose\n```\ncode ' + EM + ' here\n```\n' } }, 'block', 'emdash')
+c('em dash inside a fenced code block with a language (ignored)', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3b.md', content: 'prose\n```text\ncode ' + EM + ' here\n```\n' } }, 'pass', 'emdash')
+c('tagged block, then an untagged one with an em dash (the closing fence is not an opening)', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3c.md', content: '```js\nconst a = 1\n```\nprose\n```\nHeader ' + EM + ' here\n```\n' } }, 'block', 'emdash')
+c('em dash only inside the tagged block, untagged one clean', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3d.md', content: '```js\nconst a = "' + EM + '"\n```\nprose\n```\nclean\n```\n' } }, 'pass', 'emdash')
+c('em dash inside an unclosed tagged fence (counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3e.md', content: '```js\ncode ' + EM + ' here\n' } }, 'block', 'emdash')
 c('em dash inside a code block under skills/ (a template, counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/skills/x/SKILL.md', content: 'prose\n```\nHeader ' + EM + ' here\n```\n' } }, 'block', 'emdash')
 c('em dash inside a code block under agents/ (a template, counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/agents/qa.md', content: 'prose\n```\nQA ' + EM + ' [Project]\n```\n' } }, 'block', 'emdash')
 c('em dash inside inline code under skills/ (still ignored)', { tool_name: 'Write', tool_input: { file_path: '/tmp/skills/x/SKILL.md', content: 'zero em dashes (`' + EM + '`) anywhere' } }, 'pass', 'emdash')
@@ -97,7 +101,8 @@ c('file_path is not a string (must not throw)', { tool_name: 'Write', tool_input
 c('C:\\Users\\Public system folder (not a username) passes', { tool_name: 'Write', tool_input: { file_path: '/tmp/a.js', content: 'const p = "' + 'C:' + B + 'Users' + B + 'Public' + B + 'app"' } }, 'pass', 'paths')
 c('C:\\Users\\Default system folder passes', { tool_name: 'Write', tool_input: { file_path: '/tmp/a.js', content: 'const p = "' + 'C:' + B + 'Users' + B + 'Default' + B + 'x"' } }, 'pass', 'paths')
 c('path in a trailing comment passes', { tool_name: 'Write', tool_input: { file_path: '/tmp/a.js', content: 'const x = 1 // see ' + winUser('someone') } }, 'pass', 'paths')
-c('em dash inside a tilde ~~~ fence passes', { tool_name: 'Write', tool_input: { file_path: '/tmp/nt.md', content: 'prose\n~~~\ncode ' + EM + ' here\n~~~\n' } }, 'pass', 'emdash')
+c('em dash inside a tilde ~~~ fence with no language counts', { tool_name: 'Write', tool_input: { file_path: '/tmp/nt.md', content: 'prose\n~~~\ncode ' + EM + ' here\n~~~\n' } }, 'block', 'emdash')
+c('em dash inside a tilde ~~~text fence passes', { tool_name: 'Write', tool_input: { file_path: '/tmp/ntb.md', content: 'prose\n~~~text\ncode ' + EM + ' here\n~~~\n' } }, 'pass', 'emdash')
 c('em dash inside a 4-space indented code block passes', { tool_name: 'Write', tool_input: { file_path: '/tmp/ni.md', content: 'prose\n\n    code ' + EM + ' here\n' } }, 'pass', 'emdash')
 
 // ---- dispatcher resilience / general ----
