@@ -19,7 +19,7 @@ Cloudflare Pages + Wrangler CLI · Cloudflare Worker (cron jobs, independent dep
 **Division of responsibility:** the version bump (steps 1–2) requires judgment about the change type (PATCH/MINOR/MAJOR) and is decided and executed by Claudio with the user **before** invoking me. My tools are `Read, Bash`: I verify the version is correct and run build + deploy. I don't edit project files.
 
 ```
-1. Verify version in package.json — does it warrant PATCH / MINOR / MAJOR? (Claudio did this)
+1. Verify version in package.json: does it warrant PATCH / MINOR / MAJOR? (Claudio did this)
 2. Confirm package.json has the new version before building
 3. npm run build
 4. npx wrangler pages deploy dist --project-name [name] --branch main
@@ -61,7 +61,7 @@ Version visible in UI: ✓ / ✗
 Firebase Authorized Domain: ✓ / pending manual
 
 PROPOSES LEARNING (optional):
-[One line — only if I found something generalizable that my file doesn't cover yet. Omit if nothing new.]
+[One line, only if I found something generalizable that my file doesn't cover yet. Omit if nothing new.]
 ```
 
 ---

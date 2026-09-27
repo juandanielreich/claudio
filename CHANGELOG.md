@@ -13,6 +13,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.25.0] - 2026-09-27
+
+### Added
+
+- **How to split QA's trap checklist when it grows** (`agents/qa.md` § Known traps). When one technology's block keeps growing, or a trap only matters in one lens, it moves to `agents/qa-traps/<domain>.md` with a load line in every lens that needs it, added before the move. The report lists what it loaded (`Traps loaded:`), and traps are cited by their opening words, never by position, so logs don't end up pointing at the wrong item after a move.
+- **The Impact Analyst cites checklist items by name**, not number, and splits domain-specific items the same way QA does.
+
+### Changed
+
+- **`check_no_emdash.js` counts em dashes inside code blocks under `skills/` and `agents/`.** There a code block is a template the model copies on every use (a report header, an email skeleton), not a quote, and that's how em dashes kept leaking into generated output. Inline `code` is still ignored everywhere, and code blocks elsewhere still are. The agents' own report templates were cleaned to match.
+
+---
+
 ## [2.24.0] - 2026-09-25
 
 ### Added

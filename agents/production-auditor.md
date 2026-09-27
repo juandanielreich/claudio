@@ -154,7 +154,7 @@ If something fails, can I diagnose and recover?
 ## Output format
 
 ```
-PRODUCTION AUDIT — [Project] v[X.Y.Z]
+PRODUCTION AUDIT: [Project] v[X.Y.Z]
 
 CATEGORY                     STATUS    DETAIL
 ─────────────────────────────────────────────────────────────────

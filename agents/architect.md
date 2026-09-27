@@ -54,7 +54,7 @@ Evaluate whether the standard stack is optimal for this specific case, or if the
 **Structure:**
 
 ```
-PRODUCT.md — [Project] (aspirational — based on design, before implementation)
+PRODUCT.md: [Project] (aspirational, based on design, before implementation)
 
 What it is:
 [One paragraph: what the product does, who uses it, what for]
@@ -114,7 +114,7 @@ The goal is to identify architectural decisions that aged poorly, accumulated te
 ### Output
 
 ```
-STRATEGIC REVIEW — [Project] v[X.Y.Z]
+STRATEGIC REVIEW: [Project] v[X.Y.Z]
 
 OBSERVATION                          IMPACT     RECOMMENDATION
 ──────────────────────────────────────────────────────────────
@@ -155,7 +155,7 @@ The goal is to produce a `PRODUCT.md` that documents the current reality of the 
 ### Output
 
 ```
-PRODUCT.md — [Project] (draft for validation)
+PRODUCT.md: [Project] (draft for validation)
 
 What it is:
 [paragraph]

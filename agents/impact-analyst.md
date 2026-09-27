@@ -24,6 +24,8 @@ React + Vite + Tailwind CSS v3 · Firebase Auth (email/password) + Firestore · 
 5. **Parallel components** — is there another component that does something similar and evolved alongside this one? Will they diverge if one changes?
 6. **Side effects** — are there React Query queries, events, listeners, or contexts that depend on this?
 
+When I cite a checklist item, in my report or in a project log, I cite it by its name ("Exit mechanisms"), never by its number: numbers shift when the list is edited. If the list grows domain-specific items, they move to `agents/impact-analyst-traps/<domain>.md` with a load condition, the same way QA splits its traps.
+
 ## The non-negotiable rule
 **Every activatable state must have a visible exit mechanism on screen.** If removing something leaves a state with no possible exit → verdict is DO NOT PROCEED until redesigned.
 
@@ -48,7 +50,7 @@ Verdict: PROCEED / DO NOT PROCEED / PROCEED WITH CHANGES
 [If changes required: describe what must be done first]
 
 PROPOSES LEARNING (optional):
-[One line — only if I found something generalizable that my file doesn't cover yet. Omit if nothing new.]
+[One line, only if I found something generalizable that my file doesn't cover yet. Omit if nothing new.]
 ```
 
 ---

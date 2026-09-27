@@ -12,7 +12,8 @@
 // is why it counts instead of comparing presence.
 //
 // Code is ignored, same as in check_style.js: an em dash that genuinely belongs to
-// a quoted source goes inside backticks or a code block.
+// a quoted source goes inside backticks or a code block. Exception: under skills/
+// and agents/, code blocks count (see TEMPLATES below).
 const fs = require('fs')
 const path = require('path')
 
@@ -34,6 +35,17 @@ function stripCode(text) {
     .replace(/`[^`]*`/g, '')
 }
 
+// Under skills/ and agents/ a code block is not a quote: it's the template the model
+// copies on every use (a report header, an email skeleton). That is exactly how em
+// dashes kept leaking into generated output. There, code blocks count; only inline
+// `code` is ignored, which is where a rule names the character itself (`—`).
+const TEMPLATES = /[\\/](skills|agents)[\\/]/i
+function stripInlineCode(text) {
+  return String(text)
+    .replace(/^\s*(```|~~~).*$/gm, '')
+    .replace(/`[^`\n]*`/g, '')
+}
+
 // Returns { reason } if the write should be blocked, or null. Never exits.
 // `raw` is the unparsed payload: with no em dash anywhere in it there is no
 // possible positive delta, so we skip the readFileSync of the destination file.
@@ -50,6 +62,8 @@ function check(json, raw) {
   if (path.extname(filePath).toLowerCase() !== '.md') return null
   if (/[\\/](node_modules|\.git|dist|build|\.next)[\\/]/.test(filePath)) return null
 
+  const isTemplate = TEMPLATES.test(filePath)
+  const strip = isTemplate ? stripInlineCode : stripCode
   let before, after
   if (toolName === 'Write') {
     // New file: every em dash is new. Existing file: compare against what's
@@ -57,18 +71,20 @@ function check(json, raw) {
     // dashes would be blocked without having added any.
     let previous = ''
     try { previous = fs.readFileSync(filePath, 'utf8') } catch (_) { previous = '' }
-    before = count(stripCode(previous))
-    after = count(stripCode(toolInput.content || ''))
+    before = count(strip(previous))
+    after = count(strip(toolInput.content || ''))
   } else {
-    before = count(stripCode(toolInput.old_string || ''))
-    after = count(stripCode(toolInput.new_string || ''))
+    before = count(strip(toolInput.old_string || ''))
+    after = count(strip(toolInput.new_string || ''))
   }
 
   if (after <= before) return null
 
   const added = after - before
   return {
-    reason: `Em dash (—) in ${path.basename(filePath)}: this write adds ${added}. "Formatting: zero em dashes" rule of CLAUDE.md, in any position and in any prose I write, .md files included. Replace with a comma, period, or parentheses mid-sentence, and with a colon in a definition (**Term**: description). If the em dash is literal from a source being quoted, put it inside backticks or a code block, which this check ignores.`
+    reason: `Em dash (—) in ${path.basename(filePath)}: this write adds ${added}. "Formatting: zero em dashes" rule of CLAUDE.md, in any position and in any prose I write, .md files included. Replace with a comma, period, or parentheses mid-sentence, and with a colon in a definition (**Term**: description). If the em dash is literal from a source being quoted, ` + (isTemplate
+      ? 'put it inside inline backticks. Under skills/ and agents/ code blocks DO count: they are templates the model copies.'
+      : 'put it inside backticks or a code block, which this check ignores.')
   }
 }
 

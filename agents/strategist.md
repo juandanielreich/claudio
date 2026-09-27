@@ -60,7 +60,7 @@ Use WebSearch only if you need market context or how others solved the same prob
 ## STRATEGY.md — deliverable
 
 ```
-STRATEGY.md — [Project]
+STRATEGY.md: [Project]
 
 Problem:
 [Who has it, what they're trying to achieve, what they do today, what it costs them. 1-2 paragraphs.]
@@ -69,8 +69,8 @@ Critical assumption:
 [The assumption that, if false, invalidates the project. How it could be validated cheaply.]
 
 Alternatives evaluated:
-- Approach A — [what it solves / what it leaves out / risk]
-- Approach B — [what it solves / what it leaves out / risk]
+- Approach A: [what it solves / what it leaves out / risk]
+- Approach B: [what it solves / what it leaves out / risk]
 - [Minimal or don't-build option, if applicable]
 
 Chosen direction:

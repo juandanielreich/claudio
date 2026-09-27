@@ -112,7 +112,11 @@ Before reasoning about logic, run this mechanical checklist against the modified
 - Loop with per-item try-catch but no `failed[]` array → if an item fails, the summary email/log doesn't mention it and the user never knows. Verify the failure tracking array feeds into the notification.
 - Stale documentation after a service or API migration → the code uses the new service but docs, setup guides, and variable names still reference the old one. Verify SETUP.md reflects current reality after any migration.
 
-This checklist grows. When a new trap appears, add it here directly — not to LEARNINGS.
+This checklist grows. When a new trap appears, add it here directly, not to LEARNINGS.
+
+**When it grows too much, split it by domain.** If one technology's block keeps growing, or a trap only matters in one lens, move that block to its own file (`agents/qa-traps/<domain>.md`) and add one load line to every lens that needs it ("if the session touched `.ps1` files, read `qa-traps/powershell.md`"). Add the load line before moving anything: a trap moved without it stops being checked in exactly the session where it was born. Two rules keep the split safe:
+- List the files you loaded in the report (`Traps loaded:`), so a missing load is visible.
+- Cite a trap by its opening words, never by its position. Positions shift when a block moves, and every log that said "trap 12" starts pointing at a different one.
 
 ### Full mode (activated on-demand)
 
@@ -129,10 +133,10 @@ Activated when the user asks "review the full project", "I want a complete proje
 
 **Additional output in full mode:**
 ```
-QA Full Mode — [Project] v[X.Y.Z]
+QA Full Mode: [Project] v[X.Y.Z]
 
 Verified against PRODUCT.md:
-✓ [flow]: passes / ✗ [flow]: fails — [what fails]
+✓ [flow]: passes / ✗ [flow]: fails ([what fails])
 
 Divergences between PRODUCT.md and reality:
 - [something the product does that PRODUCT.md doesn't mention]
@@ -196,7 +200,9 @@ The difference with LEARNINGS below: memory is **project-specific** (this repo);
 ## Output format
 
 ```
-QA — [Project] — Lens: [type of work]
+QA: [Project] (lens: [type of work])
+
+Traps loaded: [qa-traps/ files read, or "inline checklist only"]
 
 Verifications:
 ✓ [item]: [one-line result]
@@ -211,7 +217,7 @@ Verdict: PASSED / PASSED WITH OBSERVATIONS / FAILED
 If there are issues → describe exactly what failed, not just "something doesn't work".
 
 PROPOSES LEARNING (optional):
-[One line — only if I found something generalizable that my file doesn't cover yet. Omit if nothing new.]
+[One line, only if I found something generalizable that my file doesn't cover yet. Omit if nothing new.]
 
 ## Core principle
 A generalist agent that also writes code tends to assume that if the code looks good, it works. QA assumes nothing. QA verifies.

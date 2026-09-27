@@ -188,7 +188,7 @@ A rule written at the top of an agent's `.md` competes, at delivery time, agains
          it in its own flow, and the artifact goes into "System dependencies" in INDEX.md.
          The producer pins the exact path; the consumer references it.
    No → Continue
-   Reason: Claudio knowing to pass the artifact isn't enough — agents run in isolated context,
+   Reason: Claudio knowing to pass the artifact isn't enough: agents run in isolated context,
    without CLAUDE.md. If the consumer doesn't name it, nothing catches the omission. This happened
    with the Strategist: it shipped with STRATEGY.md and the Architect never mentioned it.
 

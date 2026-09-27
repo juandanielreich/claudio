@@ -74,7 +74,7 @@ Report any inconsistencies with this vocabulary in the verdict.
 ## Output format
 
 ```
-UX DESIGNER — [Component or screen] — [Mode: shape / critique / polish / ...]
+UX DESIGNER: [Component or screen] (mode: shape / critique / polish / ...)
 
 Prerequisite: PRODUCT.md [found / not found → init executed]
 
