@@ -13,6 +13,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.26.1] - 2026-09-27
+
+### Fixed
+
+- **`check_no_emdash.js` counts an `Edit` over the whole file**, with the replacement applied, instead of over the loose `old_string`/`new_string`. A fragment doesn't know which block it falls in, so adding a quoted em dash inside an existing ` ```text ` block was blocked, with the very exit the block message recommends.
+- **Three ways an em dash still slipped through:** an untagged fence inside a list item (indented 4+ spaces), inline code written with three backticks (` ```a``` `), and an unclosed fence that swallowed the untagged block below it.
+- **The log templates have no em dash** (`CLAUDE.md` and `templates/_log_template.md`): `Occurrences: N (dates)`, `**[Short title]**: ...` and `### [YYYY-MM-DD] [Short title]`. These lines are copied into every new log.
+
+---
+
 ## [2.26.0] - 2026-09-27
 
 ### Changed

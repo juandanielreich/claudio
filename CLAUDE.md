@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.26.0 -->
+<!-- claudio-version: 2.26.1 -->
 
 ---
 
@@ -95,7 +95,7 @@ No explanation of what sections changed or why. No detail at all.
 - Required format:
   ```
   **[Problem name]**
-  - Occurrences: N — YYYY-MM-DD, YYYY-MM-DD...
+  - Occurrences: N (YYYY-MM-DD, YYYY-MM-DD...)
   - Symptom: what message or visible behavior
   - Root cause: what causes it (if known)
   - Current mitigation: what's done each time
@@ -108,7 +108,7 @@ No explanation of what sections changed or why. No detail at all.
 - Only record a decision if all 3 are true: (1) hard to reverse, (2) surprising without context — a future reader would ask "why this way?", (3) it was a real trade-off — genuine alternatives existed and one was chosen for a specific reason. If any is missing, don't record it — it can keep living in the conversation, but not in the log.
 - Compact format (not the full template):
   ```
-  **[Short title]** — {context in 1 sentence} → {what was decided} → {why, in 1 sentence}
+  **[Short title]**: {context in 1 sentence} → {what was decided} → {why, in 1 sentence}
   ```
 
 **CONTEXT.md — per-project domain glossary:**

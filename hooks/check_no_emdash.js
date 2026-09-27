@@ -53,10 +53,14 @@ function stripInlineCode(text) {
 // untagged block with an em dash was a template or the author's own text (file trees,
 // schemas), not a quote. It walks the lines instead of using a regex because the
 // closing fence of a tagged block is a bare fence line that a regex would take as the
-// opening of an untagged one. An unclosed fence exempts nothing: its content is prose,
-// so an Edit fragment with a lone opening fence can't hide em dashes. Indented code
-// blocks stay exempt, since they can't declare a language.
-const OPENING = /^ {0,3}(`{3,}|~{3,})(.*)$/
+// opening of an untagged one. Indented code blocks stay exempt, since they can't
+// declare a language.
+// A fence may be indented any amount (inside a list item it sits at 4+ spaces, and the
+// CommonMark cap of 3 left it exempt). A backtick fence whose info string contains a
+// backtick is not a fence but inline code ("```a``` and more"). An unclosed fence
+// exempts nothing and doesn't swallow what follows: its line counts as prose and the
+// walk goes on, so an untagged block further down is still recognized.
+const OPENING = /^[ \t]*(`{3,}|~{3,})(.*)$/
 function stripTaggedCode(text) {
   const lines = String(text).split('\n')
   const prose = []
@@ -64,16 +68,19 @@ function stripTaggedCode(text) {
   let i = 0
   while (i < lines.length) {
     const m = lines[i].replace(/\r$/, '').match(OPENING)
-    if (!m) { prose.push(lines[i]); i++; continue }
+    if (!m || (m[1][0] === '`' && m[2].includes('`'))) { prose.push(lines[i]); i++; continue }
     const fence = m[1]
-    const closing = new RegExp('^ {0,3}' + (fence[0] === '`' ? '`' : '~') + '{' + fence.length + ',}[ \\t]*$')
+    const closing = new RegExp('^[ \\t]*' + (fence[0] === '`' ? '`' : '~') + '{' + fence.length + ',}[ \\t]*$')
     let j = i + 1
     while (j < lines.length && !closing.test(lines[j].replace(/\r$/, ''))) j++
-    if (j >= lines.length) { prose.push(...lines.slice(i + 1)); break }
+    if (j >= lines.length) { prose.push(m[2]); i++; continue }
     if (!m[2].trim()) untagged.push(...lines.slice(i + 1, j))
     i = j + 1
   }
-  return stripCode(prose.join('\n')) + '\n' + untagged.join('\n').replace(/`[^`\n]*`/g, '')
+  // Prose has no fences left: indented-line filter plus inline code that doesn't cross
+  // newlines, so a stray backtick can't swallow the lines below it.
+  const cleanProse = prose.filter(l => !/^( {4,}|\t)/.test(l)).join('\n').replace(/`[^`\n]*`/g, '')
+  return cleanProse + '\n' + untagged.join('\n').replace(/`[^`\n]*`/g, '')
 }
 
 // Returns { reason } if the write should be blocked, or null. Never exits.
@@ -104,8 +111,25 @@ function check(json, raw) {
     before = count(strip(previous))
     after = count(strip(toolInput.content || ''))
   } else {
-    before = count(strip(toolInput.old_string || ''))
-    after = count(strip(toolInput.new_string || ''))
+    // Over the whole file with the replacement applied, not over the loose fragments: a
+    // fragment doesn't know which block it falls in, so a line with an em dash added
+    // inside an existing ```text block was blocked, with the very exit this message
+    // recommends. If the file can't be read or old_string isn't in it, fall back to the
+    // fragments (Claude Code will reject that edit anyway).
+    const oldS = toolInput.old_string || ''
+    const newS = toolInput.new_string || ''
+    let previous = null
+    try { previous = fs.readFileSync(filePath, 'utf8') } catch (_) { previous = null }
+    // old_string arrives with LF even when the file has CRLF.
+    if (previous !== null && !previous.includes(oldS)) previous = previous.replace(/\r\n/g, '\n')
+    if (previous !== null && oldS && previous.includes(oldS)) {
+      const next = toolInput.replace_all ? previous.split(oldS).join(newS) : previous.replace(oldS, () => newS)
+      before = count(strip(previous))
+      after = count(strip(next))
+    } else {
+      before = count(strip(oldS))
+      after = count(strip(newS))
+    }
   }
 
   if (after <= before) return null

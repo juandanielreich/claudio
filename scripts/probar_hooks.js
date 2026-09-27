@@ -77,6 +77,9 @@ c('em dash inside a fenced code block with a language (ignored)', { tool_name: '
 c('tagged block, then an untagged one with an em dash (the closing fence is not an opening)', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3c.md', content: '```js\nconst a = 1\n```\nprose\n```\nHeader ' + EM + ' here\n```\n' } }, 'block', 'emdash')
 c('em dash only inside the tagged block, untagged one clean', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3d.md', content: '```js\nconst a = "' + EM + '"\n```\nprose\n```\nclean\n```\n' } }, 'pass', 'emdash')
 c('em dash inside an unclosed tagged fence (counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3e.md', content: '```js\ncode ' + EM + ' here\n' } }, 'block', 'emdash')
+c('untagged fence inside a list item indented 4 spaces (counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3f.md', content: '- item\n\n    ```\n    Header ' + EM + ' here\n    ```\n' } }, 'block', 'emdash')
+c('inline code with three backticks is not a fence opening', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3g.md', content: '```a``` and then ' + EM + ' in prose\n' } }, 'block', 'emdash')
+c('an unclosed fence does not swallow the untagged block below', { tool_name: 'Write', tool_input: { file_path: '/tmp/n3h.md', content: '````js\nunclosed\n```\nHeader ' + EM + ' here\n```\n' } }, 'block', 'emdash')
 c('em dash inside a code block under skills/ (a template, counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/skills/x/SKILL.md', content: 'prose\n```\nHeader ' + EM + ' here\n```\n' } }, 'block', 'emdash')
 c('em dash inside a code block under agents/ (a template, counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/agents/qa.md', content: 'prose\n```\nQA ' + EM + ' [Project]\n```\n' } }, 'block', 'emdash')
 c('em dash inside inline code under skills/ (still ignored)', { tool_name: 'Write', tool_input: { file_path: '/tmp/skills/x/SKILL.md', content: 'zero em dashes (`' + EM + '`) anywhere' } }, 'pass', 'emdash')
@@ -87,6 +90,13 @@ c('Edit keeps one em dash (old 1, new 1) not retroactive', { tool_name: 'Edit', 
 c('Edit adds an em dash to existing (old 1, new 2)', { tool_name: 'Edit', tool_input: { file_path: '/tmp/x.md', old_string: 'a ' + EM + ' b', new_string: 'a ' + EM + ' b ' + EM + ' c' } }, 'block', 'emdash')
 c('em dash in .md under node_modules (excluded)', { tool_name: 'Write', tool_input: { file_path: '/tmp/node_modules/x.md', content: 'text ' + EM + ' dash' } }, 'pass', 'emdash')
 c('file_path is not a string (must not throw)', { tool_name: 'Write', tool_input: { file_path: 12345, content: 'text ' + EM + ' dash' } }, 'pass', 'emdash')
+
+// ---- fs-dependent: Edit is counted over the whole file ----
+{
+  const withText = write('exists-with-text-block.md', 'prose\n\n```text\nline one\n```\n')
+  c('Edit adding an em dash inside an existing ```text block passes', { tool_name: 'Edit', tool_input: { file_path: withText, old_string: 'line one', new_string: 'line one ' + EM + ' quoted' } }, 'pass', 'emdash')
+  c('Edit adding an em dash to the prose of the same file blocks', { tool_name: 'Edit', tool_input: { file_path: withText, old_string: 'prose', new_string: 'prose ' + EM + ' own' } }, 'block', 'emdash')
+}
 
 // ---- fs-dependent: Write over an existing .md ----
 {

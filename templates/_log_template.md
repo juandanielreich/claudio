@@ -105,7 +105,7 @@ Non-obvious logic not documented in the code.
 One entry per problem, updated in place — never duplicated for the same problem. See CLAUDE.md for the required format:
 ```
 **[Problem name]**
-- Occurrences: N — YYYY-MM-DD, YYYY-MM-DD...
+- Occurrences: N (YYYY-MM-DD, YYYY-MM-DD...)
 - Symptom: what message or visible behavior
 - Root cause: what causes it (if known)
 - Current mitigation: what's done each time
@@ -122,7 +122,7 @@ One entry per problem, updated in place — never duplicated for the same proble
 ## DECISIONS MADE (optional)
 Only decisions that pass the 3-test filter (hard to reverse, surprising without context, a genuine trade-off) — see CLAUDE.md. Compact one-line format, not a table:
 ```
-**[Short title]** — {context in 1 sentence} → {what was decided} → {why, in 1 sentence}
+**[Short title]**: {context in 1 sentence} → {what was decided} → {why, in 1 sentence}
 ```
 
 ---
@@ -130,7 +130,7 @@ Only decisions that pass the 3-test filter (hard to reverse, surprising without 
 ## CHANGE HISTORY
 Chronological entries, most recent first.
 
-### [YYYY-MM-DD] — [Short title]
+### [YYYY-MM-DD] [Short title]
 - What was done / decided
 - Why
 - Resulting state
