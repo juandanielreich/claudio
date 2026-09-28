@@ -13,74 +13,72 @@
 //
 // Code is ignored, same as in check_style.js: an em dash that genuinely belongs to
 // a quoted source goes inside backticks or a code block that declares a language
-// (```text). A code block with no language counts as your own text (see
-// stripTaggedCode below), and under skills/ and agents/ every code block counts (see
-// TEMPLATES below).
+// (```text). A code block with no language counts as your own text, and under skills/
+// and agents/ every code block counts (see TEMPLATES and strip below).
 const fs = require('fs')
 const path = require('path')
 
 const EM_DASH = /—/g
 const count = s => (s.match(EM_DASH) || []).length
 
-// Strips code so an em dash inside it isn't counted. Recognizes, in order: backtick
-// fences (```), tilde fences (~~~), indented code block lines (4+ spaces or a tab),
-// and inline `code` spans. Fences are removed first so their indented content isn't
-// mistaken for a stray indented block. The indented-line filter is a heuristic: a
-// deeply indented prose line inside a nested list is also stripped, so an em dash
-// there would pass without blocking — an accepted trade-off, since indented code is
-// more common than four-space-indented prose.
-function stripCode(text) {
-  return String(text)
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/~~~[\s\S]*?~~~/g, '')
-    .split('\n').filter(l => !/^( {4,}|\t)/.test(l)).join('\n')
-    .replace(/`[^`]*`/g, '')
-}
-
 // Under skills/ and agents/ a code block is not a quote: it's the template the model
 // copies on every use (a report header, an email skeleton). That is exactly how em
 // dashes kept leaking into generated output. There, code blocks count; only inline
 // `code` is ignored, which is where a rule names the character itself (`—`).
 const TEMPLATES = /[\\/](skills|agents)[\\/]/i
-function stripInlineCode(text) {
-  return String(text)
-    .replace(/^\s*(```|~~~).*$/gm, '')
-    .replace(/`[^`\n]*`/g, '')
-}
 
 // Everywhere else, only code blocks that declare a language (```js, ~~~text) are
 // ignored. A block with no language counts: measured over a real corpus, nearly every
 // untagged block with an em dash was a template or the author's own text (file trees,
-// schemas), not a quote. It walks the lines instead of using a regex because the
+// schemas), not a quote. Indented code blocks (4+ spaces or a tab) stay exempt, since
+// they can't declare a language. That filter is a heuristic: a deeply indented prose
+// line inside a nested list is also stripped, an accepted trade-off since indented code
+// is more common than four-space-indented prose.
+//
+// Both cases read fences with the same walk (`segments`) and differ only in what they
+// keep; inline code never crosses a newline, so a stray backtick can't swallow the
+// lines below it.
+function strip(text, isTemplate) {
+  const indented = l => /^( {4,}|\t)/.test(l)
+  const out = []
+  for (const s of segments(String(text))) {
+    if (s.prose !== undefined) {
+      if (isTemplate || !indented(s.prose)) out.push(s.prose)
+    } else if (isTemplate || !s.info.trim()) {
+      out.push(...s.lines)
+    } else {
+      out.push('')
+    }
+  }
+  return out.join('\n').replace(/`[^`\n]*`/g, '')
+}
+
+// Splits the text, in order, into `{ prose: line }` and `{ info, lines }` (a closed block
+// without its fence lines). It walks the lines instead of using a regex because the
 // closing fence of a tagged block is a bare fence line that a regex would take as the
-// opening of an untagged one. Indented code blocks stay exempt, since they can't
-// declare a language.
+// opening of an untagged one.
 // A fence may be indented any amount (inside a list item it sits at 4+ spaces, and the
 // CommonMark cap of 3 left it exempt). A backtick fence whose info string contains a
 // backtick is not a fence but inline code ("```a``` and more"). An unclosed fence
 // exempts nothing and doesn't swallow what follows: its line counts as prose and the
-// walk goes on, so an untagged block further down is still recognized.
+// walk goes on, so a block further down is still recognized.
 const OPENING = /^[ \t]*(`{3,}|~{3,})(.*)$/
-function stripTaggedCode(text) {
-  const lines = String(text).split('\n')
-  const prose = []
-  const untagged = []
+function segments(text) {
+  const lines = text.split('\n')
+  const out = []
   let i = 0
   while (i < lines.length) {
     const m = lines[i].replace(/\r$/, '').match(OPENING)
-    if (!m || (m[1][0] === '`' && m[2].includes('`'))) { prose.push(lines[i]); i++; continue }
+    if (!m || (m[1][0] === '`' && m[2].includes('`'))) { out.push({ prose: lines[i] }); i++; continue }
     const fence = m[1]
     const closing = new RegExp('^[ \\t]*' + (fence[0] === '`' ? '`' : '~') + '{' + fence.length + ',}[ \\t]*$')
     let j = i + 1
     while (j < lines.length && !closing.test(lines[j].replace(/\r$/, ''))) j++
-    if (j >= lines.length) { prose.push(m[2]); i++; continue }
-    if (!m[2].trim()) untagged.push(...lines.slice(i + 1, j))
+    if (j >= lines.length) { out.push({ prose: m[2] }); i++; continue }
+    out.push({ info: m[2], lines: lines.slice(i + 1, j) })
     i = j + 1
   }
-  // Prose has no fences left: indented-line filter plus inline code that doesn't cross
-  // newlines, so a stray backtick can't swallow the lines below it.
-  const cleanProse = prose.filter(l => !/^( {4,}|\t)/.test(l)).join('\n').replace(/`[^`\n]*`/g, '')
-  return cleanProse + '\n' + untagged.join('\n').replace(/`[^`\n]*`/g, '')
+  return out
 }
 
 // Returns { reason } if the write should be blocked, or null. Never exits.
@@ -100,7 +98,7 @@ function check(json, raw) {
   if (/[\\/](node_modules|\.git|dist|build|\.next)[\\/]/.test(filePath)) return null
 
   const isTemplate = TEMPLATES.test(filePath)
-  const strip = isTemplate ? stripInlineCode : stripTaggedCode
+  const clean = s => strip(s, isTemplate)
   let before, after
   if (toolName === 'Write') {
     // New file: every em dash is new. Existing file: compare against what's
@@ -108,8 +106,8 @@ function check(json, raw) {
     // dashes would be blocked without having added any.
     let previous = ''
     try { previous = fs.readFileSync(filePath, 'utf8') } catch (_) { previous = '' }
-    before = count(strip(previous))
-    after = count(strip(toolInput.content || ''))
+    before = count(clean(previous))
+    after = count(clean(toolInput.content || ''))
   } else {
     // Over the whole file with the replacement applied, not over the loose fragments: a
     // fragment doesn't know which block it falls in, so a line with an em dash added
@@ -124,11 +122,11 @@ function check(json, raw) {
     if (previous !== null && !previous.includes(oldS)) previous = previous.replace(/\r\n/g, '\n')
     if (previous !== null && oldS && previous.includes(oldS)) {
       const next = toolInput.replace_all ? previous.split(oldS).join(newS) : previous.replace(oldS, () => newS)
-      before = count(strip(previous))
-      after = count(strip(next))
+      before = count(clean(previous))
+      after = count(clean(next))
     } else {
-      before = count(strip(oldS))
-      after = count(strip(newS))
+      before = count(clean(oldS))
+      after = count(clean(newS))
     }
   }
 

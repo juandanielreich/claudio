@@ -83,6 +83,7 @@ c('an unclosed fence does not swallow the untagged block below', { tool_name: 'W
 c('em dash inside a code block under skills/ (a template, counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/skills/x/SKILL.md', content: 'prose\n```\nHeader ' + EM + ' here\n```\n' } }, 'block', 'emdash')
 c('em dash inside a code block under agents/ (a template, counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/agents/qa.md', content: 'prose\n```\nQA ' + EM + ' [Project]\n```\n' } }, 'block', 'emdash')
 c('em dash inside inline code under skills/ (still ignored)', { tool_name: 'Write', tool_input: { file_path: '/tmp/skills/x/SKILL.md', content: 'zero em dashes (`' + EM + '`) anywhere' } }, 'pass', 'emdash')
+c('em dash after three-backtick inline code under skills/ (not a fence, counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/skills/x/SKILL.md', content: '```a``` and more ' + EM + ' here\n' } }, 'block', 'emdash')
 c('em dash inside inline code span', { tool_name: 'Write', tool_input: { file_path: '/tmp/n4.md', content: 'prose `a ' + EM + ' b` more' } }, 'pass', 'emdash')
 c('em dash in prose AND in code (prose one counts)', { tool_name: 'Write', tool_input: { file_path: '/tmp/n5.md', content: 'real ' + EM + ' one\n```\ncode ' + EM + '\n```' } }, 'block', 'emdash')
 c('Edit removes an em dash (old 1, new 0)', { tool_name: 'Edit', tool_input: { file_path: '/tmp/x.md', old_string: 'a ' + EM + ' b', new_string: 'a, b' } }, 'pass', 'emdash')

@@ -13,6 +13,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.26.2] - 2026-09-28
+
+### Fixed
+
+- **`check_no_emdash.js` reads fences the same way under `skills/` and `agents/` as everywhere else.** A line starting with inline code written with three backticks (` ```a``` and more `) was taken as a fence there and dropped whole, so an em dash later on that line passed. Both cases now share one line walk and differ only in what they keep; the unused `stripCode` is gone.
+
+---
+
 ## [2.26.1] - 2026-09-27
 
 ### Fixed
