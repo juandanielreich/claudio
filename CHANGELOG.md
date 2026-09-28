@@ -13,6 +13,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.26.3] - 2026-09-28
+
+### Fixed
+
+- **`check_style.js` and `check_decision_prose.js` no longer let a stray backtick swallow the lines below it.** Their inline-code filter crossed newlines, so text between a lone backtick and the next one (possibly paragraphs later) went unchecked. Same fix `check_no_emdash.js` got in 2.26.2.
+
+---
+
 ## [2.26.2] - 2026-09-28
 
 ### Fixed

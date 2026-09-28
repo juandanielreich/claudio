@@ -49,8 +49,9 @@ process.stdin.on('end', () => {
   if (usedAskUserQuestion || !lastText) process.exit(0)
 
   // Strip code blocks and inline code: a list of options inside an example
-  // is not a decision being handed to the user.
-  const textOnly = lastText.replace(/```[\s\S]*?```/g, '').replace(/`[^`]*`/g, '')
+  // is not a decision being handed to the user. Inline code doesn't cross a newline, so a
+  // stray backtick can't swallow the lines below it.
+  const textOnly = lastText.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '')
 
   // No question, no decision. Cheap filter that exits the common case before
   // any structural regex runs.

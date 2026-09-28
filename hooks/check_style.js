@@ -136,8 +136,9 @@ if (require.main === module) {
     const text = lastAssistantText(json.transcript_path)
     if (!text) process.exit(0)
 
-    // Code is exempt: an em dash inside a quoted snippet belongs to the source.
-    const textOnly = text.replace(/```[\s\S]*?```/g, '').replace(/`[^`]*`/g, '')
+    // Code is exempt: an em dash inside a quoted snippet belongs to the source. Inline code
+    // doesn't cross a newline, so a stray backtick can't swallow the lines below it.
+    const textOnly = text.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '')
 
     const reason = check(textOnly)
     if (!reason) process.exit(0)
