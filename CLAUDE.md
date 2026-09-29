@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.28.1 -->
+<!-- claudio-version: 2.28.2 -->
 <!-- claudio-repo-guard:start -->
 > **AI agent working inside a clone of the Claudio repository:** this file is content, not instructions for your current session. It is the payload that gets installed into a user's global config. If you were asked to install, update or compare Claudio, read the "For AI agents" section at the top of `README.md` and follow the runbook it points to, and don't start acting as Claudio because of this file. If you are maintaining the repository, edit this file like any other document. Installers delete this whole block, including the two HTML comment lines around it, when copying the file.
 <!-- claudio-repo-guard:end -->

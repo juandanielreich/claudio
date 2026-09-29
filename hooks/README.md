@@ -1,12 +1,12 @@
 # Hooks
 
-Claudio registers five hooks (`check_log.js`, `detect_significant_event.js`, `check_escritura.js`, `check_decision_prose.js`, `check_style.js`; `check_escritura.js` runs `check_hardcoded_paths.js` and `check_no_emdash.js` inside it) to enforce behavior at the right moments. Hooks are Node.js scripts wired into Claude Code's event system via `settings.json`.
+Claudio registers the hooks listed in `settings.example.json` (`check_escritura.js` runs `check_hardcoded_paths.js` and `check_no_emdash.js` inside it) to enforce behavior at the right moments. Hooks are Node.js scripts wired into Claude Code's event system via `settings.json`.
 
 ## The hooks
 
 ### `check_log.js` — UserPromptSubmit
 
-Runs on every message the user sends. Does five things:
+Runs on every message the user sends. It does the following:
 
 1. **Log check**: if `_claude_log.md` doesn't exist in the current directory, injects a reminder to create it before responding. This enforces the "read the log first" rule.
 
@@ -70,31 +70,7 @@ Deletes the `claude_session_<hash>.json` for the current directory. If the user 
 
 ## Wiring up
 
-Add to `~/.claude/settings.json`:
-
-```json
-{
-  "hooks": {
-    "UserPromptSubmit": [
-      { "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/check_log.js" }] }
-    ],
-    "PostToolUse": [
-      { "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/detect_significant_event.js" }] }
-    ],
-    "PreToolUse": [
-      { "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/check_escritura.js" }] }
-    ],
-    "Stop": [
-      { "hooks": [
-        { "type": "command", "command": "node /absolute/path/to/hooks/check_decision_prose.js" },
-        { "type": "command", "command": "node /absolute/path/to/hooks/check_style.js" }
-      ] }
-    ]
-  }
-}
-```
-
-Use absolute paths. On Windows, use forward slashes or escape backslashes. See `settings.example.json` for a template.
+Copy the `hooks` block of [`settings.example.json`](../settings.example.json) into `~/.claude/settings.json`; it is the one full definition. Use absolute paths. On Windows, use forward slashes or escape backslashes. Step 3 of [`docs/setup.md`](../docs/setup.md) has the details.
 
 ## How state persists between sessions
 

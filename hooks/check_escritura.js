@@ -9,18 +9,14 @@
 // a blast radius. If this file throws, both controls are lost at once, and a hook
 // that throws neither blocks nor warns. Each check still lives in its own file and
 // is still importable alone; this file only dispatches.
-const path = require('path')
 
 // Each check exports check(json, raw) → { reason, short? } or null. First hit
 // blocks. The checks cover disjoint files, so order doesn't change the result
 // today; if they ever overlap, the first in the list wins.
 //
-// Each check is loaded inside its own try. The try around the call below can't protect
-// a load: a check whose file (or a shared `_lib_*.js` it requires) is missing throws
-// here, before any try exists, and took every check down with it. That is what an update
-// that forgets to copy a new lib file used to cause: no path check and no em-dash check,
-// with only a hook error on screen. Now the missing one is reported on stderr and the
-// rest keep running.
+// Each check loads in its own try, because the try around the call below doesn't cover
+// `require`: one missing file would take every check down. The missing one is reported
+// on stderr and the rest keep running.
 const CHECKS = ['./check_hardcoded_paths', './check_no_emdash'].map(file => {
   try { return require(file) } catch (e) {
     process.stderr.write('check_escritura: could not load ' + file + ' (' + (e.code || e.message) + '), skipping it\n')

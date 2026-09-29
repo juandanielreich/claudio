@@ -24,7 +24,8 @@ const fs = require('fs')
 const os = require('os')
 const path = require('path')
 
-const HOOK = path.join(__dirname, '..', 'hooks', 'check_escritura.js')
+const HOOKS_DIR = path.join(__dirname, '..', 'hooks')
+const HOOK = path.join(HOOKS_DIR, 'check_escritura.js')
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'claudio-hooktest-'))
 
 const EM = '\u2014'                 // em dash, escaped so this file has none of its own
@@ -62,7 +63,7 @@ let nTranscript = 0
 function stop(hookFile, name, text, expect) {
   const t = write('transcript-' + (++nTranscript) + '.jsonl',
     JSON.stringify({ message: { role: 'assistant', content: [{ type: 'text', text }] } }) + '\n')
-  c(name, { transcript_path: t }, expect, hookFile.replace(/\.js$/, ''), path.join(__dirname, '..', 'hooks', hookFile))
+  c(name, { transcript_path: t }, expect, hookFile.replace(/\.js$/, ''), path.join(HOOKS_DIR, hookFile))
 }
 
 // ---- check_hardcoded_paths ----
@@ -141,8 +142,8 @@ stop('check_decision_prose.js', 'Stop: a lettered options menu inside a ~~~ fenc
 // load, and the path check must keep blocking instead of dying with it.
 const NOLIB = path.join(TMP, 'hooks-without-lib')
 fs.mkdirSync(NOLIB)
-for (const f of fs.readdirSync(path.join(__dirname, '..', 'hooks'))) {
-  if (f.endsWith('.js') && f !== '_lib_text.js') fs.copyFileSync(path.join(__dirname, '..', 'hooks', f), path.join(NOLIB, f))
+for (const f of fs.readdirSync(HOOKS_DIR)) {
+  if (f.endsWith('.js') && f !== '_lib_text.js') fs.copyFileSync(path.join(HOOKS_DIR, f), path.join(NOLIB, f))
 }
 c('missing _lib_text.js: the path check still blocks', { tool_name: 'Write', tool_input: { file_path: '/tmp/nolib.js', content: 'const p = "' + winUser('someone') + '"' } }, 'block', 'dispatcher', path.join(NOLIB, 'check_escritura.js'))
 
@@ -160,6 +161,23 @@ for (const t of cases) {
   const ok = got === t.expect
   if (ok) pass++; else { fail++; failures.push({ ...t, got, reason: r.reason, malformed: r.malformed }) }
   evidence.push({ name: t.name, check: t.check, expect: t.expect, got, ok, reason: r.reason ? r.reason.slice(0, 120) : '', malformed: r.malformed || null })
+}
+
+// ---- docs: the hooks JSON in README.md must match settings.example.json ----
+// settings.example.json is the one full definition. README.md keeps a copy for the quick
+// install, and copies of this block drifted twice (2.27.1: an old write hook; 2.28.1: a
+// flat format Claude Code ignores). Same hooks, same shape, only the path prefix differs.
+{
+  const norm = s => JSON.stringify(JSON.parse(s), null, 0).replace(/node [^"]*?\/hooks\//g, 'node HOOKS/')
+  const example = norm(fs.readFileSync(path.join(__dirname, '..', 'settings.example.json'), 'utf8'))
+  const readme = fs.readFileSync(path.join(__dirname, '..', 'README.md'), 'utf8')
+  const blocks = [...readme.matchAll(/```json\n([\s\S]*?)```/g)].map(m => m[1]).filter(b => b.includes('"hooks"'))
+  const name = 'docs: README.md hooks block matches settings.example.json'
+  const ok = blocks.length === 1 && norm(blocks[0]) === example
+  const t = { name, check: 'docs', expect: 'match', got: ok ? 'match' : 'differs' }
+  if (ok) pass++; else { fail++; failures.push(t) }
+  cases.push(t)
+  evidence.push({ ...t, ok })
 }
 
 const stamp = new Date().toISOString()

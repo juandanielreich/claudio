@@ -47,33 +47,9 @@ After placing the agents, **restart Claude Code** — agents are loaded at sessi
 
 ## Step 3 — Wire up the hooks
 
-Edit (or create) `~/.claude/settings.json` and add the `hooks` block:
+Edit (or create) `~/.claude/settings.json` and add the `hooks` block of [`settings.example.json`](../settings.example.json), the one full definition of Claudio's hooks. If your file already has a `hooks` block, merge event by event instead of replacing it.
 
-```json
-{
-  "hooks": {
-    "UserPromptSubmit": [
-      { "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/check_log.js" }] }
-    ],
-    "PostToolUse": [
-      { "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/detect_significant_event.js" }] }
-    ],
-    "PreToolUse": [
-      { "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/check_escritura.js" }] }
-    ],
-    "Stop": [
-      { "hooks": [
-        { "type": "command", "command": "node /absolute/path/to/hooks/check_decision_prose.js" },
-        { "type": "command", "command": "node /absolute/path/to/hooks/check_style.js" }
-      ] }
-    ]
-  }
-}
-```
-
-Replace `/absolute/path/to/hooks/` with the actual path to the `hooks/` folder. Use absolute paths — relative paths don't work in hooks.
-
-See `settings.example.json` for the full template.
+Replace `<PATH_TO_CONFIG>` with the absolute path to your config directory. Use absolute paths: relative paths don't work in hooks. Keep the nested shape of the example (each group holds `"hooks": [{ "type": "command", "command": ... }]`); a flat `{ "command": ... }` entry is ignored.
 
 ## Step 4 — Open a project
 
@@ -95,7 +71,7 @@ Type any message in your project. You should see:
 - Claudio introduce itself and check the log
 - If you type "this is critical", a reminder about the Impact Analyst should appear
 
-To verify agents are loaded, type `/agents` in CC: the 7 agents should appear in the list.
+To verify agents are loaded, type `/agents` in CC: every agent file in `agents/` (all but `ARCHITECTURE.md`, `INDEX.md` and `README.md`) should appear in the list.
 
 ## Updating later
 

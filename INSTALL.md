@@ -36,7 +36,7 @@ Check, in order, whether the user already has:
 If any of these already have content, **do not overwrite blindly.** Ask the user which strategy they want, per file:
 
 - **CLAUDE.md** — options: (a) replace entirely, (b) append Claudio's content as a new section at the end of the existing file, (c) skip and let the user merge by hand. Default recommendation: (b) if the existing file has real content; (a) only if it's empty or trivial.
-- **settings.json**: never overwrite the whole file. Read it, then merge the `hooks` arrays. For each hook Claudio needs (`UserPromptSubmit` → `check_log.js`, `PostToolUse` → `detect_significant_event.js`, `PreToolUse` with matcher `Write|Edit` → `check_escritura.js`, `Stop` → `check_decision_prose.js` and `check_style.js`; `settings.example.json` has the full list), check whether an equivalent command is already registered for that event. If not, append it; don't replace the array or drop the user's existing hooks. Use the nested format of `settings.example.json`: each event holds groups shaped `{ "matcher": ..., "hooks": [{ "type": "command", "command": ... }] }`, with `matcher` only on `PreToolUse`. A flat entry (`{ "command": ... }` straight in the event array) is invalid and Claude Code ignores it, so compare by the `command` inside those groups. If the file already has flat Claudio entries (docs before 2.28.1 showed that shape), convert them to the nested form, with the user's OK.
+- **settings.json**: never overwrite the whole file. Read it, then merge the `hooks` arrays. For each hook Claudio needs (`UserPromptSubmit` → `check_log.js`, `PostToolUse` → `detect_significant_event.js`, `PreToolUse` with matcher `Write|Edit` → `check_escritura.js`, `Stop` → `check_decision_prose.js` and `check_style.js`; `settings.example.json` has the full list), check whether an equivalent command is already registered for that event. If not, append it; don't replace the array or drop the user's existing hooks. Use the nested format of `settings.example.json` and compare by the `command` inside each group. If the file already has flat Claudio entries, follow "Flat hook entries" in `UPDATE.md` § "Before either merge".
 - **agents/** — copy files that don't already exist by filename. If a name collides with one of the user's own agents (e.g. they already have a `qa.md`), ask before overwriting — don't silently replace a custom agent.
 
 ## Step 2 — Copy the payload
@@ -45,7 +45,7 @@ Follow `docs/setup.md` Steps 1-3 (files, agents, hooks), using the config direct
 
 **Important substitution:** this repository's `CLAUDE.md` uses the literal placeholder `<your-config-dir>` in its "System paths" table. Replace it with the actual resolved path for this user's OS before writing the file — don't leave placeholder text sitting in a live config.
 
-**Delete the repo guard.** Right under the version marker, `CLAUDE.md` has a block from a `<!-- claudio-repo-guard:start -->` line to a `<!-- claudio-repo-guard:end -->` line. It is there for agents working inside this repo, and in the user's config it would tell every session not to act as Claudio. Remove it, both marker lines included, from the file you write. Keep the `claudio-version` line. Check afterwards that the written file contains no `claudio-repo-guard`.
+**Delete the repo guard** from the file you write, as `docs/setup.md` Step 1 describes, and check afterwards that it contains no `claudio-repo-guard`.
 
 ## Step 3 — Wire hooks safely
 
@@ -57,7 +57,7 @@ Tell the user to restart Claude Code — agents are only loaded at session start
 - Run `/agents` — the copied agents should be listed.
 - Open any project and type a message — Claudio should introduce itself.
 - Type "this is critical" — a reminder about the Impact Analyst should appear.
-- Run each hook once by hand and check it exits with code 0 and prints nothing on stderr: `echo '{}' | node <config-dir>/hooks/<name>.js` for `check_log.js`, `detect_significant_event.js`, `check_escritura.js`, `check_decision_prose.js` and `check_style.js`. A missing file shows up here as `Cannot find module` (or, from `check_escritura.js`, `could not load`), which the checks above can miss.
+- **Hook check:** run every `command` registered in `settings.example.json` once by hand, with `'{}'` piped in (`echo '{}' | node <config-dir>/hooks/<name>.js`), and check each exits with code 0 and prints nothing on stderr. A missing file shows up here as `Cannot find module` (or, from `check_escritura.js`, `could not load`), which the checks above can miss.
 
 ## Step 5 — Point them at customization
 

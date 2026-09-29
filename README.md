@@ -66,7 +66,7 @@ Agents aren't called randomly. The system has a taxonomy that matches when the i
 
 ### 4. Hooks that enforce rules — not just prose
 
-Rules in CLAUDE.md get forgotten. Hooks don't. Five hooks enforce the critical behaviors, plus a script you run by hand:
+Rules in CLAUDE.md get forgotten. Hooks don't. These hooks enforce the critical behaviors, plus a script you run by hand:
 
 - **`check_log.js`** (UserPromptSubmit): verifies `_claude_log.md` exists, detects urgency keywords ("critical", "must not fail"), reminds of pending items, scans agent files for unprocessed learnings, summarizes session state on every message.
 - **`detect_significant_event.js`** (PostToolUse): silently tracks what changed — files edited, UI files, builds, deploys, git commits — to power the session-close proposal.
@@ -126,7 +126,7 @@ Clone this repo into a folder of its own, then copy `CLAUDE.md`, `project-strate
 - Mac/Linux: `~/.claude/`
 - Windows: `%USERPROFILE%\.claude\`
 
-Then open the copied `CLAUDE.md` and delete the block from the `claudio-repo-guard:start` line to the `claudio-repo-guard:end` line, both included. It tells an agent working inside the repo not to act as Claudio; left in your config, it would tell your own sessions the same. Keep the `claudio-version` line above it.
+Then delete the repo guard block from the copied `CLAUDE.md` and keep the `claudio-version` line above it, as `docs/setup.md` Step 1 describes.
 
 **2. Wire up the hooks**
 

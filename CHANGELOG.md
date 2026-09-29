@@ -13,6 +13,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.28.2] - 2026-09-29
+
+### Changed
+
+- **`settings.example.json` is the one full definition of the hooks.** `docs/setup.md` and `hooks/README.md` point to it instead of repeating the JSON. `README.md` keeps its quick-install copy, and `scripts/probar_hooks.js` now fails if that copy differs from the example; copies of this block drifted twice.
+- **`UPDATE.md` has one "Before either merge" section** for the three rules both merges share (copy new files, keep the repo guard out, fix flat hook entries), instead of repeating them in Step 2A and 2B. Its Step 4 points to the hook check in `INSTALL.md` Step 4, which now takes the hook list from `settings.example.json`.
+- `INSTALL.md` points to `docs/setup.md` for deleting the repo guard and to `UPDATE.md` for flat entries, instead of restating both.
+- Counts that went stale on every addition (hooks, agents, what `check_log.js` does) are gone from the docs.
+
+---
+
 ## [2.28.1] - 2026-09-29
 
 ### Fixed

@@ -31,14 +31,8 @@ const TEMPLATES = /[\\/](skills|agents)[\\/]/i
 // Everywhere else, only code blocks that declare a language (```js, ~~~text) are
 // ignored. A block with no language counts: measured over a real corpus, nearly every
 // untagged block with an em dash was a template or the author's own text (file trees,
-// schemas), not a quote. Indented code blocks (4+ spaces or a tab) stay exempt, since
-// they can't declare a language. That filter is a heuristic: a deeply indented prose
-// line inside a nested list is also stripped, an accepted trade-off since indented code
-// is more common than four-space-indented prose.
-//
-// Both cases read fences with the same walk (`stripCode` in _lib_text.js, shared with
-// the Stop hooks) and differ only in what they keep; inline code never crosses a
-// newline, so a stray backtick can't swallow the lines below it.
+// schemas), not a quote. What counts as a fence, an indented block or inline code is
+// defined once in _lib_text.js, shared with the Stop hooks.
 const strip = (text, isTemplate) => stripCode(text, { blocks: isTemplate ? false : 'tagged' })
 
 // Returns { reason } if the write should be blocked, or null. Never exits.
