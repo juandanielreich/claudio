@@ -52,6 +52,10 @@ The walk covers the current turn only: from the end of the transcript back to th
 
 If it produces false positives in your writing, narrow the patterns rather than removing the hook — the `X or Y?` pattern is the exposed one (an informational question with "or" inside is not a decision).
 
+### `_lib_text.js` (shared, not a hook)
+
+Decides what counts as code, and so is exempt: backtick and tilde fences (also indented inside a list item), indented code blocks, and inline spans. `check_style.js`, `check_decision_prose.js` and `check_no_emdash.js` all require it, so it must sit in the same folder as them. An unclosed fence exempts nothing.
+
 ### `clear_session_state.js` — manual
 
 Not a hook — a script you run at session close after the batched proposal:

@@ -85,6 +85,8 @@ Non-obvious logic not documented in the code.
 ---
 
 ## PENDING
+_Inside each color, highest day-to-day impact first. In 🟢, what waits on a decision of the user goes last, and what can only be tested on a real case goes after that. Full rule: CLAUDE.md, "Order inside each PENDING color"._
+
 🔴 **Blockers** (prevents moving forward)
 - ...
 

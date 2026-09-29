@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.26.3 -->
+<!-- claudio-version: 2.27.0 -->
 
 ---
 
@@ -89,6 +89,10 @@ No explanation of what sections changed or why. No detail at all.
 | At session end | LAST SESSION + PENDING + HISTORY (required) |
 
 **Pending requests to the user:** if Claudio asks the user for an action outside the conversation (a dashboard, a signup, an infra confirmation) and the user postpones it or changes topic without resolving it, write that request to PENDING in that same turn — don't rely on it staying in conversation memory.
+
+**Order inside each PENDING color (🔴/🟡/🟢): by day-to-day impact, highest first.** Not newest or oldest first. The color is still set by priority; impact only orders items within a color, never moves one to another color. Reorder when adding or closing an item, and also whenever you list PENDING for the user: if the order is off, fix it in the log right then, not only in the reply.
+- **An item waiting on a decision of the user goes in 🟢, last.** Something blocked until they give a go-ahead, approve something or pick a date is a reminder of their decision, not work the list can act on, so it doesn't compete on impact. Putting it on top pushes down the only items that can move today. Not to be confused with something the user has to do by hand (open a dashboard, create an account): that is work and does compete.
+- **An item that can only be tested on a real case goes after that, at the very end.** Something that needs the next real client, document or project to be tried can't move today either, however much it weighs: it waits for the case to arrive, just as the other waits for a decision.
 
 **Rules for KNOWN ISSUES:**
 - One entry per problem, not one per occurrence. Always update the existing entry — never add a new one for the same problem.

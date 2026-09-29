@@ -13,6 +13,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.27.0] - 2026-09-29
+
+### Added
+
+- **Order rule for PENDING** (`CLAUDE.md`, "Order inside each PENDING color", with a one-line summary in `templates/_log_template.md`). Inside each color, highest day-to-day impact first. Two exceptions at the end of 🟢: what waits on a decision of the user goes last, and what can only be tested on a real case goes after that.
+- **`hooks/_lib_text.js`**, the shared definition of what counts as code for the style checks. Not a hook: it has no `settings.json` entry, but `check_style.js`, `check_decision_prose.js` and `check_no_emdash.js` require it. `UPDATE.md` now says to copy new files like this one.
+
+### Changed
+
+- **`check_style.js` and `check_decision_prose.js` read code the same way `check_no_emdash.js` does.** Their regex missed `~~~` fences, and a triple backtick in the middle of a line (as in "type ``` to open a fence") paired with the next fence and exempted all the prose in between. They now also exempt indented code blocks (4+ spaces or a tab), and with them any prose line indented 4+ spaces, such as a deep sub-bullet. Net effect: an em dash or an options menu inside a `~~~` block no longer blocks the reply.
+- `scripts/probar_hooks.js` covers the two Stop hooks end to end, with a one-line transcript per case (55 cases; four of them fail on 2.26.3).
+
+---
+
 ## [2.26.3] - 2026-09-28
 
 ### Fixed

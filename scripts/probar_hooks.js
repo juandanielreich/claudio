@@ -35,8 +35,8 @@ const winUserFwd = n => 'C:' + S + 'Users' + S + n + S + 'x'
 const homeUser = n => S + 'home' + S + n + S + 'x'
 const macUser = n => S + 'Users' + S + n + S + 'x'
 
-function run(payload) {
-  const res = spawnSync('node', [HOOK], { input: JSON.stringify(payload), encoding: 'utf8' })
+function run(payload, hook = HOOK) {
+  const res = spawnSync('node', [hook], { input: JSON.stringify(payload), encoding: 'utf8' })
   const out = (res.stdout || '').trim()
   if (!out) return { blocked: false, reason: '' }
   try {
@@ -54,7 +54,16 @@ function write(name, content) {
 }
 
 const cases = []
-function c(name, payload, expect, check) { cases.push({ name, payload, expect, check }) }
+function c(name, payload, expect, check, hook) { cases.push({ name, payload, expect, check, hook }) }
+
+// Stop hooks read the last assistant reply from the transcript, so each case writes a
+// one-line transcript and points the payload at it.
+let nTranscript = 0
+function stop(hookFile, name, text, expect) {
+  const t = write('transcript-' + (++nTranscript) + '.jsonl',
+    JSON.stringify({ message: { role: 'assistant', content: [{ type: 'text', text }] } }) + '\n')
+  c(name, { transcript_path: t }, expect, hookFile.replace(/\.js$/, ''), path.join(__dirname, '..', 'hooks', hookFile))
+}
 
 // ---- check_hardcoded_paths ----
 c('hardcoded path in .js', { tool_name: 'Write', tool_input: { file_path: '/tmp/a.js', content: 'const p = "' + winUser('someone') + '"' } }, 'block', 'paths')
@@ -116,6 +125,17 @@ c('em dash inside a tilde ~~~ fence with no language counts', { tool_name: 'Writ
 c('em dash inside a tilde ~~~text fence passes', { tool_name: 'Write', tool_input: { file_path: '/tmp/ntb.md', content: 'prose\n~~~text\ncode ' + EM + ' here\n~~~\n' } }, 'pass', 'emdash')
 c('em dash inside a 4-space indented code block passes', { tool_name: 'Write', tool_input: { file_path: '/tmp/ni.md', content: 'prose\n\n    code ' + EM + ' here\n' } }, 'pass', 'emdash')
 
+// ---- Stop hooks: which forms count as code (_lib_text.js, shared with check_no_emdash) ----
+stop('check_style.js', 'Stop: em dash in plain prose blocks (control)', 'Some prose ' + EM + ' here.', 'block')
+stop('check_style.js', 'Stop: em dash inside a ~~~ fence passes', 'Prose.\n\n~~~\nquoted ' + EM + ' source\n~~~\n\nMore prose.', 'pass')
+stop('check_style.js', 'Stop: em dash inside a fence indented in a list item passes', '- item\n\n    ```\n    quoted ' + EM + ' source\n    ```\n', 'pass')
+stop('check_style.js', 'Stop: an unclosed fence exempts nothing', 'Prose.\n```\nstill prose ' + EM + ' here', 'block')
+stop('check_style.js', 'Stop: inline "```a``` and more" is not a fence, the em dash below still counts', 'See ```a``` and more.\n\nThen ' + EM + ' this.\n\n```\nx\n```', 'block')
+stop('check_style.js', 'Stop: em dash inside a 4-space indented code block passes', 'Prose.\n\n    quoted ' + EM + ' source\n\nMore prose.', 'pass')
+stop('check_style.js', 'Stop: a triple backtick mid-line does not pair with the next fence', 'Type ``` to open a fence.\n\nProse ' + EM + ' here.\n\n```\ncode\n```', 'block')
+stop('check_decision_prose.js', 'Stop: a lettered options menu in prose blocks (control)', 'Which one?\n\n[A] first\n[B] second', 'block')
+stop('check_decision_prose.js', 'Stop: a lettered options menu inside a ~~~ fence passes', 'Here is the template?\n\n~~~\n[A] first\n[B] second\n~~~', 'pass')
+
 // ---- dispatcher resilience / general ----
 c('empty payload -> pass', {}, 'pass', 'dispatcher')
 c('no tool_name -> pass', { tool_input: { file_path: '/tmp/a.js', content: 'x' } }, 'pass', 'dispatcher')
@@ -126,7 +146,7 @@ let pass = 0, fail = 0
 const failures = []
 const evidence = []
 for (const t of cases) {
-  const r = run(t.payload)
+  const r = run(t.payload, t.hook)
   const got = r.blocked ? 'block' : 'pass'
   const ok = got === t.expect
   if (ok) pass++; else { fail++; failures.push({ ...t, got, reason: r.reason, malformed: r.malformed }) }
@@ -139,7 +159,7 @@ fs.mkdirSync(evidenceDir, { recursive: true })
 const evidenceFile = path.join(evidenceDir, 'probar_hooks-latest.json')
 fs.writeFileSync(evidenceFile, JSON.stringify({ stamp, total: cases.length, pass, fail, cases: evidence }, null, 2))
 
-console.log('\nWrite-hook test suite: ' + pass + '/' + cases.length + ' passed, ' + fail + ' failed')
+console.log('\nHook test suite: ' + pass + '/' + cases.length + ' passed, ' + fail + ' failed')
 if (fail > 0) {
   console.log('\nFAILURES:')
   for (const f of failures) {

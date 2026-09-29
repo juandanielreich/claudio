@@ -17,6 +17,7 @@
 // and agents/ every code block counts (see TEMPLATES and strip below).
 const fs = require('fs')
 const path = require('path')
+const { stripCode } = require('./_lib_text')
 
 const EM_DASH = /—/g
 const count = s => (s.match(EM_DASH) || []).length
@@ -35,51 +36,10 @@ const TEMPLATES = /[\\/](skills|agents)[\\/]/i
 // line inside a nested list is also stripped, an accepted trade-off since indented code
 // is more common than four-space-indented prose.
 //
-// Both cases read fences with the same walk (`segments`) and differ only in what they
-// keep; inline code never crosses a newline, so a stray backtick can't swallow the
-// lines below it.
-function strip(text, isTemplate) {
-  const indented = l => /^( {4,}|\t)/.test(l)
-  const out = []
-  for (const s of segments(String(text))) {
-    if (s.prose !== undefined) {
-      if (isTemplate || !indented(s.prose)) out.push(s.prose)
-    } else if (isTemplate || !s.info.trim()) {
-      out.push(...s.lines)
-    } else {
-      out.push('')
-    }
-  }
-  return out.join('\n').replace(/`[^`\n]*`/g, '')
-}
-
-// Splits the text, in order, into `{ prose: line }` and `{ info, lines }` (a closed block
-// without its fence lines). It walks the lines instead of using a regex because the
-// closing fence of a tagged block is a bare fence line that a regex would take as the
-// opening of an untagged one.
-// A fence may be indented any amount (inside a list item it sits at 4+ spaces, and the
-// CommonMark cap of 3 left it exempt). A backtick fence whose info string contains a
-// backtick is not a fence but inline code ("```a``` and more"). An unclosed fence
-// exempts nothing and doesn't swallow what follows: its line counts as prose and the
-// walk goes on, so a block further down is still recognized.
-const OPENING = /^[ \t]*(`{3,}|~{3,})(.*)$/
-function segments(text) {
-  const lines = text.split('\n')
-  const out = []
-  let i = 0
-  while (i < lines.length) {
-    const m = lines[i].replace(/\r$/, '').match(OPENING)
-    if (!m || (m[1][0] === '`' && m[2].includes('`'))) { out.push({ prose: lines[i] }); i++; continue }
-    const fence = m[1]
-    const closing = new RegExp('^[ \\t]*' + (fence[0] === '`' ? '`' : '~') + '{' + fence.length + ',}[ \\t]*$')
-    let j = i + 1
-    while (j < lines.length && !closing.test(lines[j].replace(/\r$/, ''))) j++
-    if (j >= lines.length) { out.push({ prose: m[2] }); i++; continue }
-    out.push({ info: m[2], lines: lines.slice(i + 1, j) })
-    i = j + 1
-  }
-  return out
-}
+// Both cases read fences with the same walk (`stripCode` in _lib_text.js, shared with
+// the Stop hooks) and differ only in what they keep; inline code never crosses a
+// newline, so a stray backtick can't swallow the lines below it.
+const strip = (text, isTemplate) => stripCode(text, { blocks: isTemplate ? false : 'tagged' })
 
 // Returns { reason } if the write should be blocked, or null. Never exits.
 // `raw` is the unparsed payload: with no em dash anywhere in it there is no

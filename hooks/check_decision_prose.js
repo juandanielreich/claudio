@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { stripCode } = require('./_lib_text')
 
 let inputData = ''
 process.stdin.setEncoding('utf8')
@@ -49,9 +50,9 @@ process.stdin.on('end', () => {
   if (usedAskUserQuestion || !lastText) process.exit(0)
 
   // Strip code blocks and inline code: a list of options inside an example
-  // is not a decision being handed to the user. Inline code doesn't cross a newline, so a
-  // stray backtick can't swallow the lines below it.
-  const textOnly = lastText.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '')
+  // is not a decision being handed to the user. Which forms count as code lives in
+  // _lib_text.js, shared with the other hooks.
+  const textOnly = stripCode(lastText)
 
   // No question, no decision. Cheap filter that exits the common case before
   // any structural regex runs.

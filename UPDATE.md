@@ -25,6 +25,8 @@ You have three versions of each tracked file (`CLAUDE.md`, `settings.example.jso
 - **local** — the user's current installed file (read directly, no git needed)
 - **upstream** — the file as it exists on disk in this cloned repo right now, at `HEAD` (also a plain read — you're already sitting in that checkout, don't `git show HEAD:...` it)
 
+A file that exists upstream but neither at the base tag nor locally is new: there is nothing to merge, just copy it. This matters for `hooks/`, where a shared `_lib_*.js` has no `settings.json` entry of its own but the hooks that `require` it fail without it.
+
 Before reasoning section-by-section, try a mechanical merge first: `git merge-file -p --diff3 <local> <base> <upstream>` (or `git merge-tree`). Everything that merges without `<<<<<<<` conflict markers is resolved for free — upstream-only changes and local-only changes both fold in automatically with zero ambiguity. You only need to reason, section by section, about the hunks the tool actually flags as conflicting:
 
 - **Tool reports no conflict for a section** → trust it, move on. (Covers: changed only in upstream; changed only in local; unchanged in both; new section added upstream; section removed upstream but you still have local content — the merge tool keeps it, don't second-guess that.)
@@ -41,6 +43,7 @@ Then, for each changed file:
 - **Before adding a new rule/section to `CLAUDE.md`:** check whether a heading with the same or very similar name already exists in the user's file. If it does, skip it, don't duplicate. If it exists but the *content* differs meaningfully from the repo's version, flag it and ask the user which to keep — you can't tell here whether the difference is their customization or just staleness, so always ask, don't guess.
 - **`settings.json` hooks:** merge the `hooks` array, don't replace it. Check by matcher + command path, not by array position.
 - **`agents/*.md`:** if a new agent file was added upstream and the filename doesn't collide with anything the user has, copy it. If it collides, ask before overwriting.
+- **`hooks/*.js`:** a new file upstream (such as a shared `_lib_*.js`) is copied next to the hooks, even if no `settings.json` entry points at it: the hooks `require` it, and without it they fail on every run.
 - **Removed/renamed rules:** don't auto-delete the user's local copy — mention it and let them decide.
 
 ## Step 3 — Bump the version marker

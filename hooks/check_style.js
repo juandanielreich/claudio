@@ -18,6 +18,7 @@
 // often a candidate rule would fire before adding it.
 
 const fs = require('fs')
+const { stripCode } = require('./_lib_text')
 
 function check(textOnly) {
   let hit = null
@@ -136,9 +137,9 @@ if (require.main === module) {
     const text = lastAssistantText(json.transcript_path)
     if (!text) process.exit(0)
 
-    // Code is exempt: an em dash inside a quoted snippet belongs to the source. Inline code
-    // doesn't cross a newline, so a stray backtick can't swallow the lines below it.
-    const textOnly = text.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '')
+    // Code is exempt: an em dash inside a quoted snippet belongs to the source. Which forms
+    // count as code lives in _lib_text.js, shared with check_no_emdash.js.
+    const textOnly = stripCode(text)
 
     const reason = check(textOnly)
     if (!reason) process.exit(0)
