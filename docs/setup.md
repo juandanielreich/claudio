@@ -57,7 +57,11 @@ Edit (or create) `~/.claude/settings.json` and add the `hooks` block:
       { "command": "node /absolute/path/to/hooks/detect_significant_event.js" }
     ],
     "PreToolUse": [
-      { "matcher": "Write|Edit", "command": "node /absolute/path/to/hooks/check_hardcoded_paths.js" }
+      { "matcher": "Write|Edit", "command": "node /absolute/path/to/hooks/check_escritura.js" }
+    ],
+    "Stop": [
+      { "command": "node /absolute/path/to/hooks/check_decision_prose.js" },
+      { "command": "node /absolute/path/to/hooks/check_style.js" }
     ]
   }
 }

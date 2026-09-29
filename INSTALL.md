@@ -27,7 +27,7 @@ Check, in order, whether the user already has:
 If any of these already have content, **do not overwrite blindly.** Ask the user which strategy they want, per file:
 
 - **CLAUDE.md** — options: (a) replace entirely, (b) append Claudio's content as a new section at the end of the existing file, (c) skip and let the user merge by hand. Default recommendation: (b) if the existing file has real content; (a) only if it's empty or trivial.
-- **settings.json** — never overwrite the whole file. Read it, then merge the `hooks` arrays. For each hook Claudio needs (`UserPromptSubmit` → `check_log.js`, `PostToolUse` → `detect_significant_event.js`, `PreToolUse` with matcher `Write|Edit` → `check_hardcoded_paths.js`), check whether an equivalent command is already registered for that event. If not, append it — don't replace the array or drop the user's existing hooks.
+- **settings.json** — never overwrite the whole file. Read it, then merge the `hooks` arrays. For each hook Claudio needs (`UserPromptSubmit` → `check_log.js`, `PostToolUse` → `detect_significant_event.js`, `PreToolUse` with matcher `Write|Edit` → `check_escritura.js`, `Stop` → `check_decision_prose.js` and `check_style.js`; `settings.example.json` has the full list), check whether an equivalent command is already registered for that event. If not, append it — don't replace the array or drop the user's existing hooks.
 - **agents/** — copy files that don't already exist by filename. If a name collides with one of the user's own agents (e.g. they already have a `qa.md`), ask before overwriting — don't silently replace a custom agent.
 
 ## Step 2 — Copy the payload

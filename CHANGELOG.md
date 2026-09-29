@@ -13,6 +13,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.27.1] - 2026-09-29
+
+### Fixed
+
+- **The install docs registered the old write hook.** `INSTALL.md`, `docs/setup.md` and the example in `hooks/README.md` wired `check_hardcoded_paths.js` directly, so anyone installing from them got no em dash check on writes, and none of the three registered `check_style.js`. They now list the same hooks as `settings.example.json`: `check_escritura.js` for `Write|Edit` and both `Stop` hooks. The hooks table in `docs/how-it-works.md` gained the two missing rows.
+
+---
+
 ## [2.27.0] - 2026-09-29
 
 ### Added
