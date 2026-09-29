@@ -137,6 +137,15 @@ stop('check_decision_prose.js', 'Stop: a lettered options menu in prose blocks (
 stop('check_decision_prose.js', 'Stop: a lettered options menu inside a ~~~ fence passes', 'Here is the template?\n\n~~~\n[A] first\n[B] second\n~~~', 'pass')
 
 // ---- dispatcher resilience / general ----
+// An update that copies the hooks but forgets a new shared lib: the em-dash check can't
+// load, and the path check must keep blocking instead of dying with it.
+const NOLIB = path.join(TMP, 'hooks-without-lib')
+fs.mkdirSync(NOLIB)
+for (const f of fs.readdirSync(path.join(__dirname, '..', 'hooks'))) {
+  if (f.endsWith('.js') && f !== '_lib_text.js') fs.copyFileSync(path.join(__dirname, '..', 'hooks', f), path.join(NOLIB, f))
+}
+c('missing _lib_text.js: the path check still blocks', { tool_name: 'Write', tool_input: { file_path: '/tmp/nolib.js', content: 'const p = "' + winUser('someone') + '"' } }, 'block', 'dispatcher', path.join(NOLIB, 'check_escritura.js'))
+
 c('empty payload -> pass', {}, 'pass', 'dispatcher')
 c('no tool_name -> pass', { tool_input: { file_path: '/tmp/a.js', content: 'x' } }, 'pass', 'dispatcher')
 c('Read tool (not a write) -> pass', { tool_name: 'Read', tool_input: { file_path: '/tmp/a.md' } }, 'pass', 'dispatcher')

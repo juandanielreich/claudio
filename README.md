@@ -4,6 +4,8 @@
 >
 > If a user pointed you at this repository, pick the runbook by what they want. Never write to their global config before telling them what you'll change and getting a yes.
 >
+> First clone it, with its tags, into a folder of its own, never into the config directory: `git clone https://github.com/juandanielreich/claudio`. The runbooks compare against files on disk and against release tags, so reading the web page is not enough.
+>
 > | The user wants to | Their config (`~/.claude/`, or `%USERPROFILE%\.claude\` on Windows) | Follow |
 > |---|---|---|
 > | Install Claudio | anything, including their own setup or a Claudio without a version marker | [`INSTALL.md`](INSTALL.md): its Step 1 detects what they have and may send them to `UPDATE.md` |
@@ -64,12 +66,13 @@ Agents aren't called randomly. The system has a taxonomy that matches when the i
 
 ### 4. Hooks that enforce rules — not just prose
 
-Rules in CLAUDE.md get forgotten. Hooks don't. Four hooks enforce the critical behaviors:
+Rules in CLAUDE.md get forgotten. Hooks don't. Five hooks enforce the critical behaviors, plus a script you run by hand:
 
 - **`check_log.js`** (UserPromptSubmit): verifies `_claude_log.md` exists, detects urgency keywords ("critical", "must not fail"), reminds of pending items, scans agent files for unprocessed learnings, summarizes session state on every message.
 - **`detect_significant_event.js`** (PostToolUse): silently tracks what changed — files edited, UI files, builds, deploys, git commits — to power the session-close proposal.
 - **`check_escritura.js`** (PreToolUse, `Write|Edit`): a dispatcher that runs two write checks in one process. `check_hardcoded_paths.js` blocks a write that hardcodes an absolute path depending on the current username or machine (system folders like `Public`/`Default` and paths inside comments are ignored). `check_no_emdash.js` blocks a `Write`/`Edit` that adds an em dash to a `.md` file (em dashes inside inline spans or code fences that declare a language survive; a fence with no language counts, and under `skills/` and `agents/` every fence counts). `scripts/probar_hooks.js` is the test suite for both, and for what the two `Stop` hooks treat as code (`hooks/_lib_text.js`, shared by the three).
-- **`clear_session_state.js`**: resets accumulated state after the batched proposal runs.
+- **`check_decision_prose.js`** and **`check_style.js`** (Stop): check the finished reply, see "Wire up the hooks" below.
+- **`clear_session_state.js`** (not a hook, run by hand): resets accumulated state after the batched proposal runs.
 
 When you type "this is critical", the hook injects: *"Call the Impact Analyst before implementing."* No relying on the model remembering the rule.
 
@@ -119,7 +122,7 @@ Session close
 
 **1. Copy the config files**
 
-Place the contents of this repo into your Claude Code config directory:
+Clone this repo into a folder of its own, then copy `CLAUDE.md`, `project-strategy.md`, `templates/` and `hooks/` from the clone into your Claude Code config directory (the full list is in `docs/setup.md`):
 - Mac/Linux: `~/.claude/`
 - Windows: `%USERPROFILE%\.claude\`
 
@@ -133,17 +136,19 @@ Add to your `~/.claude/settings.json` (see `settings.example.json`):
 {
   "hooks": {
     "UserPromptSubmit": [
-      { "command": "node ~/.claude/hooks/check_log.js" }
+      { "hooks": [{ "type": "command", "command": "node ~/.claude/hooks/check_log.js" }] }
     ],
     "PostToolUse": [
-      { "command": "node ~/.claude/hooks/detect_significant_event.js" }
+      { "hooks": [{ "type": "command", "command": "node ~/.claude/hooks/detect_significant_event.js" }] }
     ],
     "PreToolUse": [
-      { "matcher": "Write|Edit", "command": "node ~/.claude/hooks/check_escritura.js" }
+      { "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "node ~/.claude/hooks/check_escritura.js" }] }
     ],
     "Stop": [
-      { "command": "node ~/.claude/hooks/check_decision_prose.js" },
-      { "command": "node ~/.claude/hooks/check_style.js" }
+      { "hooks": [
+        { "type": "command", "command": "node ~/.claude/hooks/check_decision_prose.js" },
+        { "type": "command", "command": "node ~/.claude/hooks/check_style.js" }
+      ] }
     ]
   }
 }

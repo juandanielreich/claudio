@@ -12,7 +12,7 @@ This file is for a user who **already has Claudio installed** and wants the newe
 
 Use this when the user asks to compare their setup with Claudio, to see what an install or an update would change, or when `INSTALL.md` found a translated or rewritten Claudio. It works for any config, Claudio or not. **Write nothing:** no file in their config changes, and the version marker is not touched.
 
-1. Resolve the config directory (`~/.claude/`, or `%USERPROFILE%\.claude\` on Windows) and read their `CLAUDE.md`, the `hooks` block of `settings.json`, and the list of files in `agents/`.
+1. Resolve the config directory (`~/.claude/`, or `%USERPROFILE%\.claude\` on Windows) and read their `CLAUDE.md`, the `hooks` block of `settings.json` (including whether its entries are flat, see "Flat hook entries" below), the list of files in `agents/` and in `hooks/`, and their log template if they have one.
 2. Compare against this repo as it is on disk: `CLAUDE.md` (ignoring the `claudio-repo-guard` block), `settings.example.json`, `agents/`, `hooks/`, `templates/_log_template.md`.
 3. Match `CLAUDE.md` rules by what they say, not by heading text: a translated or rewritten Claudio shares no English headings with this repo, and matching by heading would report every rule as new.
 4. Report, one line per item:
@@ -30,6 +30,10 @@ Use this when the user asks to compare their setup with Claudio, to see what an 
    - **Found, and a matching `vX.Y.Z` git tag exists in this repo:** you can do a real three-way merge — go to Step 2A.
    - **Found, but no matching tag exists** (a fork without its own tags, or a canonical release that shipped without one): tell the user there's no base snapshot for their exact version. Fall back to Step 2B, treating their marker version as the "installed version" for the changelog summary.
    - **Not found** (install predates the marker, before 2.9.0, or it's a fork or a translated copy): tell the user this explicitly, then run the structural check in `INSTALL.md` Step 1 ("No marker? Check whether it is a Claudio anyway"). If it shares this repo's English section headings, treat the installed version as `0.0.0` for Step 2B, where every changelog entry is "new" to them. If it is translated or rewritten, don't use Step 2B: it matches by heading, finds none, and would append every section. Go to "Compare only" instead. If it isn't a Claudio at all, use `INSTALL.md`.
+
+## Flat hook entries (check before Step 2A or 2B)
+
+Docs and `settings.example.json` before 2.28.1 showed hooks as flat entries, `{ "command": ... }` or `{ "matcher": ..., "command": ... }` straight in the event array. Claude Code requires groups shaped `{ "matcher": ..., "hooks": [{ "type": "command", "command": ... }] }` and ignores the flat ones, so an install that copied them never ran its hooks. If the user's `settings.json` has flat entries pointing at Claudio hooks, tell them, and with their OK rewrite those entries in the nested form of the current `settings.example.json`. Leave their other hooks as they are. Don't three-way merge `settings.example.json` across that change: its old base is flat and the new one nested, so the merge would produce a mix.
 
 ## Step 2A — Three-way merge (when a base tag exists)
 
@@ -57,7 +61,7 @@ Read this repo's `CHANGELOG.md` and collect every entry newer than the installed
 Then, for each changed file:
 - **Never blind-overwrite.** Read the user's file first, merge in only the sections/rules that changed.
 - **Before adding a new rule/section to `CLAUDE.md`:** check whether a heading with the same or very similar name already exists in the user's file. If it does, skip it, don't duplicate. If it exists but the *content* differs meaningfully from the repo's version, flag it and ask the user which to keep — you can't tell here whether the difference is their customization or just staleness, so always ask, don't guess.
-- **`settings.json` hooks:** merge the `hooks` array, don't replace it. Check by matcher + command path, not by array position.
+- **`settings.json` hooks:** merge the `hooks` array, don't replace it. Check by matcher + command path, not by array position. Use the nested format of `settings.example.json` (see "Flat hook entries" above).
 - **`agents/*.md`:** if a new agent file was added upstream and the filename doesn't collide with anything the user has, copy it. If it collides, ask before overwriting.
 - **`hooks/*.js`:** a new file upstream (such as a shared `_lib_*.js`) is copied next to the hooks, even if no `settings.json` entry points at it: the hooks `require` it, and without it they fail on every run.
 - **Removed/renamed rules:** don't auto-delete the user's local copy — mention it and let them decide.
@@ -72,6 +76,7 @@ After applying, update `<!-- claudio-version: X.Y.Z -->` in the user's `~/.claud
 Tell the user to restart Claude Code (agents and hooks are only loaded at session start). Then:
 - Run `/agents`, and any newly copied agents should be listed.
 - Open any project: Claudio should introduce itself as before, nothing should have broken.
+- Run each hook once by hand and check it exits with code 0 and prints nothing on stderr: `echo '{}' | node <config-dir>/hooks/<name>.js` for `check_log.js`, `detect_significant_event.js`, `check_escritura.js`, `check_decision_prose.js` and `check_style.js`. A shared file the update forgot to copy shows up here as `Cannot find module` (or, from `check_escritura.js`, `could not load`); the two checks above pass without noticing it.
 
 ## Step 5 — Offer to set up notifications for next time
 

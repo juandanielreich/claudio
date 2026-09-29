@@ -14,10 +14,19 @@ const path = require('path')
 // Each check exports check(json, raw) → { reason, short? } or null. First hit
 // blocks. The checks cover disjoint files, so order doesn't change the result
 // today; if they ever overlap, the first in the list wins.
-const CHECKS = [
-  require('./check_hardcoded_paths'),
-  require('./check_no_emdash')
-]
+//
+// Each check is loaded inside its own try. The try around the call below can't protect
+// a load: a check whose file (or a shared `_lib_*.js` it requires) is missing throws
+// here, before any try exists, and took every check down with it. That is what an update
+// that forgets to copy a new lib file used to cause: no path check and no em-dash check,
+// with only a hook error on screen. Now the missing one is reported on stderr and the
+// rest keep running.
+const CHECKS = ['./check_hardcoded_paths', './check_no_emdash'].map(file => {
+  try { return require(file) } catch (e) {
+    process.stderr.write('check_escritura: could not load ' + file + ' (' + (e.code || e.message) + '), skipping it\n')
+    return null
+  }
+}).filter(Boolean)
 
 let inputData = ''
 process.stdin.setEncoding('utf8')

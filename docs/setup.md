@@ -9,7 +9,7 @@ This guide assumes a clean `~/.claude/` with no existing config. If you already 
 
 ## Step 1 — Copy the files
 
-Clone this repo or copy its contents into your Claude Code config directory:
+Clone this repo into a folder of its own (not into your config directory), then copy the files listed below from the clone into your Claude Code config directory:
 
 | OS | Config directory |
 |---|---|
@@ -53,17 +53,19 @@ Edit (or create) `~/.claude/settings.json` and add the `hooks` block:
 {
   "hooks": {
     "UserPromptSubmit": [
-      { "command": "node /absolute/path/to/hooks/check_log.js" }
+      { "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/check_log.js" }] }
     ],
     "PostToolUse": [
-      { "command": "node /absolute/path/to/hooks/detect_significant_event.js" }
+      { "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/detect_significant_event.js" }] }
     ],
     "PreToolUse": [
-      { "matcher": "Write|Edit", "command": "node /absolute/path/to/hooks/check_escritura.js" }
+      { "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/check_escritura.js" }] }
     ],
     "Stop": [
-      { "command": "node /absolute/path/to/hooks/check_decision_prose.js" },
-      { "command": "node /absolute/path/to/hooks/check_style.js" }
+      { "hooks": [
+        { "type": "command", "command": "node /absolute/path/to/hooks/check_decision_prose.js" },
+        { "type": "command", "command": "node /absolute/path/to/hooks/check_style.js" }
+      ] }
     ]
   }
 }
@@ -93,7 +95,7 @@ Type any message in your project. You should see:
 - Claudio introduce itself and check the log
 - If you type "this is critical", a reminder about the Impact Analyst should appear
 
-To verify agents are loaded, type `/agents` in CC — the 6 agents should appear in the list.
+To verify agents are loaded, type `/agents` in CC: the 7 agents should appear in the list.
 
 ## Updating later
 
@@ -103,7 +105,7 @@ Once installed, don't repeat these steps by hand to pick up new rules — tell y
 
 **Agents not showing up:** Confirm `~/.claude/agents/` exists and contains `.md` files with valid YAML frontmatter (`name:` field). Restart CC.
 
-**Hooks not running:** Check that the paths in `settings.json` are absolute and point to existing files. Run `node /path/to/hooks/check_log.js` manually to see if it errors.
+**Hooks not running:** Check that each entry in `settings.json` uses the nested shape of `settings.example.json` (`"hooks": [{ "type": "command", "command": ... }]` inside each group). A flat `{ "command": ... }` entry, as older versions of these docs showed, is ignored. Check that the paths are absolute and point to existing files. Run `node /path/to/hooks/check_log.js` manually to see if it errors.
 
 **Hook errors in CC:** CC shows hook errors in the conversation. Common cause: Node.js not in PATH when CC starts. Try launching CC from a terminal that has Node available.
 

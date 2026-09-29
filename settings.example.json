@@ -2,26 +2,32 @@
   "hooks": {
     "UserPromptSubmit": [
       {
-        "command": "node <PATH_TO_CONFIG>/hooks/check_log.js"
+        "hooks": [
+          { "type": "command", "command": "node <PATH_TO_CONFIG>/hooks/check_log.js" }
+        ]
       }
     ],
     "PostToolUse": [
       {
-        "command": "node <PATH_TO_CONFIG>/hooks/detect_significant_event.js"
+        "hooks": [
+          { "type": "command", "command": "node <PATH_TO_CONFIG>/hooks/detect_significant_event.js" }
+        ]
       }
     ],
     "PreToolUse": [
       {
         "matcher": "Write|Edit",
-        "command": "node <PATH_TO_CONFIG>/hooks/check_escritura.js"
+        "hooks": [
+          { "type": "command", "command": "node <PATH_TO_CONFIG>/hooks/check_escritura.js" }
+        ]
       }
     ],
     "Stop": [
       {
-        "command": "node <PATH_TO_CONFIG>/hooks/check_decision_prose.js"
-      },
-      {
-        "command": "node <PATH_TO_CONFIG>/hooks/check_style.js"
+        "hooks": [
+          { "type": "command", "command": "node <PATH_TO_CONFIG>/hooks/check_decision_prose.js" },
+          { "type": "command", "command": "node <PATH_TO_CONFIG>/hooks/check_style.js" }
+        ]
       }
     ]
   }

@@ -13,6 +13,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.28.1] - 2026-09-29
+
+### Fixed
+
+- **The hook examples used a format Claude Code ignores.** `settings.example.json`, `README.md`, `docs/setup.md` and `hooks/README.md` showed flat entries (`{ "command": ... }` straight in the event array) since the first release. Claude Code requires each group to hold `"hooks": [{ "type": "command", "command": ... }]`, so an install that copied those examples had no hooks running. All four now use the nested format. **If you installed from these docs, check your `settings.json`:** `UPDATE.md` has a new "Flat hook entries" step that rewrites them, and `INSTALL.md` converts them too.
+- **A missing hook file no longer disables both write checks.** `check_escritura.js` loaded its two checks outside any try, so an update that forgot to copy `hooks/_lib_text.js` (added in 2.27.0) took down the path check along with the em dash check. Each check now loads on its own; a missing one is reported on stderr and the other keeps running. New test case, red on 2.28.0.
+- **The runbooks now verify the hooks by running them.** `INSTALL.md` Step 4 and `UPDATE.md` Step 4 run each hook once by hand and expect exit code 0 and nothing on stderr. Before, the checks there passed with a hook file missing.
+- **Agents are told to clone first.** The "For AI agents" block says to clone the repo, with its tags, into a folder of its own, never into the config directory; the runbooks compare against files and tags on disk. The manual steps in `README.md` and `docs/setup.md` now say to copy the listed files from a clone instead of "the contents of this repo".
+- "Compare only" also reads the user's `hooks/` folder and log template, so it can report a missing hook file.
+- Stale counts: `README.md` said four hooks, `hooks/README.md` said `check_log.js` does four things, `docs/setup.md` said 6 agents.
+
+---
+
 ## [2.28.0] - 2026-09-29
 
 ### Added

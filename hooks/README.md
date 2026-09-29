@@ -1,12 +1,12 @@
 # Hooks
 
-Claudio uses five hooks to enforce behavior at the right moments. Hooks are Node.js scripts wired into Claude Code's event system via `settings.json`.
+Claudio registers five hooks (`check_log.js`, `detect_significant_event.js`, `check_escritura.js`, `check_decision_prose.js`, `check_style.js`; `check_escritura.js` runs `check_hardcoded_paths.js` and `check_no_emdash.js` inside it) to enforce behavior at the right moments. Hooks are Node.js scripts wired into Claude Code's event system via `settings.json`.
 
 ## The hooks
 
 ### `check_log.js` — UserPromptSubmit
 
-Runs on every message the user sends. Does four things:
+Runs on every message the user sends. Does five things:
 
 1. **Log check**: if `_claude_log.md` doesn't exist in the current directory, injects a reminder to create it before responding. This enforces the "read the log first" rule.
 
@@ -76,17 +76,19 @@ Add to `~/.claude/settings.json`:
 {
   "hooks": {
     "UserPromptSubmit": [
-      { "command": "node /absolute/path/to/hooks/check_log.js" }
+      { "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/check_log.js" }] }
     ],
     "PostToolUse": [
-      { "command": "node /absolute/path/to/hooks/detect_significant_event.js" }
+      { "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/detect_significant_event.js" }] }
     ],
     "PreToolUse": [
-      { "matcher": "Write|Edit", "command": "node /absolute/path/to/hooks/check_escritura.js" }
+      { "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "node /absolute/path/to/hooks/check_escritura.js" }] }
     ],
     "Stop": [
-      { "command": "node /absolute/path/to/hooks/check_decision_prose.js" },
-      { "command": "node /absolute/path/to/hooks/check_style.js" }
+      { "hooks": [
+        { "type": "command", "command": "node /absolute/path/to/hooks/check_decision_prose.js" },
+        { "type": "command", "command": "node /absolute/path/to/hooks/check_style.js" }
+      ] }
     ]
   }
 }
