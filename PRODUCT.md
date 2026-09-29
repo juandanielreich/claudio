@@ -11,6 +11,7 @@ Main flows:
 - When describing a new project → if the what/why is still fuzzy, Claudio suggests the Strategist first (frames the problem and alternatives, produces STRATEGY.md), then the Architect, who produces a construction brief and PRODUCT.md before coding.
 - At session end → Claudio updates the log and, if something is generalizable, records a learning in the corresponding agent (the team improves itself).
 - Installing → a user can either follow docs/setup.md by hand, or point their own Claude Code session at INSTALL.md and ask it to install — it merges into an existing global config instead of overwriting it.
+- Pointing an agent at the repo → with the link and a one-line request, the "For AI agents" block at the top of README.md sends it to install (INSTALL.md), update (UPDATE.md) or compare only (UPDATE.md, writes nothing). A Claudio without a version marker is recognized by structure; a translated one is only compared, never merged automatically. A session opened inside a clone is told by the guard at the top of CLAUDE.md that the file is payload, not its instructions.
 
 Current design decisions:
 - Orchestrator defined in global CLAUDE.md (loaded in every session).
