@@ -23,6 +23,8 @@ The files that must be in the config root:
 
 **Keep the version marker.** `CLAUDE.md` starts with a `<!-- claudio-version: X.Y.Z -->` comment on its own line — don't strip it when you copy the file in. It's what lets `UPDATE.md` find a matching git tag later and do a real diff against what you have, instead of guessing. If you hand-merge Claudio's `CLAUDE.md` into an existing one instead of replacing it outright, carry the marker line over manually.
 
+**Delete the repo guard.** Right under the marker there is a block from a `<!-- claudio-repo-guard:start -->` line to a `<!-- claudio-repo-guard:end -->` line. It tells an agent working inside a clone of this repo that the file is payload, not its instructions. Delete it, both marker lines included, from the copy in your config: left there, it would tell your own sessions not to act as Claudio.
+
 ## Step 2 — Make agents available
 
 Claude Code loads agents from `~/.claude/agents/`. You have two options:

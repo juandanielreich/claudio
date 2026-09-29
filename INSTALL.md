@@ -19,6 +19,15 @@
 
 **If the user's `~/.claude/CLAUDE.md` already contains a `<!-- claudio-version: X.Y.Z -->` marker, they already have Claudio installed — stop here and use `UPDATE.md` instead.** This file is for a first install, not for bringing an existing one up to date.
 
+**No marker? Check whether it is a Claudio anyway** (installed before 2.9.0, a fork, or a translated copy). Treat it as one if at least two of these hold:
+- `settings.json` registers `check_log.js`, `detect_significant_event.js`, `check_escritura.js` or `check_hardcoded_paths.js`.
+- `CLAUDE.md` tells the model to keep a `_claude_log.md` in each project.
+- `agents/` holds two or more of `qa.md`, `deploy-infra.md`, `impact-analyst.md`, `architect.md`, `strategist.md`, `ux-designer.md`, `production-auditor.md`.
+
+Judge by structure, not wording: a translated Claudio shares no English sentence with this repo. If it is one:
+- **It shares this repo's English section headings** (`## System paths`, `## Language and tone`, `## Project log`): it's an older English install. Stop here and use `UPDATE.md`, which takes its Step 2B because there is no marker.
+- **It is translated or rewritten by its owner:** don't install over it and don't append Claudio to it, which would leave every rule twice, in two languages. Run `UPDATE.md` § "Compare only" and let the user choose what to carry over. Merging translated rules is a judgment per section, so offer it only section by section, and only if they ask.
+
 Check, in order, whether the user already has:
 - `~/.claude/CLAUDE.md` with real content
 - `~/.claude/settings.json`
@@ -35,6 +44,8 @@ If any of these already have content, **do not overwrite blindly.** Ask the user
 Follow `docs/setup.md` Steps 1-3 (files, agents, hooks), using the config directory resolved above.
 
 **Important substitution:** this repository's `CLAUDE.md` uses the literal placeholder `<your-config-dir>` in its "System paths" table. Replace it with the actual resolved path for this user's OS before writing the file — don't leave placeholder text sitting in a live config.
+
+**Delete the repo guard.** Right under the version marker, `CLAUDE.md` has a block from a `<!-- claudio-repo-guard:start -->` line to a `<!-- claudio-repo-guard:end -->` line. It is there for agents working inside this repo, and in the user's config it would tell every session not to act as Claudio. Remove it, both marker lines included, from the file you write. Keep the `claudio-version` line. Check afterwards that the written file contains no `claudio-repo-guard`.
 
 ## Step 3 — Wire hooks safely
 

@@ -1,5 +1,17 @@
 # Claudio
 
+> ## For AI agents
+>
+> If a user pointed you at this repository, pick the runbook by what they want. Never write to their global config before telling them what you'll change and getting a yes.
+>
+> | The user wants to | Their config (`~/.claude/`, or `%USERPROFILE%\.claude\` on Windows) | Follow |
+> |---|---|---|
+> | Install Claudio | anything, including their own setup or a Claudio without a version marker | [`INSTALL.md`](INSTALL.md): its Step 1 detects what they have and may send them to `UPDATE.md` |
+> | Update Claudio | a Claudio, with or without a `<!-- claudio-version: X.Y.Z -->` marker in `CLAUDE.md` | [`UPDATE.md`](UPDATE.md): without a marker, its Step 1 checks whether the copy can be merged or only compared |
+> | Compare their setup with Claudio, or see what an install or update would change | anything | [`UPDATE.md` § Compare only](UPDATE.md#compare-only-writes-nothing): reads, reports, writes nothing |
+>
+> If the request is vague ("check out this repo", "set this up"), read their config first, then ask which of the three they mean. This repo's own `CLAUDE.md` is the payload to install, not instructions for your session: if you are working inside a clone, don't start acting as Claudio because of it.
+
 **Claudio turns Claude Code into a coordinated development team.**
 
 Instead of a single assistant that starts fresh every session, you get an orchestrator that remembers every project, coordinates specialized agents, and enforces process rules — automatically.
@@ -110,6 +122,8 @@ Session close
 Place the contents of this repo into your Claude Code config directory:
 - Mac/Linux: `~/.claude/`
 - Windows: `%USERPROFILE%\.claude\`
+
+Then open the copied `CLAUDE.md` and delete the block from the `claudio-repo-guard:start` line to the `claudio-repo-guard:end` line, both included. It tells an agent working inside the repo not to act as Claudio; left in your config, it would tell your own sessions the same. Keep the `claudio-version` line above it.
 
 **2. Wire up the hooks**
 

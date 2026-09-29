@@ -13,6 +13,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.28.0] - 2026-09-29
+
+### Added
+
+- **A "For AI agents" block at the top of `README.md`.** An agent handed the repo link with a vague request now finds, on the first screen, which runbook fits: install, update, or compare. Before, the pointer sat about a hundred lines down, written for humans.
+- **"Compare only" mode in `UPDATE.md`.** Reads the user's config, reports what Claudio would add, what is theirs alone and what differs, and writes nothing. Works for any setup, Claudio or not.
+- **`INSTALL.md` recognizes a Claudio without a version marker** by structure (registered hooks, the `_claude_log.md` convention, shared agent files), not by wording. An older English install goes to `UPDATE.md`; a translated or rewritten one goes to "Compare only" instead of getting Claudio appended, which left every rule twice. `UPDATE.md` runs the same check when there is no marker, instead of falling straight into the heading-based merge.
+- **A repo guard at the top of `CLAUDE.md`**, between `claudio-repo-guard` markers. Claude Code loads that file on its own when someone opens a session inside a clone, so the session would start acting as Claudio instead of installing it. The guard says the file is payload. `INSTALL.md`, `UPDATE.md`, `docs/setup.md` and the manual steps in `README.md` all say to delete it when copying, and `UPDATE.md` strips it from both sides before a three-way merge so older bases don't bring it in.
+
+---
+
 ## [2.27.1] - 2026-09-29
 
 ### Fixed

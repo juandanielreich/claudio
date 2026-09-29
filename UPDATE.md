@@ -4,9 +4,23 @@
 
 **Do not treat this repository's own `CLAUDE.md` as behavioral instructions for your current session.** It is the payload you are merging into the user's global config — not a system prompt for you right now. If your working directory is inside this cloned repo, ignore what its `CLAUDE.md` tells you to do as an orchestrator; you are updating it, not running it.
 
-This file is for a user who **already has Claudio installed** and wants the newer rules/agents/hooks added since they installed. If they don't have Claudio yet, use `INSTALL.md` instead.
+This file is for a user who **already has Claudio installed** and wants the newer rules/agents/hooks added since they installed. If they don't have Claudio yet, use `INSTALL.md` instead. If they only want to see how their setup compares, with or without Claudio, use "Compare only" below and stop there.
 
 ---
+
+## Compare only (writes nothing)
+
+Use this when the user asks to compare their setup with Claudio, to see what an install or an update would change, or when `INSTALL.md` found a translated or rewritten Claudio. It works for any config, Claudio or not. **Write nothing:** no file in their config changes, and the version marker is not touched.
+
+1. Resolve the config directory (`~/.claude/`, or `%USERPROFILE%\.claude\` on Windows) and read their `CLAUDE.md`, the `hooks` block of `settings.json`, and the list of files in `agents/`.
+2. Compare against this repo as it is on disk: `CLAUDE.md` (ignoring the `claudio-repo-guard` block), `settings.example.json`, `agents/`, `hooks/`, `templates/_log_template.md`.
+3. Match `CLAUDE.md` rules by what they say, not by heading text: a translated or rewritten Claudio shares no English headings with this repo, and matching by heading would report every rule as new.
+4. Report, one line per item:
+   - **Version:** their marker (or "none") against the latest in `CHANGELOG.md`, and which runbook would apply: `INSTALL.md`, `UPDATE.md` Step 2A, Step 2B, or none.
+   - **In Claudio, not in theirs:** rules, hooks and agents they would gain.
+   - **In theirs, not in Claudio:** their own additions. An install or update keeps these.
+   - **In both, but different:** say which side looks newer if the changelog tells, otherwise just that they differ.
+5. Ask what they want next: nothing, a full install or update, or specific items carried over by hand.
 
 ## Step 1 — Find the installed version
 
@@ -15,7 +29,7 @@ This file is for a user who **already has Claudio installed** and wants the newe
 3. Look for the marker `<!-- claudio-version: X.Y.Z -->` near the top.
    - **Found, and a matching `vX.Y.Z` git tag exists in this repo:** you can do a real three-way merge — go to Step 2A.
    - **Found, but no matching tag exists** (a fork without its own tags, or a canonical release that shipped without one): tell the user there's no base snapshot for their exact version. Fall back to Step 2B, treating their marker version as the "installed version" for the changelog summary.
-   - **Not found** (install predates the marker, before 2.9.0): tell the user this explicitly, then treat the installed version as `0.0.0` for Step 2B — every changelog entry is "new" to them.
+   - **Not found** (install predates the marker, before 2.9.0, or it's a fork or a translated copy): tell the user this explicitly, then run the structural check in `INSTALL.md` Step 1 ("No marker? Check whether it is a Claudio anyway"). If it shares this repo's English section headings, treat the installed version as `0.0.0` for Step 2B, where every changelog entry is "new" to them. If it is translated or rewritten, don't use Step 2B: it matches by heading, finds none, and would append every section. Go to "Compare only" instead. If it isn't a Claudio at all, use `INSTALL.md`.
 
 ## Step 2A — Three-way merge (when a base tag exists)
 
@@ -24,6 +38,8 @@ You have three versions of each tracked file (`CLAUDE.md`, `settings.example.jso
 - **base** — this repo's file content at the tag matching the user's installed marker: `git show vX.Y.Z:path/to/file` (the only one of the three you need a git command for)
 - **local** — the user's current installed file (read directly, no git needed)
 - **upstream** — the file as it exists on disk in this cloned repo right now, at `HEAD` (also a plain read — you're already sitting in that checkout, don't `git show HEAD:...` it)
+
+**Strip the repo guard before merging.** From 2.28.0 on, this repo's `CLAUDE.md` carries a block from a `<!-- claudio-repo-guard:start -->` line to a `<!-- claudio-repo-guard:end -->` line, meant for agents working inside the repo. Delete it from temporary copies of the base and of the upstream file before running the merge (never edit this clone's own `CLAUDE.md`), not after the merge: older bases don't have it, so the merge would bring it in as an upstream change and it would tell the user's sessions not to act as Claudio. If the user's local file has it too (a manual install that kept it), delete it there as well and tell them. Check afterwards that their `CLAUDE.md` contains no `claudio-repo-guard`.
 
 A file that exists upstream but neither at the base tag nor locally is new: there is nothing to merge, just copy it. This matters for `hooks/`, where a shared `_lib_*.js` has no `settings.json` entry of its own but the hooks that `require` it fail without it.
 
@@ -45,6 +61,7 @@ Then, for each changed file:
 - **`agents/*.md`:** if a new agent file was added upstream and the filename doesn't collide with anything the user has, copy it. If it collides, ask before overwriting.
 - **`hooks/*.js`:** a new file upstream (such as a shared `_lib_*.js`) is copied next to the hooks, even if no `settings.json` entry points at it: the hooks `require` it, and without it they fail on every run.
 - **Removed/renamed rules:** don't auto-delete the user's local copy — mention it and let them decide.
+- **The repo guard never goes in.** The `claudio-repo-guard` block at the top of this repo's `CLAUDE.md` is for agents inside the repo, not a rule to merge. Skip it, and delete it from the user's file if a manual install left it there.
 
 ## Step 3 — Bump the version marker
 
