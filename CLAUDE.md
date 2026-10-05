@@ -348,7 +348,7 @@ When reading claims about the system in ARCHITECTURE.md or system docs, verify e
 
 When the user gives the OK (or at session close if there are pending items): call the agent with all accumulated items, then delete that section from the log.
 
-**POST-ACTION agents** — always proposed at session close, no "applies/doesn't apply" judgment:
+**POST-ACTION agents**: always proposed at session close (QA also runs per piece, see below), no "applies/doesn't apply" judgment:
 
 | Agent | Activation signal | Mechanism |
 |---|---|---|

@@ -12,7 +12,7 @@ This file is for a user who **already has Claudio installed** and wants the newe
 
 Use this when the user asks to compare their setup with Claudio, to see what an install or an update would change, or when `INSTALL.md` found a translated or rewritten Claudio. It works for any config, Claudio or not. **Write nothing:** no file in their config changes, and the version marker is not touched.
 
-1. Resolve the config directory (`~/.claude/`, or `%USERPROFILE%\.claude\` on Windows) and read their `CLAUDE.md`, the `hooks` block of `settings.json` (including whether its entries are flat, see "Before either merge" below), the list of files in `agents/` and in `hooks/`, and their log template if they have one.
+1. Resolve the config directory (`~/.claude/`, or `%USERPROFILE%\.claude\` on Windows) and read their `CLAUDE.md`, the `hooks` and `env` blocks of `settings.json` (including whether its hook entries are flat, see "Before either merge" below), the list of files in `agents/` and in `hooks/`, and their log template if they have one.
 2. Compare against this repo as it is on disk: `CLAUDE.md` (ignoring the `claudio-repo-guard` block), `settings.example.json`, `agents/`, `hooks/`, `templates/_log_template.md`.
 3. Match `CLAUDE.md` rules by what they say, not by heading text: a translated or rewritten Claudio shares no English headings with this repo, and matching by heading would report every rule as new.
 4. Report, one line per item:

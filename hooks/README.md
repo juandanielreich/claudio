@@ -55,7 +55,7 @@ Blocks killing processes by name: `taskkill /IM` and `/FI`, `Stop-Process -Name`
 
 ### `check_revertir_subagente.js` (PreToolUse, matcher: `Bash|PowerShell`)
 
-Blocks a **subagent** from reverting files with git: `checkout` and `switch` (whole), `restore` (except `--staged` alone), `stash` (except `list` and `show`), `reset --hard`/`--merge`/`--keep`, `clean -f`, `apply -R`. With several sessions in the same folder, `git status` also shows someone else's work in progress, and a half-written file looks like a leftover. A subagent is recognized by the `agent_id` field Claude Code adds to the payload of a subagent's tool call. The main thread is not blocked, and neither is a subagent inside its own worktree (`.claude/worktrees/`), unless the command points out of it with `-C`, `--work-tree` or a `cd`. Suite: `scripts/probar_revertir_subagente.js`.
+Blocks a **subagent** from reverting files with git, in each simple command that starts with `git` (a `git` wrapped in `bash -c`, `xargs` or an environment-variable prefix is not seen): `checkout` and `switch` (whole), `restore` (except `--staged` alone), `stash` (except `list` and `show`), `reset --hard`/`--merge`/`--keep`, `clean -f`, `apply -R`. With several sessions in the same folder, `git status` also shows someone else's work in progress, and a half-written file looks like a leftover. A subagent is recognized by the `agent_id` field Claude Code adds to the payload of a subagent's tool call. The main thread is not blocked, and neither is a subagent inside its own worktree (`.claude/worktrees/`), unless the command points out of it with `-C`, `--work-tree` or a `cd`. Suite: `scripts/probar_revertir_subagente.js`.
 
 ### `check_decision_prose.js` — Stop
 

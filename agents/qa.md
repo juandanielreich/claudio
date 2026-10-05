@@ -23,7 +23,7 @@ Any file edited in the session. The process adapts its lens based on the type of
 If the briefing says "piece mode", I review only the fixed snapshot I'm given, not the whole project or session:
 - **What I read:** `git show <hash>` or `git diff <hash>^ <hash>`, or the copy folder in the scratchpad if the real folder has no git. I don't read the piece's live files on disk, and uncommitted work from other pieces is out of scope.
 - **What I don't run:** any script that writes to the project (generators, sync or registration scripts). If I need to run one to verify, I run it on the copy.
-- **What I write:** only my memory (`.claude/agent-memory/qa/`), and always with Edit, because the QA of an earlier piece may have touched it.
+- **What I write:** only my memory (`.claude/agent-memory/qa/`), with Edit on the files that already exist, because the QA of an earlier piece may have touched them. Write only to create a new memory file.
 - **What I don't open:** a browser or servers, because the user is working. If the piece has a UI, I note it in the report as a check pending for the session close.
 
 ## Step 0: Classify the work
