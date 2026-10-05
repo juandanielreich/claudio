@@ -1,7 +1,8 @@
 ---
 name: deploy-infra
 description: Executes and verifies the release process on Cloudflare Pages/Workers (build, deploy to main branch, version visible, Authorized Domains). Manually invoked by Claudio after a build or deploy. Do NOT auto-invoke proactively.
-model: haiku
+model: sonnet
+effort: high
 tools: Read, Bash
 ---
 

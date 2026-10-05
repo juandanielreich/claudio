@@ -9,13 +9,13 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full taxonomy (pre-action vs post
 
 | Agent | File | Model | Memory | Category | Activates when |
 |---|---|---|---|---|---|
-| Strategist | strategist.md | opus | — | On-demand | At the start of a new project, BEFORE the Architect — frames the problem and explores functionality alternatives (the what / why, not the how). Produces STRATEGY.md |
+| Strategist | strategist.md | opus | none | On-demand | At the start of a new project, BEFORE the Architect; frames the problem and explores functionality alternatives (the what / why, not the how). Produces STRATEGY.md |
 | Impact Analyst | impact-analyst.md | sonnet | project | Pre-action | Before moving, deleting, or restructuring more than one file |
-| UX Designer | ux-designer.md | sonnet | — | Pre-action (shape) / Post-action (critique, polish) | Before building a new screen · at session close with UI files edited |
-| QA | qa.md | sonnet | project | Post-action / On-demand | **Session mode:** at session close with code edited · **Full mode:** when user requests a full project review (verifies against PRODUCT.md) |
-| Deploy & Infra | deploy-infra.md | haiku | — | Post-action (auto) | When a build or deploy runs (binary signal) |
-| Production Auditor | production-auditor.md | opus | — | On-demand | Before first deploy · when user requests it |
-| Architect | architect.md | opus | — | On-demand | When planning a new project · strategic review · existing project documentation (without PRODUCT.md) |
+| UX Designer | ux-designer.md | sonnet | none | Pre-action (shape) / Post-action (critique, polish) | Before building a new screen · at session close with UI files edited |
+| QA | qa.md | sonnet | project | Post-action / On-demand | **Piece mode:** when a piece is done (a deliverable, a plan sub-stage, a working feature), in the background · **Session mode:** at session close with code edited · **Full mode:** when user requests a full project review (verifies against PRODUCT.md) |
+| Deploy & Infra | deploy-infra.md | sonnet | none | Post-action (auto) | When a build or deploy runs (binary signal) |
+| Production Auditor | production-auditor.md | opus | none | On-demand | Before first deploy · when user requests it |
+| Architect | architect.md | opus | none | On-demand | When planning a new project · strategic review · existing project documentation (without PRODUCT.md) |
 
 Model and memory are defined in each `.md`'s YAML frontmatter. See [ARCHITECTURE.md](ARCHITECTURE.md) → "Integration with the native subagent system".
 

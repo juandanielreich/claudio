@@ -49,7 +49,9 @@ function check(json, raw) {
   // throw a TypeError, and a hook that throws takes the whole turn down with it.
   const filePath = String(toolInput.file_path || '')
   if (path.extname(filePath).toLowerCase() !== '.md') return null
-  if (/[\\/](node_modules|\.git|dist|build|\.next)[\\/]/.test(filePath)) return null
+  // On the normalized path, same as check_hardcoded_paths.js: with the raw one,
+  // `proj\dist\..\a.md` fell into the exemption.
+  if (/[\\/](node_modules|\.git|dist|build|\.next)[\\/]/.test(path.normalize(filePath))) return null
 
   const isTemplate = TEMPLATES.test(filePath)
   const clean = s => strip(s, isTemplate)

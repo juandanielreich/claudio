@@ -5,8 +5,15 @@
 // of paying a node startup for each. It no longer exits the process itself: the
 // caller decides that.
 const path = require('path')
+const os = require('os')
 
-// Returns { reason, short } if the write should be blocked, or null if this file
+// True if the file sits inside the OS temp directory (case-insensitive, as on Windows).
+const inTemp = f => {
+  const rel = path.relative(os.tmpdir().toLowerCase(), path.resolve(f).toLowerCase())
+  return !!rel && !rel.startsWith('..') && !path.isAbsolute(rel)
+}
+
+// Returns { reason } if the write should be blocked, or null if this file
 // isn't its concern or nothing was found. Never exits the process.
 function check(json) {
   const toolName = json.tool_name
@@ -15,11 +22,21 @@ function check(json) {
   const toolInput = json.tool_input || {}
   const filePath = toolInput.file_path || ''
 
-  if (/[\\/](node_modules|\.git|dist|build|\.next)[\\/]/.test(filePath)) return null
+  // On the normalized path: with the raw one, `proj\node_modules\..\x.js` fell into the
+  // exemption although the file sits outside node_modules.
+  if (/[\\/](node_modules|\.git|dist|build|\.next)[\\/]/.test(path.normalize(filePath))) return null
+
+  // The scratchpad Claude Code gives each session (`%TEMP%\claude\<project>\<session>\
+  // scratchpad\`) never moves between machines and is never versioned, so the portable
+  // path rule has nothing to protect there. Blocking it pushed subagents to build the
+  // path in pieces just to get through. Only that folder is exempt, not the whole temp
+  // directory: the test suites use other temp paths as fixtures.
+  if (/[\\/]claude[\\/][^\\/]+[\\/][^\\/]+[\\/]scratchpad[\\/]/i.test(filePath) && inTemp(filePath)) return null
 
   const CHECKED_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.ps1', '.sh', '.py', '.json', '.jsonc', '.env', '.yaml', '.yml', '.cjs', '.mjs', '.bat', '.cmd']
   const ext = path.extname(filePath).toLowerCase()
-  const isEnvFile = path.basename(filePath).startsWith('.env')
+  // Case-insensitive, like the Windows filesystem: `.ENV` used to get through.
+  const isEnvFile = path.basename(filePath).toLowerCase().startsWith('.env')
   if (!CHECKED_EXTENSIONS.includes(ext) && !isEnvFile) return null
 
   const content = toolName === 'Write' ? (toolInput.content || '') : (toolInput.new_string || '')
@@ -62,8 +79,7 @@ function check(json) {
   if (!hit) return null
 
   return {
-    reason: `Hardcoded absolute path detected ("${hit}...") in ${filePath}. Global "System paths" rule (CLAUDE.md): never hardcode a path that depends on the current username or machine. Use an environment variable instead. PowerShell: $env:USERNAME / $env:USERPROFILE; Node.js: os.homedir() or process.env.USERPROFILE; bash: $HOME. Fix and retry.`,
-    short: `Hardcoded absolute path detected ("${hit}..."). Use an environment variable instead of the literal, see the "System paths" rule in the global CLAUDE.md.`
+    reason: `Hardcoded absolute path detected ("${hit}...") in ${filePath}. Global "System paths" rule (CLAUDE.md): never hardcode a path that depends on the current username or machine. Use an environment variable instead. PowerShell: $env:USERNAME / $env:USERPROFILE; Node.js: os.homedir() or process.env.USERPROFILE; bash: $HOME. Fix and retry.`
   }
 }
 

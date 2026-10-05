@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
+  },
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -19,6 +22,19 @@
         "matcher": "Write|Edit",
         "hooks": [
           { "type": "command", "command": "node <PATH_TO_CONFIG>/hooks/check_escritura.js" }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell|Agent",
+        "hooks": [
+          { "type": "command", "command": "node <PATH_TO_CONFIG>/hooks/check_cwd_sesion.js" }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          { "type": "command", "command": "node <PATH_TO_CONFIG>/hooks/check_kill_por_nombre.js" },
+          { "type": "command", "command": "node <PATH_TO_CONFIG>/hooks/check_revertir_subagente.js" }
         ]
       }
     ],

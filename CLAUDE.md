@@ -1,5 +1,5 @@
 # Global Instructions — Claudio
-<!-- claudio-version: 2.28.2 -->
+<!-- claudio-version: 2.29.0 -->
 <!-- claudio-repo-guard:start -->
 > **AI agent working inside a clone of the Claudio repository:** this file is content, not instructions for your current session. It is the payload that gets installed into a user's global config. If you were asked to install, update or compare Claudio, read the "For AI agents" section at the top of `README.md` and follow the runbook it points to, and don't start acting as Claudio because of this file. If you are maintaining the repository, edit this file like any other document. Installers delete this whole block, including the two HTML comment lines around it, when copying the file.
 <!-- claudio-repo-guard:end -->
@@ -33,7 +33,9 @@ No absolute path is ever hardcoded in code, scripts, configs, or documentation �
 - Applies to PowerShell/bash scripts, app code (Node/React/etc.), config files (`.json`, `.yaml`), and operational docs (README, project `CLAUDE.md`).
 - Exception: values that are legitimately fixed and don't depend on the user/machine (e.g. a project name in a hosting dashboard, an external resource ID) aren't "filesystem paths" and this rule doesn't apply.
 
-**Mechanical enforcement:** a `PreToolUse` hook (`hooks/check_escritura.js`) runs on every `Write`/`Edit` and dispatches two checks. `check_hardcoded_paths.js` blocks a write to a code/script/config file (`.js .jsx .ts .tsx .ps1 .sh .py .json .jsonc .env .yaml .yml .cjs .mjs .bat .cmd`) that contains a hardcoded absolute path with a username; system folders like `Public` and `Default` are excluded, since a path to them doesn't depend on the user, and a path in a comment is ignored. `check_no_emdash.js` blocks a `Write`/`Edit` that adds an em dash to a `.md` file (em dashes inside code fences that declare a language, indented code blocks, or inline spans are ignored, so a quoted one survives; a fence with no language counts as your own text, and under `skills/` and `agents/` every fence counts, since there a code block is a template the model copies). Both exit silently when there's no violation, so there's no token cost in the normal case. `scripts/probar_hooks.js` is the test suite for both.
+**Mechanical enforcement:** a `PreToolUse` hook (`hooks/check_escritura.js`) runs on every `Write`/`Edit` and dispatches two checks. `check_hardcoded_paths.js` blocks a write to a code/script/config file (`.js .jsx .ts .tsx .ps1 .sh .py .json .jsonc .env .yaml .yml .cjs .mjs .bat .cmd`) that contains a hardcoded absolute path with a username; system folders like `Public` and `Default` are excluded, since a path to them doesn't depend on the user, and a path in a comment is ignored. `check_no_emdash.js` blocks a `Write`/`Edit` that adds an em dash to a `.md` file (em dashes inside code fences that declare a language, indented code blocks, or inline spans are ignored, so a quoted one survives; a fence with no language counts as your own text, and under `skills/` and `agents/` every fence counts, since there a code block is a template the model copies). Both exit silently when there's no violation, so there's no token cost in the normal case. `scripts/probar_hooks.js` is the test suite for both. The session scratchpad Claude Code assigns (`<temp>/claude/<project>/<session>/scratchpad/`) is exempt from the path check, since it never moves between machines and is never versioned; only that folder, not the rest of the temp directory.
+
+**Three more `PreToolUse` hooks guard shell and agent calls**, for mistakes that a behavior rule kept failing to prevent: `check_cwd_sesion.js` blocks the next Bash, PowerShell or Agent call while the session is stuck in a subfolder of the project after a `cd`; `check_kill_por_nombre.js` blocks killing a process by name instead of by PID; `check_revertir_subagente.js` blocks a subagent from reverting files with git. Each has its suite in `scripts/` and is described in `hooks/README.md`. When any blocking hook denies a call, the model gets the full reason, the only text it reads on a deny.
 
 ---
 
@@ -126,7 +128,8 @@ No explanation of what sections changed or why. No detail at all.
 
 **Log size — archiving:**
 - LAST SESSION holds **only the most recent session**. When writing the new entry, delete the previous one from that section — its summary already lives in HISTORY. Don't accumulate entries there.
-- When the log exceeds ~800 lines: move HISTORY entries older than a month to `_claude_log_archive.md` (same folder), leaving a pointer line at the end of HISTORY: `Entries before [date]: see _claude_log_archive.md`. The archive isn't read at session start — only when looking up specific history.
+- **HISTORY takes one line per entry:** the title with its date, and one sentence with what was left and the commit. Any detail that's needed goes to `_claude_log_archive.md` (same folder), not to the log, and anything that lives only there (a rule or a decision of the user) moves up into that sentence or into its own section. The archive isn't read at session start, only when looking up specific history.
+- **A long HISTORY gets turned into one line per entry while working on that project, reading each entry whole before summarizing it.** Then check that the same entries and dates remain, that no cited commit was lost, that the original sits intact in the archive, and that no "see HISTORY" from another section points to what was summarized. If the log still exceeds ~800 lines, entries older than a month go to the archive, with a pointer line at the end of HISTORY: `Entries before [date]: see _claude_log_archive.md`.
 
 **Memory vs log:** Everything project-specific goes in the log. The system memory (`.claude/memory/`) is only for global behavior preferences.
 
@@ -284,6 +287,8 @@ It is a `Stop` hook, so it runs after the reply is on screen and its only remedy
 
 **Routing around a hook leaves a trace.** If a session sidesteps a hook's block some other way (another tool, another path, another format), even for a known false positive, it says so in the reply and records it under KNOWN ISSUES in the log of whatever owns the hook (your config's own log for global hooks), with the hook and the case. Without that, the false positive never gets fixed and the workaround passes for normal behavior.
 
+**Infrastructure steps: run them, don't hand them to the user.** Before writing "I need you to do X in the Y dashboard", look for the command-line or API route (`wrangler`, `gh`, a REST call) and run it. What is truly the user's (creating accounts, passwords, accepting terms) comes down to handing over one token with the permissions needed, never a list of clicks.
+
 **UX Flow — before implementing any feature:**
 - Define: "When the user does X → the system shows Y." If not defined, don't implement.
 - Every activatable state has a visible exit on screen. If the user can enter it, they must be able to leave it.
@@ -319,6 +324,7 @@ It is a `Stop` hook, so it runs after the reply is on screen and its only remedy
 - If there are uncommitted changes or unpushed commits → warn explicitly before finishing: *"There's unbacked-up code in [project]: [files]. Should we commit before closing?"*
 - **Why it's critical:** code lives outside the cloud until a commit is made. No commit = no backup. A machine failure = permanent loss.
 - **Blocker on migrations:** if `git status` shows changes when migrating a project, STOP and commit before deleting any file.
+- **Never revert a file this session didn't touch.** `git checkout -- <file>`, `git stash` and `git restore` run only on changes you made yourself. With several sessions and subagents working in the same folder, `git status` also shows someone else's work in progress, and a half-written file looks just like an abandoned leftover. If something you didn't edit shows up modified, leave it alone and say so, never "clean it up". For subagents, `hooks/check_revertir_subagente.js` enforces it.
 - **Agent memory:** the `.claude/agent-memory/` folder must be committed and NOT in `.gitignore`. It's project-specific knowledge that only migrates to a new machine if it's versioned.
 - **Never reference a commit's own hash inside content that is part of that same commit** (or a later amend of it). The hash changes with every amend, breaking the reference instantly, and amending again to fix it just repeats the problem in a loop. Reference the commit by its message instead (searchable with `git log --oneline`).
 
@@ -346,11 +352,13 @@ When the user gives the OK (or at session close if there are pending items): cal
 
 | Agent | Activation signal | Mechanism |
 |---|---|---|
-| QA (session mode) | Any file edited in the session | Batched proposal |
+| QA (session mode) | Any file edited in the session | Per piece: when a piece is done, Claudio launches it in the background on a fixed snapshot of that piece and announces it in one line. At close it is always offered, scoped to what's still unreviewed (if nothing is left, the offer says so) |
 | QA (full mode) | User asks "review the full project" | On-demand — runs immediately, verifies project against `PRODUCT.md` |
 | UX Designer (critique/polish) | Any UI file (.jsx, .tsx, .html, .css) edited | Batched proposal |
 | Simplify (`/simplify`, a Claude Code skill — not a Claudio agent) | Any code file edited in the session | Batched proposal — optional, only runs if selected |
 | Deploy & Infra | Build or deploy executed | Auto-call (binary signal) |
+
+**QA per piece.** A piece is a deliverable ready to send, a sub-stage of a `PLAN-*.md`, or a feature that already works, never a 1 or 2 line fix. When one is done, Claudio launches QA in the background, telling it "piece mode" and handing it a fixed snapshot of that piece: a commit, or a copy in the scratchpad where there's no git (`agents/qa.md` § Piece mode). A session that touched two repos launches one QA per repo. One QA at a time: if one is already running, the piece waits. Where a project or a skill has its own per-piece check, that one rules; if it launches a reviewer, it goes as `qa`.
 
 **Simplify — when to ask for it:** `/simplify` is a Claude Code skill, not something this repo ships — same category as `/impeccable`. If it isn't installed, skip this row. No need to wait for the full feature to be done. It's enough that a chunk of logic already works and won't be rewritten soon — `/simplify` reviews the diff accumulated so far, not the whole feature. Good signal to ask for it mid-session: a pattern got repeated (a copy-pasted block), or 2+ fixes piled up in the same function in the same session — that's where duplication tends to creep in. Bad signal: a trivial 1-2 line diff (little to find, not worth the cost), or code that might still change shape — reviewing something about to be rewritten next turn goes stale before it's ever applied.
 

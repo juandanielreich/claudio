@@ -13,6 +13,37 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [2.29.0] - 2026-10-05
+
+### Added
+
+- **Three `PreToolUse` hooks for shell and agent calls**, each with its suite in `scripts/` and registered in `settings.example.json`:
+  - `check_cwd_sesion.js` (`Bash|PowerShell|Agent`): blocks the next call while the session is stuck in a subfolder of the project after a `cd`, with the exact command to go back. A subagent launched from a subfolder wrote its memory to the wrong place.
+  - `check_kill_por_nombre.js` (`Bash|PowerShell`): blocks killing a process by name (`taskkill /IM`, `Stop-Process -Name` and its prefixes, `pkill`, looking a process up by name and piping it to a kill). Killing by PID passes.
+  - `check_revertir_subagente.js` (`Bash|PowerShell`): blocks a subagent (payload with `agent_id`) from reverting files with git. The main thread and a subagent in its own worktree pass.
+- **Shared files for those hooks:** `hooks/_lib_stdin.js`, `hooks/_lib_hook_salida.js` and `hooks/_lib_comandos.js`. They have no `settings.json` entry; an update has to copy them (see `UPDATE.md`, "New files are copied").
+- **`CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=1`** in a new `env` block of `settings.example.json` (and the README copy). Claude Code then sends the main thread back to the project root after every command. `INSTALL.md`, `UPDATE.md` and `docs/setup.md` say to merge `env` key by key.
+- **QA per piece** (`CLAUDE.md`, "QA per piece", plus a "Piece mode" section in `agents/qa.md`): when a deliverable, a plan sub-stage or a working feature is done, Claudio launches QA in the background on a fixed snapshot of it, one at a time. At close QA is still offered, scoped to what's left unreviewed.
+- **Rule "Infrastructure steps: run them, don't hand them to the user"** in `CLAUDE.md`: look for the CLI or API route before asking for clicks in a dashboard.
+- **Git Safety: never revert a file this session didn't touch** (`CLAUDE.md`), the rule `check_revertir_subagente.js` enforces for subagents.
+- `agents/ux-designer.md`: kill only by the PID you launched, and never revert files with git.
+- `scripts/probar_deny_motivo.js`: checks that every blocking hook hands the model its full reason.
+
+### Changed
+
+- **A deny hands the model the full reason.** The model reads only `permissionDecisionReason`, and `check_escritura.js` put a `short` version there, so the model lost what the long reason said about how to proceed. `short` is gone from `check_hardcoded_paths.js`, and the field always carries `reason`.
+- **HISTORY takes one line per entry** (`CLAUDE.md`, "Log size", and `templates/_log_template.md`): title, date, one sentence and the commit; detail goes to `_claude_log_archive.md`. A long HISTORY gets converted entry by entry, reading each one whole, and only then does archiving by age apply.
+- **No agent uses Haiku.** `deploy-infra` moves to `model: sonnet` with `effort: high`; `agents/ARCHITECTURE.md`, `INDEX.md`, `agents/README.md`, `docs/adapting.md` and `docs/how-it-works.md` stop recommending Haiku for procedural work.
+- `detect_significant_event.js`: a write under `.claude/agent-memory/` is not counted as an edit, but it resets the "committed" flag, and `check_log.js` warns about uncommitted agent memory even when no edit was counted.
+
+### Fixed
+
+- **`check_hardcoded_paths.js` exempts the session scratchpad** (`<temp>/claude/<project>/<session>/scratchpad/`), and only it. Blocking it pushed subagents to build the path in pieces.
+- **The `node_modules`/`.git`/`dist`/`build`/`.next` exemption looks at the normalized path** in `check_hardcoded_paths.js` and `check_no_emdash.js`: `proj/node_modules/../x.js` used to slip through. `.env` files are recognized in any case (`.ENV`).
+- `scripts/probar_hooks.js` covers all of the above (69 cases); its new non-control cases fail on 2.28.2.
+
+---
+
 ## [2.28.2] - 2026-09-29
 
 ### Changed

@@ -15,6 +15,14 @@ Before executing any `/impeccable` command, verify that `PRODUCT.md` exists in t
 - If it doesn't exist → run `/impeccable init` first and complete it before continuing.
 - If it exists → proceed directly with the corresponding command.
 
+## Processes and files I don't touch
+
+Never kill processes by name (`taskkill /IM`, `Stop-Process -Name`, `pkill`): only by the PID I launched and noted when I launched it. Chrome, Node and Vite also run for the user, and a kill by name closes their real browser. If the PID is lost, I leave the process running and say so. The `check_kill_por_nombre.js` hook blocks it too.
+
+Never revert files with git (`checkout`, `restore`, `stash`, `reset --hard`): the folder may hold another session's half-written work, and the `check_revertir_subagente.js` hook blocks it. If a change needs testing, I make it on a copy in the scratchpad; if a versioned file was left dirty, I report its path to Claudio.
+
+My `tools` have no shell today, so these rules bind me only if a project adds one. The two hooks cover every subagent regardless.
+
 ## Two activation modes
 
 ### PRE-ACTION mode — Shape (new screen or component)

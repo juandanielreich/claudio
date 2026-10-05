@@ -59,7 +59,7 @@ Called **after** the work is done, at session close. They don't interrupt the fl
 6. State is cleared: `node "~/.claude/hooks/clear_session_state.js"`
 
 **Current post-action agents:**
-- **QA** → signal: any file edited in the session (process adapts its lens based on the type of work)
+- **QA** → signal: any file edited in the session (process adapts its lens based on the type of work). It also runs per piece: when a piece is done, Claudio launches it in the background on a fixed snapshot of that piece (see "QA per piece" in `CLAUDE.md`)
 - **UX Designer (critique/polish)** → signal: any UI file (.jsx, .tsx, .html, .css) edited
 - **Deploy & Infra** → signal: build or deploy executed (auto-call, binary signal)
 
@@ -135,7 +135,7 @@ This section documents alternatives that were considered and why they weren't ch
 
 | Date | Alternative considered | Why it was discarded |
 |---|---|---|
-| 2026-06-15 | Automatic mid-session trigger: Claudio detects "I finished X" via natural language and fires QA without asking | Generates noise, false positives, interrupts the flow. Not standard practice in any tool in the ecosystem. Replaced by: explicit on-demand from user + QA full mode |
+| 2026-06-15 | Automatic mid-session trigger: Claudio detects "I finished X" via natural language and fires QA without asking | Generates noise, false positives, interrupts the flow. Not standard practice in any tool in the ecosystem. Replaced by: explicit on-demand from user + QA full mode. Superseded on 2026-09-29 by QA per piece (see the decision history) |
 | 2026-06-15 | Mid-session batched proposal (similar to close) when detecting many changes | Would require frequent user inputs — the constraint was exactly the opposite: one instruction → autonomous execution |
 
 ---
@@ -220,7 +220,9 @@ Since 2026-06-13, agents are **CC native subagents**: each `.md` in `agents/` ha
 | qa | sonnet | Frequent, requires real capability (resilience lens) |
 | impact-analyst | sonnet | Refined checklist, medium frequency |
 | ux-designer | sonnet | Router with contextual judgment |
-| deploy-infra | haiku | 100% procedural, follows checklist |
+| deploy-infra | sonnet (effort `high`) | Procedural, follows a checklist; see the Haiku note below |
+
+**No agent uses Haiku** (since 2026-09-30). Procedural agents used to run on it; they run on Sonnet with `effort: high` instead. In the test that settled it, a Haiku reviewer judging the same report twice didn't agree with itself, and it trimmed the quotes it was asked to keep, which is exactly what a checklist agent can't afford.
 
 **Effort on Opus 5.5:** `high` as the ceiling for Opus agents (set `effort` in the agent's frontmatter), `medium` as the default for Claudio. At the same level Opus 5.5 thinks more than Opus 5, and Anthropic recommends keeping `xhigh` and `max` for cases where you measured a gain ("Prompting Claude Opus 5.5", § Calibrate effort). In the user `settings.json`, the general `effortLevel` does not apply to Opus 5.5: set it per model under `modelSettings`. The general value does still apply to Fable 5.1 and earlier models, so give those their own entry if the general one is lower than you want. *(Holds while `opus` resolves to Opus 5.5. Observed 2026-09-25.)*
 
@@ -261,8 +263,9 @@ No auto-dispatch cases reported since implementation (2026-06-13). If in the fut
 | 2026-06-08 | UX Designer delegates to /impeccable | /impeccable has the capability; the agent has the criterion of when |
 | 2026-06-08 | Post-action always proposes (no "applies/doesn't apply") | Claudio's judgment about significance has historically failed |
 | 2026-06-13 | Agents as CC native subagents | Enables declarative model/tools/memory without custom invocation logic |
-| 2026-06-13 | Model per agent (opus/sonnet/haiku) | Matches cost and capability to the task: Haiku for procedural, Opus for strategic |
+| 2026-06-13 | Model per agent (opus/sonnet/haiku) | Matches cost and capability to the task: Haiku for procedural, Opus for strategic. Since 2026-09-30 no agent uses Haiku (see "Model per agent") |
 | 2026-06-13 | `memory: project` in QA and Analyst | Project-specific knowledge that grows between sessions and migrates with the repo |
 | 2026-06-13 | Agents in `~/.claude/agents/` with symlink/copy from config | Single versioned source; agents are visible across all projects |
 | 2026-06-15 | PRODUCT.md as project reference anchor | Established standard (Spec-Driven Development): QA can verify the full project without depending on session context. Architect (Existing project documentation) creates it retroactively for existing projects |
+| 2026-09-29 | QA per piece, in the background, on a fixed snapshot (a commit, or a copy in the scratchpad where there's no git), one QA at a time | Supersedes the 2026-06-15 discarded trigger: it fires on a finished piece, not on natural language, and runs in the background without interrupting. Measured in the original system: 30 of the 31 errors caught in client material came from the one project where QA ran deliverable by deliverable, and 7 of 29 postponed close reviews never ran |
 | 2026-07-15 | Strategist as a separate agent, before the Architect | The Architect jumps to a single technical solution by design; a framing layer (what/why, functionality alternatives) free of stack bias was missing. Separating them keeps the Strategist non-technical |

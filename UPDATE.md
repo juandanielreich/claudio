@@ -65,7 +65,7 @@ Read this repo's `CHANGELOG.md` and collect every entry newer than the installed
 Then, for each changed file:
 - **Never blind-overwrite.** Read the user's file first, merge in only the sections/rules that changed.
 - **Before adding a new rule/section to `CLAUDE.md`:** check whether a heading with the same or very similar name already exists in the user's file. If it does, skip it, don't duplicate. If it exists but the *content* differs meaningfully from the repo's version, flag it and ask the user which to keep — you can't tell here whether the difference is their customization or just staleness, so always ask, don't guess.
-- **`settings.json` hooks:** merge the `hooks` array, don't replace it. Check by matcher + command path, not by array position. Use the nested format of `settings.example.json` (see "Before either merge" above).
+- **`settings.json` hooks:** merge the `hooks` array, don't replace it. Check by matcher + command path, not by array position. Use the nested format of `settings.example.json` (see "Before either merge" above). Merge its `env` block key by key the same way: add a missing key, and ask before changing one the user already set to another value.
 - **`agents/*.md`:** if a new agent file was added upstream and the filename doesn't collide with anything the user has, copy it. If it collides, ask before overwriting.
 - **Removed/renamed rules:** don't auto-delete the user's local copy — mention it and let them decide.
 

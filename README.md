@@ -61,7 +61,7 @@ Claudio calls agents at the right moment — or you call them directly. They don
 Agents aren't called randomly. The system has a taxonomy that matches when the intervention is useful:
 
 - **Pre-action** (Impact Analyst, UX Designer shape): called *before* doing something. Items accumulate in the log — Claudio asks "analyze now or accumulate?" — and the agent runs when you give the OK, not mid-task.
-- **Post-action** (QA, UX Designer critique/polish, Deploy & Infra): proposed at session close in a single batched screen. No interruptions during work.
+- **Post-action** (QA, UX Designer critique/polish, Deploy & Infra): proposed at session close in a single batched screen. No interruptions during work. QA also runs per piece: when a deliverable or a plan sub-stage is done, Claudio launches it in the background on a fixed snapshot of that piece and keeps working.
 - **On-demand**: any agent, any time — "call QA", "analyze impact", "review the architecture".
 
 ### 4. Hooks that enforce rules — not just prose
@@ -71,6 +71,9 @@ Rules in CLAUDE.md get forgotten. Hooks don't. These hooks enforce the critical 
 - **`check_log.js`** (UserPromptSubmit): verifies `_claude_log.md` exists, detects urgency keywords ("critical", "must not fail"), reminds of pending items, scans agent files for unprocessed learnings, summarizes session state on every message.
 - **`detect_significant_event.js`** (PostToolUse): silently tracks what changed — files edited, UI files, builds, deploys, git commits — to power the session-close proposal.
 - **`check_escritura.js`** (PreToolUse, `Write|Edit`): a dispatcher that runs two write checks in one process. `check_hardcoded_paths.js` blocks a write that hardcodes an absolute path depending on the current username or machine (system folders like `Public`/`Default` and paths inside comments are ignored). `check_no_emdash.js` blocks a `Write`/`Edit` that adds an em dash to a `.md` file (em dashes inside inline spans or code fences that declare a language survive; a fence with no language counts, and under `skills/` and `agents/` every fence counts). `scripts/probar_hooks.js` is the test suite for both, and for what the two `Stop` hooks treat as code (`hooks/_lib_text.js`, shared by the three).
+- **`check_cwd_sesion.js`** (PreToolUse, `Bash|PowerShell|Agent`): blocks the next command while the session is stuck in a subfolder of the project after a `cd`, so a subagent doesn't write its memory to the wrong folder. Backstop for `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR`, which `settings.example.json` sets and which only covers the main thread.
+- **`check_kill_por_nombre.js`** (PreToolUse, `Bash|PowerShell`): blocks killing processes by name (`taskkill /IM`, `Stop-Process -Name`, `pkill`), which also closes the user's own browser or server with the same name. Killing by PID passes.
+- **`check_revertir_subagente.js`** (PreToolUse, `Bash|PowerShell`): blocks a subagent from reverting files with git (`checkout`, `restore`, `stash`, `reset --hard`, `clean -f`), which can wipe another session's work in progress. The main thread and a subagent in its own worktree pass.
 - **`check_decision_prose.js`** and **`check_style.js`** (Stop): check the finished reply, see "Wire up the hooks" below.
 - **`clear_session_state.js`** (not a hook, run by hand): resets accumulated state after the batched proposal runs.
 
@@ -134,6 +137,9 @@ Add to your `~/.claude/settings.json` (see `settings.example.json`):
 
 ```json
 {
+  "env": {
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
+  },
   "hooks": {
     "UserPromptSubmit": [
       { "hooks": [{ "type": "command", "command": "node ~/.claude/hooks/check_log.js" }] }
@@ -142,7 +148,12 @@ Add to your `~/.claude/settings.json` (see `settings.example.json`):
       { "hooks": [{ "type": "command", "command": "node ~/.claude/hooks/detect_significant_event.js" }] }
     ],
     "PreToolUse": [
-      { "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "node ~/.claude/hooks/check_escritura.js" }] }
+      { "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "node ~/.claude/hooks/check_escritura.js" }] },
+      { "matcher": "Bash|PowerShell|Agent", "hooks": [{ "type": "command", "command": "node ~/.claude/hooks/check_cwd_sesion.js" }] },
+      { "matcher": "Bash|PowerShell", "hooks": [
+        { "type": "command", "command": "node ~/.claude/hooks/check_kill_por_nombre.js" },
+        { "type": "command", "command": "node ~/.claude/hooks/check_revertir_subagente.js" }
+      ] }
     ],
     "Stop": [
       { "hooks": [
@@ -153,6 +164,8 @@ Add to your `~/.claude/settings.json` (see `settings.example.json`):
   }
 }
 ```
+
+The `env` entry makes Claude Code send the main thread back to the project root after every Bash or PowerShell command, so a `cd` inside one command doesn't leave the whole session in a subfolder. If your `settings.json` already has an `env` block, add the key to it instead of replacing it.
 
 The two `Stop` hooks check the reply itself: `check_decision_prose.js` catches a decision handed to you in prose instead of through `AskUserQuestion`, and `check_style.js` checks the mechanizable half of the anti-AI baseline (em dashes, curly quotes, hollow filler, opening preamble) plus one idea per bullet and short paragraphs. Both run after the reply is on screen, so their only remedy is asking for another version: you will occasionally see two near-identical answers. That is the trade-off, and it is why only rules that rarely fire belong there.
 

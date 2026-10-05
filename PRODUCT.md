@@ -8,6 +8,7 @@ Main flows:
 - When requesting a change that touches multiple files → Claudio detects the signal and offers to call the Impact Analyst before implementing.
 - When using urgency words ("critical", "must not fail") → a hook injects the reminder and the Analyst is called without asking.
 - At session close with edited code → Claudio proposes QA, UX review, and/or pending analysis in a single screen (without interrupting during work).
+- When a piece is done (a deliverable, a plan sub-stage, a working feature) → Claudio launches QA in the background on a fixed snapshot of that piece, and keeps working.
 - When describing a new project → if the what/why is still fuzzy, Claudio suggests the Strategist first (frames the problem and alternatives, produces STRATEGY.md), then the Architect, who produces a construction brief and PRODUCT.md before coding.
 - At session end → Claudio updates the log and, if something is generalizable, records a learning in the corresponding agent (the team improves itself).
 - Installing → a user can either follow docs/setup.md by hand, or point their own Claude Code session at INSTALL.md and ask it to install — it merges into an existing global config instead of overwriting it.
@@ -18,7 +19,7 @@ Current design decisions:
 - Per-project memory in _claude_log.md (read before any task).
 - 6 agents with YAML frontmatter (name, description, tools, model, memory); invoked as native CC subagents.
 - Pre-action / post-action / on-demand taxonomy (see agents/ARCHITECTURE.md).
-- Real enforcement via hooks (not just prose rules): urgency keyword detection, session state accumulation, close reminders, hardcoded-path blocking, and decisions-in-prose blocking (the turn can't close until the choice goes through `AskUserQuestion`).
+- Real enforcement via hooks (not just prose rules): urgency keyword detection, session state accumulation, close reminders, blocking of hardcoded paths, of a session stuck in a subfolder, of killing a process by name and of a subagent reverting files with git, and decisions-in-prose blocking (the turn can't close until the choice goes through `AskUserQuestion`).
 - Opinionated reference stack (React+Vite+Firebase+Cloudflare) — adaptable.
 
 Out of scope (v1 public):

@@ -10,7 +10,7 @@
 // that throws neither blocks nor warns. Each check still lives in its own file and
 // is still importable alone; this file only dispatches.
 
-// Each check exports check(json, raw) → { reason, short? } or null. First hit
+// Each check exports check(json, raw) → { reason } or null. First hit
 // blocks. The checks cover disjoint files, so order doesn't change the result
 // today; if they ever overlap, the first in the list wins.
 //
@@ -41,13 +41,21 @@ process.stdin.on('end', () => {
     try { r = check(json, inputData) } catch (_) { continue }
     if (!r) continue
 
+    // The model receives only permissionDecisionReason, so the full reason goes there.
+    // There used to be a `short` version for that field, and the model lost what the
+    // long one said about how to proceed. A deny shows no permission prompt where the
+    // user would see a different text, so one reason serves both. Same contract as
+    // deny() in _lib_hook_salida.js, written out here on purpose: this dispatcher must
+    // not depend on a shared file, or one missing file takes both write checks down.
+    // *(Holds while: Claude Code passes only permissionDecisionReason to the model on a
+    // deny. Observed 2026-10-05.)*
     const output = {
       decision: 'block',
       reason: r.reason,
       hookSpecificOutput: {
         hookEventName: 'PreToolUse',
         permissionDecision: 'deny',
-        permissionDecisionReason: r.short || r.reason
+        permissionDecisionReason: r.reason
       }
     }
     console.log(JSON.stringify(output))

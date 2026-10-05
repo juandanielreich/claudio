@@ -47,7 +47,7 @@ After placing the agents, **restart Claude Code** — agents are loaded at sessi
 
 ## Step 3 — Wire up the hooks
 
-Edit (or create) `~/.claude/settings.json` and add the `hooks` block of [`settings.example.json`](../settings.example.json), the one full definition of Claudio's hooks. If your file already has a `hooks` block, merge event by event instead of replacing it.
+Edit (or create) `~/.claude/settings.json` and add the `hooks` block of [`settings.example.json`](../settings.example.json), the one full definition of Claudio's hooks. If your file already has a `hooks` block, merge event by event instead of replacing it. Add the keys of the example's `env` block to yours too (merge key by key if you already have one).
 
 Replace `<PATH_TO_CONFIG>` with the absolute path to your config directory. Use absolute paths: relative paths don't work in hooks. Keep the nested shape of the example (each group holds `"hooks": [{ "type": "command", "command": ... }]`); a flat `{ "command": ... }` entry is ignored.
 

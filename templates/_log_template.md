@@ -130,9 +130,7 @@ Only decisions that pass the 3-test filter (hard to reverse, surprising without 
 ---
 
 ## CHANGE HISTORY
-Chronological entries, most recent first.
+One entry per session, most recent first: the title and one line with what was left and the commit. Any detail goes to `_claude_log_archive.md` (same folder), not here. If the log exceeds ~800 lines, entries older than a month go there too, with a pointer line at the end.
 
 ### [YYYY-MM-DD] [Short title]
-- What was done / decided
-- Why
-- Resulting state
+What was left, in one sentence (`commit`).

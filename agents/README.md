@@ -7,11 +7,11 @@ Claudio ships with 6 specialized agents. Each is a Markdown file with YAML front
 | Agent | File | Model | Memory | Category | Activates when |
 |---|---|---|---|---|---|
 | Impact Analyst | `impact-analyst.md` | sonnet | project | Pre-action | Before moving, deleting, or restructuring more than one file |
-| UX Designer | `ux-designer.md` | sonnet | — | Pre-action / Post-action | Before new screen · at session close with UI files edited |
-| QA | `qa.md` | sonnet | project | Post-action / On-demand | **Session mode:** at session close · **Full mode:** when user requests a full project review |
-| Deploy & Infra | `deploy-infra.md` | haiku | — | Post-action (auto) | After a build or deploy |
-| Production Auditor | `production-auditor.md` | opus | — | On-demand | Before first deploy · when user requests it |
-| Architect | `architect.md` | opus | — | On-demand | New project · strategic review · existing project documentation (without PRODUCT.md) |
+| UX Designer | `ux-designer.md` | sonnet | none | Pre-action / Post-action | Before new screen · at session close with UI files edited |
+| QA | `qa.md` | sonnet | project | Post-action / On-demand | **Piece mode:** when a piece is done, in the background · **Session mode:** at session close · **Full mode:** when user requests a full project review |
+| Deploy & Infra | `deploy-infra.md` | sonnet | none | Post-action (auto) | After a build or deploy |
+| Production Auditor | `production-auditor.md` | opus | none | On-demand | Before first deploy · when user requests it |
+| Architect | `architect.md` | opus | none | On-demand | New project · strategic review · existing project documentation (without PRODUCT.md) |
 
 ## Taxonomy
 

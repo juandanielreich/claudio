@@ -53,7 +53,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 Claude Code reads the frontmatter to know:
 - `name`: how Claudio invokes it (`subagent_type: "qa"`)
 - `description`: when to auto-dispatch it (Claudio's descriptions say "do NOT auto-invoke")
-- `model`: which model to use for this agent (haiku for procedural, sonnet for analytical, opus for strategic)
+- `model`: which model to use for this agent (sonnet for procedural and analytical work, opus for strategic; no agent uses haiku)
 - `memory: project`: creates `.claude/agent-memory/<agent>/` in the project repo, injected at startup
 
 Agents must live in `~/.claude/agents/` to be visible. The body of the `.md` becomes their system prompt.
@@ -67,6 +67,8 @@ CC hooks run shell commands at specific events:
 | UserPromptSubmit | `check_log.js` | Checks log, detects urgency, reminds of pending items, summarizes session state |
 | PostToolUse | `detect_significant_event.js` | Accumulates what changed (files, builds, deploys, git) |
 | PreToolUse (`Write\|Edit`) | `check_escritura.js` | Runs two write checks: `check_hardcoded_paths.js` blocks an absolute, machine-dependent path; `check_no_emdash.js` blocks an em dash added to a `.md` file |
+| PreToolUse (`Bash\|PowerShell\|Agent`) | `check_cwd_sesion.js` | Blocks the next call while the session is stuck in a subfolder of the project after a `cd` |
+| PreToolUse (`Bash\|PowerShell`) | `check_kill_por_nombre.js`, `check_revertir_subagente.js` | Block killing a process by name, and a subagent reverting files with git |
 | Stop | `check_decision_prose.js`, `check_style.js` | Check the finished reply: a decision handed over in prose instead of `AskUserQuestion`, and the mechanizable style rules |
 
 The hooks communicate with CC by writing JSON to stdout. `UserPromptSubmit` and `PostToolUse` inject context:

@@ -78,6 +78,18 @@ c('.env file with path', { tool_name: 'Write', tool_input: { file_path: '/tmp/.e
 c('clean .js, no path', { tool_name: 'Write', tool_input: { file_path: '/tmp/a.js', content: 'const p = process.env.HOME' } }, 'pass', 'paths')
 c('non-checked extension .txt with path', { tool_name: 'Write', tool_input: { file_path: '/tmp/a.txt', content: winUser('someone') } }, 'pass', 'paths')
 c('Edit new_string with path', { tool_name: 'Edit', tool_input: { file_path: '/tmp/a.js', old_string: 'x', new_string: 'const p = "' + winUser('someone') + '"' } }, 'block', 'paths')
+// The exemption looks at the normalized path, and `.env` is matched case-insensitively.
+// The `..` paths are joined with B, not path.join, which would resolve the `..` before
+// the hook ever saw it.
+c('.ENV in upper case with a path', { tool_name: 'Write', tool_input: { file_path: TMP + B + '.ENV', content: 'DIR=' + winUser('someone') } }, 'block', 'paths')
+c('node_modules followed by .. is not exempt', { tool_name: 'Write', tool_input: { file_path: TMP + B + 'proj' + B + 'node_modules' + B + '..' + B + 'x.js', content: 'const p = "' + winUser('someone') + '"' } }, 'block', 'paths')
+c('a file really inside node_modules stays exempt', { tool_name: 'Write', tool_input: { file_path: TMP + B + 'proj' + B + 'node_modules' + B + 'x.js', content: 'const p = "' + winUser('someone') + '"' } }, 'pass', 'paths')
+c('dist followed by .. does not exempt an em dash', { tool_name: 'Write', tool_input: { file_path: TMP + B + 'proj' + B + 'dist' + B + '..' + B + 'n6.md', content: 'text ' + EM + ' dash' } }, 'block', 'emdash')
+// The session scratchpad is exempt, and only it: a folder with the same shape outside
+// the temp directory, or the temp directory without the `scratchpad` segment, still blocks.
+c('the session scratchpad passes', { tool_name: 'Write', tool_input: { file_path: path.join(os.tmpdir(), 'claude', 'C--project', 'session-1', 'scratchpad', 'probe.js'), content: 'const p = "' + winUser('someone') + '"' } }, 'pass', 'paths')
+c('a scratchpad outside the temp directory still blocks', { tool_name: 'Write', tool_input: { file_path: path.join(os.homedir(), 'dev', 'x', 'claude', 'p', 's', 'scratchpad', 'a.js'), content: 'const p = "' + winUser('someone') + '"' } }, 'block', 'paths')
+c('the temp directory without scratchpad still blocks', { tool_name: 'Write', tool_input: { file_path: path.join(os.tmpdir(), 'claude', 'C--project', 'a.js'), content: 'const p = "' + winUser('someone') + '"' } }, 'block', 'paths')
 
 // ---- check_no_emdash ----
 c('em dash in new .md', { tool_name: 'Write', tool_input: { file_path: '/tmp/n1.md', content: 'text ' + EM + ' dash' } }, 'block', 'emdash')
@@ -178,6 +190,50 @@ for (const t of cases) {
   if (ok) pass++; else { fail++; failures.push(t) }
   cases.push(t)
   evidence.push({ ...t, ok })
+}
+
+// ---- session state: agent memory is not an edit, but it reopens "no commit" ----
+// detect_significant_event.js and check_log.js key their state file on the project path
+// (process.cwd()), so each case runs the hooks with cwd set to a throwaway project.
+{
+  const crypto = require('crypto')
+  const results = []
+  const project = name => {
+    // realpath: on macOS the temp dir sits behind a symlink, and the hooks hash the
+    // resolved process.cwd(), so the test must hash the same path.
+    const dir = path.join(fs.realpathSync(TMP), name)
+    fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(path.join(dir, '_claude_log.md'), '# log\n')
+    fs.writeFileSync(path.join(dir, 'PRODUCT.md'), '# product\n')
+    return dir
+  }
+  const stateFile = dir => path.join(os.tmpdir(), `claude_session_${crypto.createHash('md5').update(dir).digest('hex')}.json`)
+  const hook = (file, dir, payload) => spawnSync('node', [path.join(HOOKS_DIR, file)], { cwd: dir, input: JSON.stringify(payload), encoding: 'utf8' }).stdout || ''
+  const readState = dir => { try { return JSON.parse(fs.readFileSync(stateFile(dir), 'utf8')) } catch (_) { return {} } }
+
+  const mem = project('state-memory')
+  hook('detect_significant_event.js', mem, { tool_name: 'Bash', tool_input: { command: 'git commit -m x' } })
+  hook('detect_significant_event.js', mem, { tool_name: 'Write', tool_input: { file_path: path.join(mem, '.claude', 'agent-memory', 'qa', 'MEMORY.md') } })
+  let s = readState(mem)
+  results.push(['agent memory write is not counted as an edit', (s.editCount || 0) === 0])
+  results.push(['agent memory write reopens "no commit"', s.gitCommitted === false])
+  results.push(['check_log warns about agent memory with no commit', hook('check_log.js', mem, { prompt: 'hi' }).includes('agent memory with no git commit')])
+
+  const code = project('state-code')
+  hook('detect_significant_event.js', code, { tool_name: 'Write', tool_input: { file_path: path.join(code, 'agent-memory', 'notes.js') } })
+  s = readState(code)
+  results.push(['agent-memory outside .claude/ is a normal edit', s.editCount === 1])
+
+  const fresh = project('state-fresh')
+  results.push(['a fresh state does not warn about agent memory', !hook('check_log.js', fresh, { prompt: 'hi' }).includes('agent memory')])
+
+  for (const dir of [mem, code, fresh]) { try { fs.unlinkSync(stateFile(dir)) } catch (_) {} }
+  for (const [name, ok] of results) {
+    const t = { name, check: 'state', expect: 'true', got: String(ok) }
+    if (ok) pass++; else { fail++; failures.push(t) }
+    cases.push(t)
+    evidence.push({ ...t, ok })
+  }
 }
 
 const stamp = new Date().toISOString()

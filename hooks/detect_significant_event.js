@@ -52,7 +52,14 @@ process.stdin.on('end', () => {
     }
   } catch (_) {}
 
-  if (eventType === 'ui') {
+  // Memory a subagent writes (`.claude/agent-memory/`) is not the session's own work: with
+  // QA running per piece mid-session, every run inflated editCount and the edited-files
+  // list, and the close offered it as something to review. The "no commit" warning does
+  // come back, because that memory has to go into a commit just like the code.
+  const isAgentMemory = /[\\/]\.claude[\\/]agent-memory[\\/]/.test(filePath ? path.resolve(filePath) : '')
+  if (isAgentMemory && (eventType === 'ui' || eventType === 'code')) {
+    state.gitCommitted = false
+  } else if (eventType === 'ui') {
     state.editCount = (state.editCount || 0) + 1
     if (!state.filesEdited.includes(fileName)) state.filesEdited.push(fileName)
     if (!state.uiFilesEdited.includes(fileName)) state.uiFilesEdited.push(fileName)

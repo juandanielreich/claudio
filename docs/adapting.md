@@ -81,7 +81,7 @@ Models are set in the frontmatter of each agent file. Default assignments:
 |---|---|
 | Strategic decisions (once per project) | opus |
 | Analysis with nuanced checklist | sonnet |
-| Procedural checklist, high frequency | haiku |
+| Procedural checklist, high frequency | sonnet (with `effort: high`) |
 
 ---
 

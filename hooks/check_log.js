@@ -127,6 +127,12 @@ process.stdin.on('end', () => {
       : 'At session close: present batched agent proposal before writing HISTORY. Then clear state: node ~/.claude/hooks/clear_session_state.js'
 
     messages.push(`Session state: ${parts.join(' | ')}. ${closeSteps}`)
+  } else if (state.gitCommitted === false) {
+    // No counted edits but the flag is down: that only happens when the only thing written
+    // was agent memory, which detect_significant_event.js doesn't count as an edit. That
+    // memory still has to be committed. `=== false` and not `!`, because a freshly created
+    // state has no such field and must not warn.
+    messages.push('Session state: ⚠ agent memory with no git commit, verify before closing.')
   }
 
   // --- Save state changes ---
