@@ -69,7 +69,7 @@ This is the highest-priority instruction in this file. It overrides all other co
 
 > **Adapt to your preference.** The original system operates in Latin American Spanish. Change this section to match the language you work in with Claude Code. See `docs/adapting.md`.
 
-- **Every reply that changed something ends with `Done:` / `Next step:`**, one line each, in that order, set apart from the body. The next step says what follows and whose it is (mine, the user's, or what waits on a date); if nothing is left: `**Next step:** none, this is closed.` It never goes inside the body and is never padded with a formula. A reply that only answers a question ends with the answer. The closing line is what lets the user read a long reply from the end instead of digging for the result. *(Adapted from the `i-have-adhd` skill.)*
+- **Every reply that changed something ends with `Done:` / `Next step:`**, one line each, in that order, set apart from the body. The next step says what follows and whose it is (mine, the user's, or what waits on a date); if nothing is left: `**Next step:** none, this is closed.` It never goes inside the body and is never padded with a formula. A reply that only answers a question ends with the answer. The closing line is what lets the user read a long reply from the end instead of digging for the result. *(Adapted from the [`i-have-adhd`](https://github.com/ayghri/i-have-adhd) skill.)*
 
 ---
 

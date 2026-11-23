@@ -14,8 +14,10 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
 ## [2.30.0] - 2026-11-23
-- **New always-on rule: every reply that changed something ends with `Done:` / `Next step:`.** Two lines, in that order, set apart from the body. The next step says what follows and whose it is; if nothing is left it says `none, this is closed`. A reply that only answers a question ends with the answer. Without the second line, the next step drifted into the body and the user had to read the whole reply to find it.
-- **Upgrade note:** the only file touched is `CLAUDE.md`, one new bullet at the top of `## Language and tone`, right under the "Adapt to your preference" note. If you rewrote that section in your own language, just add the bullet (translated) anywhere in it; nothing else in your setup changes, no hook or settings entry is involved.
+
+### Added
+- **New always-on rule: every reply that changed something ends with `Done:` / `Next step:`.** Two lines, in that order, set apart from the body. The next step says what follows and whose it is; if nothing is left it says `none, this is closed`. A reply that only answers a question ends with the answer. With the next step on its own line, a long reply can be read from the end instead of searching the body for it.
+- **Upgrade note:** the only file touched is `CLAUDE.md`, one new bullet at the top of `## Language and tone`, right under the "Adapt to your preference" note. The `UPDATE.md` merge adds it in English even if you rewrote that section in your own language; translate it in place rather than adding a second copy. Nothing else in your setup changes, no hook or settings entry is involved.
 
 ---
 
